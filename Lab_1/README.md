@@ -1,8 +1,25 @@
-Hướng dẫn chạy code:
-Bước 1: Mở terminal
-Bước 2: Chạy lệnh python main.py
-Bước 3: Quá trình training tiến hành diễn ra đầu tiên với model một lớp layer MLP
-Bước 4: Quan sát quá trình training đến khi hiện ra cửa sổ kết quả các thang đo sau quá trình training
-Bước 5: Sau khi quan sát cửa sổ kết quả xong, đóng cửa sổ để code tiếp tục chạy quá trình training cho model 3 lớp MLP
-Bước 6: Quá trình lặp lại như bước 4
-Note: Kết quả training của 2 model đã được lưu lại trong folder result
+# Hướng dẫn chạy
+
+Mô tả ngắn: script sẽ huấn luyện lần lượt hai mô hình (One-layer MLP và Three-layer MLP) và hiển thị cửa sổ kết quả sau mỗi lần huấn luyện.
+
+## Yêu cầu
+- Python 3.x, PyTorch, torchvision, scikit-learn, matplotlib, tabulate
+- (Nếu dùng conda) kích hoạt môi trường:  
+  conda activate ds201_env
+
+## Các bước chạy
+1. Mở terminal (hoặc PowerShell) và điều hướng đến thư mục project:
+   ```
+   cd \DS201\Lab_1
+   ```
+2. Chạy:
+   ```
+   python main.py
+   ```
+3. Chương trình sẽ huấn luyện model One-layer MLP trước. Khi hoàn tất, một cửa sổ đồ họa sẽ hiện các biểu đồ/điểm số.
+4. Quan sát kết quả. Đóng cửa sổ đồ họa để chương trình tiếp tục.
+5. Tiếp theo chương trình sẽ huấn luyện model Three-layer MLP và lặp lại bước 3–4.
+6. Khi toàn bộ hoàn tất, kết quả và mô hình được lưu trong thư mục `results`.
+
+## Ghi chú
+- Kết quả huấn luyện (checkpoint/biểu đồ) được lưu tự động — kiểm tra thư mục `result` / `models`.
