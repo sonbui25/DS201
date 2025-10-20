@@ -8,6 +8,7 @@ from array import array
 
 class MNISTDataset(Dataset):
     def __init__(self, images_filepath: str, labels_filepath: str, transform=None):
+        super().__init__()
         self.transform = transform
         # Load images and labels from the given file paths one time only
         self.images, self.labels = self.read_images_labels(images_filepath, labels_filepath)

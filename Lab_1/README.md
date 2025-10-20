@@ -3,7 +3,7 @@
 Mô tả ngắn: script sẽ huấn luyện lần lượt hai mô hình (One-layer MLP và Three-layer MLP) để phân loại chữ viết tay trong bộ dữ liệu MNIST và hiển thị cửa sổ kết quả sau mỗi lần huấn luyện.
 
 ## Yêu cầu
-- Python 3.9, PyTorch, torchvision, scikit-learn, matplotlib, tabulate
+- Python 3.12, PyTorch, torchvision, scikit-learn, matplotlib, tabulate
 - (Nếu dùng conda) kích hoạt môi trường:  
   conda activate ds201_env
 
