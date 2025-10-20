@@ -17,13 +17,16 @@ class MNISTDataset(Dataset):
         return len(self.images)
 
     def __getitem__(self, idx):
-        img = self.images[idx]
-        label = self.labels[idx]
+        image = self.images[idx]
+        label_id = self.labels[idx]
         if self.transform:
-            img = self.transform(img)
+            image = self.transform(image)
         else:
-            img = transforms.ToTensor()(img) # Convert to tensor 
-        return img, label
+            image = transforms.ToTensor()(image) # Convert to tensor 
+        return  {
+            "image": image,
+            "label": label_id
+        }
     
     def read_images_labels(self, images_filepath, labels_filepath):
         with open(labels_filepath, 'rb') as file:
