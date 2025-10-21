@@ -10,7 +10,7 @@ import warnings
 warnings.filterwarnings("ignore", message=".*number of unique classes.*", category=UserWarning)
 #  Hyperparameters 
 NUM_EPOCHS = 250
-LEARNING_RATE = 2e-4
+LEARNING_RATE = 1e-2
 WEIGHT_DECAY = 1e-5
 BATCH_SIZE = 128
 EARLY_STOP_EPOCHS = 10
@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     #  Experiment Configurations 
     configs = [
-        {'model_name': 'LeNet', 'data_key': 'mnist'},
+        # {'model_name': 'LeNet', 'data_key': 'mnist'},
         {'model_name': 'GoogleNet', 'data_key': 'vinafood'},
         {'model_name': 'ResNet18', 'data_key': 'vinafood'},
         {'model_name': 'ResNet50', 'data_key': 'vinafood'},
