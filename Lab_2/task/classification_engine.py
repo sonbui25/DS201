@@ -103,6 +103,7 @@ class ClassificationTraining():
         best_test_f1 = 0
         best_row = None
         epochs_decrease = 0
+        actual_epochs_ran = 0
         for epoch in tqdm(
                 range(start_epoch, epochs),
                 desc="Epoch",
@@ -127,6 +128,8 @@ class ClassificationTraining():
             results["test_f1"].append(test_f1)
 
             print("\n\n", tabulate([row], headers=headers, tablefmt="github"))
+
+            actual_epochs_ran = epoch + 1 # In case of early stopping
 
             if test_f1 > best_test_f1: # Save best result based on test_f1
                 best_test_f1 = test_f1
@@ -163,7 +166,7 @@ class ClassificationTraining():
         print("\nClassification report for last epoch on test set:")
         print(classification_report(y_true_all, y_pred_all, zero_division=0))
         
-        return results
+        return results, actual_epochs_ran
     def save_model(self,
                 target_dir: str,
                 model_name: str,
