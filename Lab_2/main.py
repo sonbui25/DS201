@@ -8,11 +8,12 @@ from task import classification_engine
 import warnings
 warnings.filterwarnings("ignore", message=".*number of unique classes.*", category=UserWarning)
 #  Hyperparameters 
-NUM_EPOCHS = 50
-LEARNING_RATE = 0.1
-BATCH_SIZE = 32
+NUM_EPOCHS = 250
+LEARNING_RATE = 2e-4
+WEIGHT_DECAY = 1e-5
+BATCH_SIZE = 128
+EARLY_STOP_EPOCHS = 10
 
-#  Main Execution 
 if __name__ == "__main__":
     #  Data Download 
     data_name = r"hojjatk/mnist-dataset"
@@ -30,18 +31,18 @@ if __name__ == "__main__":
     data = {
         'mnist': {
             'train': MNIST.MNISTDataset(
-                images_filepath=r"./data/MNIST/train-images.idx3-ubyte",
-                labels_filepath=r"./data/MNIST/train-labels.idx1-ubyte"
+                images_filepath=r"/kaggle/input/mnist-dataset/train-images.idx3-ubyte",
+                labels_filepath=r"/kaggle/input/mnist-dataset/train-labels.idx1-ubyte"
             ),
             'test' : MNIST.MNISTDataset(
-                images_filepath=r"./data/MNIST/t10k-images.idx3-ubyte",
-                labels_filepath=r"./data/MNIST/t10k-labels.idx1-ubyte"
+                images_filepath=r"/kaggle/input/mnist-dataset/t10k-images.idx3-ubyte",
+                labels_filepath=r"/kaggle/input/mnist-dataset/t10k-labels.idx1-ubyte"
             ),
             'classes': 10  # Number of classes for MNIST
         },
         'vinafood': {
-            'train': ViNaFood21.ViNaFood21Dataset(path=r"./data/VinaFood21/train"),
-            'test' : ViNaFood21.ViNaFood21Dataset(path=r"./data/VinaFood21/test"),
+            'train': ViNaFood21.ViNaFood21Dataset(path=r"/kaggle/input/vinafood21/VinaFood21/train"),
+            'test' : ViNaFood21.ViNaFood21Dataset(path=r"/kaggle/input/vinafood21/VinaFood21/test"),
             'classes': 21 # Number of classes for ViNaFood21
         }
     }
@@ -80,7 +81,7 @@ if __name__ == "__main__":
                                     train_data, 
                                     batch_size=BATCH_SIZE, 
                                     shuffle=True,
-                                    collate_fn=collate_fn
+                                    collate_fn=collate_fn,
                                 )
         test_data = current_data_info['test']
         test_dataloader = DataLoader(
@@ -90,29 +91,36 @@ if __name__ == "__main__":
                                     collate_fn=collate_fn
                                 )
         
-        #  Print Data Info 
+    #  Print Data Info 
         print(f"Train samples: {len(train_data)}, Test samples: {len(test_data)}")
         image_shape = train_data[0]['image'].shape # Get the shape from the tensor image
         print(f"Sample image shape: {image_shape}")
         
         #  Training Setup 
         loss_fn = torch.nn.CrossEntropyLoss()
-        optimizer = torch.optim.Adam(params=model.parameters(), lr=LEARNING_RATE)
+        optimizer = torch.optim.Adam(params=model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
         trainer = classification_engine.ClassificationTraining(
             model=model,
             train_dataloader=train_dataloader,
             test_dataloader=test_dataloader,
             loss_fn=loss_fn,
             optimizer=optimizer,
-            device=device
-        )
-
-        #  Train 
+            device=device,
+        )        
         print(f"START TRAINING {model_name}...")
-        results = trainer.train(epochs=NUM_EPOCHS, target_dir="./checkpoints", model_name=model_name + ".pth")
+        checkpoint_path = f"./checkpoints/{model_name}.pth"
+        start_epoch = trainer.load_checkpoint(checkpoint_path)
+        if start_epoch > 0:
+            print(f"Resuming training from epoch {start_epoch} for model {model_name}")
+        #  Train 
+        results = trainer.train(epochs=NUM_EPOCHS, 
+                                early_stop_epochs = EARLY_STOP_EPOCHS,
+                                target_dir="./checkpoints", 
+                                model_name=model_name + ".pth",
+                                start_epoch=start_epoch)
         print(f"DONE TRAINING {model_name}.")
-        
-        #  Plot Results 
+
+        # Plot Results
         print(f"Plotting results for {model_name}. Close plot to continue...")
         plot_metrics(results, epochs=NUM_EPOCHS, model_name=model_name)
 

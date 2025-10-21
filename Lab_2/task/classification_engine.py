@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from tabulate import tabulate
 import torch
@@ -6,12 +7,12 @@ from typing import Dict, List, Tuple
 from sklearn.metrics import classification_report
 class ClassificationTraining():
     def __init__(self,
-                 model: torch.nn.Module,
-                 train_dataloader: torch.utils.data.DataLoader,
-                 test_dataloader: torch.utils.data.DataLoader,
-                 loss_fn: torch.nn.Module,
-                 optimizer: torch.optim.Optimizer,
-                 device: torch.device):
+                model: torch.nn.Module,
+                train_dataloader: torch.utils.data.DataLoader,
+                test_dataloader: torch.utils.data.DataLoader,
+                loss_fn: torch.nn.Module,
+                optimizer: torch.optim.Optimizer,
+                device: torch.device):
         self.model = model
         self.train_dataloader = train_dataloader
         self.test_dataloader = test_dataloader
@@ -65,6 +66,7 @@ class ClassificationTraining():
             for batch, (X, y) in enumerate(self.test_dataloader):
 
                 X, y = X.to(self.device), y.to(self.device)
+
                 y_logits = self.model(X)
 
                 loss = self.loss_fn(y_logits, y)
@@ -84,7 +86,13 @@ class ClassificationTraining():
         test_f1 = test_f1 / len_data
         return test_loss, test_acc, test_precision, test_recall, test_f1
 
-    def train(self, epochs: int, model_name: str, target_dir: str = "./checkpoints") -> Dict[str, List]:
+    def train(self, 
+            epochs: int, 
+            model_name: str,
+            early_stop_epochs: int,
+            target_dir: str = "./checkpoints",
+            start_epoch: int = 0) -> Dict[str, List]:
+
         results = {"train_loss": [], "train_acc": [], "train_precision": [], "train_recall": [], "train_f1": [],
                 "test_loss": [], "test_acc": [], "test_precision": [], "test_recall": [], "test_f1": []}
         headers = ["Epoch", "Train Loss", "Train Acc", "Train Precision", "Train Recall", "Train F1",
@@ -94,11 +102,15 @@ class ClassificationTraining():
         # Save best result
         best_test_f1 = 0
         best_row = None
-
-        for epoch in tqdm(range(epochs)):
+        epochs_decrease = 0
+        for epoch in tqdm(
+                range(start_epoch, epochs),
+                desc="Epoch",
+                initial=start_epoch,
+                total=epochs):
             train_loss, train_acc, train_precision, train_recall, train_f1 = self.train_step()
             test_loss, test_acc, test_precision, test_recall, test_f1 = self.test_step()
-            row = [epoch+1, f"{train_loss:.4f}", f"{train_acc:.4f}", f"{train_precision:.4f}", f"{train_recall:.4f}", f"{train_f1:.4f}",
+            row = [epoch, f"{train_loss:.4f}", f"{train_acc:.4f}", f"{train_precision:.4f}", f"{train_recall:.4f}", f"{train_f1:.4f}",
                 f"{test_loss:.4f}", f"{test_acc:.4f}", f"{test_precision:.4f}", f"{test_recall:.4f}", f"{test_f1:.4f}"]
             table.append(row)
             #Update results train
@@ -115,16 +127,23 @@ class ClassificationTraining():
             results["test_f1"].append(test_f1)
 
             print("\n\n", tabulate([row], headers=headers, tablefmt="github"))
-            # Save best result based on test_f1
-            if test_f1 > best_test_f1:
+
+            if test_f1 > best_test_f1: # Save best result based on test_f1
                 best_test_f1 = test_f1
                 best_row = row
                 #Save the best model
                 self.save_model(target_dir=target_dir,
                                 model_name=model_name,
                                 epoch=epoch+1)
+                epochs_decrease = 0
+            else:
+                epochs_decrease += 1
+                if epochs_decrease > early_stop_epochs: # Triggered early stop
+                    print(f"TRIGGERED EARLY STOP AT {epoch}!")
+                    break
 
 
+            
         # Print best result on test set
         print("\nBest result based on F1-score on test set:")
         print(tabulate([best_row], headers=headers, tablefmt="github"))
@@ -156,9 +175,25 @@ class ClassificationTraining():
         
         #Create model save path
         assert model_name.endswith(".pth") or model_name.endswith(".pt"), "model_name should end with '.pt' or '.pth'"
-        model_save_path = target_dir_path / model_name
+        save_path = os.path.join(target_dir, model_name)
+
 
         #Save the model state_dict()
-        print(f"[INFO] Saving best model at epoch {epoch} to: {model_save_path}")
-        torch.save(obj=self.model.state_dict(),
-                f=model_save_path)
+        print(f"[INFO]: Saving best model at epoch {epoch} to: {save_path}")
+        torch.save({
+            'epoch': epoch,
+            'model_state_dict': self.model.state_dict(),
+            'optimizer_state_dict': self.optimizer.state_dict(),
+        }, save_path)
+    
+    def load_checkpoint(self, checkpoint_path: str):
+        if os.path.isfile(checkpoint_path):
+            checkpoint = torch.load(checkpoint_path, map_location=self.device)
+            self.model.load_state_dict(checkpoint['model_state_dict'])
+            self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+            start_epoch = checkpoint.get('epoch', 0)
+            print(f"Loaded checkpoint '{checkpoint_path}' (epoch {start_epoch})")
+            return start_epoch
+        else:
+            print(f"No checkpoint found at '{checkpoint_path}', training from scratch.")
+        return 0
