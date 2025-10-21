@@ -3,7 +3,7 @@ import torch
 from utils.utils import download_data_and_clear_cache, plot_metrics, collate_fn
 from dataloader import MNIST, ViNaFood21 
 from torch.utils.data import DataLoader
-from models import LeNet, GoogleNet, ResNet18
+from models import LeNet, GoogleNet, ResNet18, ResNet50
 from task import classification_engine
 import kagglehub
 import warnings
@@ -50,14 +50,16 @@ if __name__ == "__main__":
     model_classes = {
         'LeNet': LeNet.LeNet,             # Store class, not instance
         'GoogleNet': GoogleNet.GoogleNet,
-        'ResNet18': ResNet18.ResNet18
+        'ResNet18': ResNet18.ResNet18,
+        'ResNet50': ResNet50.ResNet50
     }
 
     #  Experiment Configurations 
     configs = [
         {'model_name': 'LeNet', 'data_key': 'mnist'},
         {'model_name': 'GoogleNet', 'data_key': 'vinafood'},
-        {'model_name': 'ResNet18', 'data_key': 'vinafood'}
+        {'model_name': 'ResNet18', 'data_key': 'vinafood'},
+        {'model_name': 'ResNet50', 'data_key': 'vinafood'},
     ]
 
     #  Training Loop 

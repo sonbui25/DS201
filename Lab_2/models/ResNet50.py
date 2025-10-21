@@ -2,7 +2,7 @@ import torch
 from torch import nn
 from transformers import ResNetForImageClassification
 
-class PretrainedResnet(nn.Module):
+class ResNet50(nn.Module):
     def __init__(self):
         super().__init__()
 
