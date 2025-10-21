@@ -10,8 +10,8 @@ import warnings
 warnings.filterwarnings("ignore", message=".*number of unique classes.*", category=UserWarning)
 #  Hyperparameters 
 NUM_EPOCHS = 250
-LEARNING_RATE = 1e-2
-WEIGHT_DECAY = 1e-3
+LEARNING_RATE = 2e-2
+WEIGHT_DECAY = 2e-3
 BATCH_SIZE = 128
 EARLY_STOP_EPOCHS = 10
 
