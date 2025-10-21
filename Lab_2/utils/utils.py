@@ -5,7 +5,7 @@ import kagglehub
 import matplotlib.pyplot as plt
 from typing import Tuple, List, Dict
 from pathlib import Path
-def download_data_and_clear_cache(dataset: str, target_dir: str):
+def download_data_and_clear_cache(dataset: str, target_dir: str = './data'):
     # Nếu đã tồn tại dữ liệu ở target_dir thì bỏ qua
     if os.path.exists(target_dir) and os.listdir(target_dir):
         print(f"Dataset already exists in: {target_dir}")

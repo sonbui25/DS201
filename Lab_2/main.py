@@ -16,7 +16,7 @@ EARLY_STOP_EPOCHS = 10
 
 if __name__ == "__main__":
     #  Data Download 
-    download_data_and_clear_cache(r'hojjatk/mnist-dataset', r'./data') # Download if needed
+    download_data_and_clear_cache(r'hojjatk/mnist-dataset') # Download if needed
 
     #  Setup 
     device = "cuda" if torch.cuda.is_available() else "cpu"
