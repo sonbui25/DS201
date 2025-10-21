@@ -30,12 +30,12 @@ if __name__ == "__main__":
     data = {
         'mnist': {
             'train': MNIST.MNISTDataset(
-                images_filepath=r"./kaggle/input/mnist-dataset/train-images.idx3-ubyte",
-                labels_filepath=r"./kaggle/input/mnist-dataset/train-labels.idx1-ubyte"
+                images_filepath=r"/kaggle/input/mnist-dataset/train-images.idx3-ubyte",
+                labels_filepath=r"/kaggle/input/mnist-dataset/train-labels.idx1-ubyte"
             ),
             'test' : MNIST.MNISTDataset(
-                images_filepath=r"./kaggle/input/mnist-dataset/t10k-images.idx3-ubyte",
-                labels_filepath=r"./kaggle/input/mnist-dataset/t10k-labels.idx1-ubyte"
+                images_filepath=r"/kaggle/input/mnist-dataset/t10k-images.idx3-ubyte",
+                labels_filepath=r"/kaggle/input/mnist-dataset/t10k-labels.idx1-ubyte"
             ),
             'classes': 10  # Number of classes for MNIST
         },
