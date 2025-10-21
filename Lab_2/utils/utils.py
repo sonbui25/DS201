@@ -5,7 +5,7 @@ import kagglehub
 import matplotlib.pyplot as plt
 from typing import Tuple, List, Dict
 from pathlib import Path
-def download_data_and_clear_cache(dataset: str, target_dir: str = './data'):
+def download_data_and_clear_cache(dataset: str, target_dir: str):
     # Nếu đã tồn tại dữ liệu ở target_dir thì bỏ qua
     if os.path.exists(target_dir) and os.listdir(target_dir):
         print(f"Dataset already exists in: {target_dir}")
@@ -27,10 +27,10 @@ def download_data_and_clear_cache(dataset: str, target_dir: str = './data'):
 
     # B4: Xóa đúng dataset (thường lưu trong ổ C) vừa tải trong cache (không ảnh hưởng dataset khác)
     dataset_root = os.path.dirname(os.path.dirname(os.path.dirname(cache_path)))  # quay lại 3 cấp để đến thư mục datasets
-    if os.path.exists(dataset_root):
-        shutil.rmtree(dataset_root, ignore_errors=True)
-        print(f"Dataset copied to: {target_dir}")
-        print(f"Cache for {dataset} removed at: {dataset_root}")
+    shutil.rmtree(dataset_root, ignore_errors=True)
+
+    print(f"Dataset copied to: {target_dir}")
+    print(f"Cache for {dataset} removed at: {dataset_root}")
     return target_dir
 def show_images(images, title_texts):
     cols = 5

@@ -5,6 +5,7 @@ from dataloader import MNIST, ViNaFood21
 from torch.utils.data import DataLoader
 from models import LeNet, GoogleNet, ResNet18
 from task import classification_engine
+import kagglehub
 import warnings
 warnings.filterwarnings("ignore", message=".*number of unique classes.*", category=UserWarning)
 #  Hyperparameters 
@@ -16,7 +17,7 @@ EARLY_STOP_EPOCHS = 10
 
 if __name__ == "__main__":
     #  Data Download 
-    download_data_and_clear_cache(r'hojjatk/mnist-dataset') # Download if needed
+    kagglehub.dataset_download(r'hojjatk/mnist-dataset') # Download if needed
 
     #  Setup 
     device = "cuda" if torch.cuda.is_available() else "cpu"
