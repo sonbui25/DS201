@@ -27,10 +27,10 @@ def download_data_and_clear_cache(dataset: str, target_dir: str):
 
     # B4: Xóa đúng dataset (thường lưu trong ổ C) vừa tải trong cache (không ảnh hưởng dataset khác)
     dataset_root = os.path.dirname(os.path.dirname(os.path.dirname(cache_path)))  # quay lại 3 cấp để đến thư mục datasets
-    shutil.rmtree(dataset_root, ignore_errors=True)
-
-    print(f"Dataset copied to: {target_dir}")
-    print(f"Cache for {dataset} removed at: {dataset_root}")
+    if os.path.exists(dataset_root):
+        shutil.rmtree(dataset_root, ignore_errors=True)
+        print(f"Dataset copied to: {target_dir}")
+        print(f"Cache for {dataset} removed at: {dataset_root}")
     return target_dir
 def show_images(images, title_texts):
     cols = 5
