@@ -10,7 +10,7 @@ import warnings
 warnings.filterwarnings("ignore", message=".*number of unique classes.*", category=UserWarning)
 #  Hyperparameters 
 NUM_EPOCHS = 250
-LEARNING_RATE = 1e-3
+LEARNING_RATE = 1e-5 # 1e-3 good for MNIST
 WEIGHT_DECAY = 1e-4
 BATCH_SIZE = 128
 EARLY_STOP_EPOCHS = 10
