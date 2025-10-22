@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     #  Experiment Configurations 
     configs = [
-        {'model_name': 'LeNet', 'data_key': 'mnist'},
+        # {'model_name': 'LeNet', 'data_key': 'mnist'},
         {'model_name': 'GoogleNet', 'data_key': 'vinafood'},
         {'model_name': 'ResNet18', 'data_key': 'vinafood'},
         {'model_name': 'ResNet50', 'data_key': 'vinafood'},
