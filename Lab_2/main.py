@@ -41,7 +41,7 @@ if __name__ == "__main__":
         },
         'vinafood': {
             'train': ViNaFood21.ViNaFood21Dataset(path=r"/kaggle/input/vinafood21/VinaFood21/train"),
-            'test' : ViNaFood21.ViNaFood21Dataset(path=r"/kaggle/input/vinafood21/VinaFood21/test"),
+            'test' : ViNaFood21.ViNaFood21Dataset(path=r"/kaggle/input/vinafood21/VinaFood21/test", is_train=False),
             'classes': 21 # Number of classes for ViNaFood21
         }
     }
