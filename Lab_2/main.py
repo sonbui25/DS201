@@ -111,7 +111,7 @@ if __name__ == "__main__":
 
     # --- Training Setup ---
     loss_fn = torch.nn.CrossEntropyLoss()
-
+    
     # Chọn Optimizer
     optimizer_name = hp['optimizer']
     optimizer_params = hp.get('optimizer_params', {})
@@ -131,7 +131,7 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"Error initializing optimizer: {e}")
         exit(1)
-
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.1)
     # Khởi tạo Trainer
     trainer = classification_engine.ClassificationTraining(
         model=model,
@@ -140,6 +140,7 @@ if __name__ == "__main__":
         loss_fn=loss_fn,
         optimizer=optimizer,
         device=device,
+        scheduler=scheduler
     )
 
     print(f"START TRAINING {exp_name}...")

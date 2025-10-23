@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from sched import scheduler
 from tabulate import tabulate
 import torch
 from  tqdm.auto import tqdm
@@ -13,13 +14,15 @@ class ClassificationTraining():
                 test_dataloader: torch.utils.data.DataLoader,
                 loss_fn: torch.nn.Module,
                 optimizer: torch.optim.Optimizer,
-                device: torch.device):
+                device: torch.device,
+                scheduler: torch.optim.lr_scheduler._LRScheduler):
         self.model = model
         self.train_dataloader = train_dataloader
         self.test_dataloader = test_dataloader
         self.loss_fn = loss_fn
         self.optimizer = optimizer
         self.device = device
+        self.scheduler = scheduler
     def train_step(self) -> Tuple[float, float, float, float, float]:
         # Put model in train mode
         self.model.train()
@@ -50,6 +53,8 @@ class ClassificationTraining():
             train_precision += result_report['macro avg']['precision']
             train_recall += result_report['macro avg']['recall']
             train_f1 += result_report['macro avg']['f1-score']
+            if self.scheduler is not None:
+                self.scheduler.step()
         # Adjust metrics to get average loss and accuracy per batch
         len_data = len(self.train_dataloader)
         train_loss = train_loss / len_data
