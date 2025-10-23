@@ -24,7 +24,7 @@ class ViNaFood21Dataset(Dataset):
         # Define transforms based on train/test flag *before* loading
         if self.is_train:
             self.transform = transforms.Compose([
-                transforms.RandomResizedCrop(224, scale=(0.8, 1.0)), # Crop randomly
+                transforms.Resize((224, 224)), # Crop randomly
                 transforms.RandomHorizontalFlip(), # Flip horizontally
                 transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1), # Adjust colors
                 transforms.RandomRotation(15), # Rotate slightly
