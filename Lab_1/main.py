@@ -7,7 +7,7 @@ from models.one_layer_MLP import OneLayerMLP
 from models.three_layer_MLP import ThreeLayerMLP 
 from task import classification_engine
 
-NUM_EPOCHS = 20
+NUM_EPOCHS = 50
 LEARNING_RATE = 0.1
 BATCH_SIZE = 128
 # Download dataset
