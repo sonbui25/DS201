@@ -74,23 +74,23 @@ def plot_metrics(results, epochs, model_name):
 
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
         
-    # Define and create save directory
+    # 1. Define and create save directory
     save_dir = "results" 
     os.makedirs(save_dir, exist_ok=True) 
     file_name = f"metrics_{model_name}.png"
     save_path = os.path.join(save_dir, file_name)
-    
-    # save plot (MUST happen before close)
-    plt.savefig(save_path, dpi=300, bbox_inches='tight')
-    print(f"Plot saved to folder '{save_dir}' at: {save_path}")
 
-    # Display plot (Non-blocking)
+    # 2. Display plot (Non-blocking)
     plt.show(block=False) 
     print(f"Displaying plot for '{model_name}' for 10 seconds...")
 
-    # Pause for 10 seconds
-    plt.pause(10)     
+    # 3. Pause for 10 seconds
+    plt.pause(10) 
     
-    # Close figure to free memory
+    # 4. Save plot (MUST happen before close)
+    plt.savefig(save_path, dpi=300, bbox_inches='tight')
+    print(f"Plot saved to folder '{save_dir}' at: {save_path}")
+    
+    # 5. Close figure to free memory
     plt.close() 
     print("Plot automatically closed.")
