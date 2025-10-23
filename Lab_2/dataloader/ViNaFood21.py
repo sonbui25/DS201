@@ -29,13 +29,13 @@ class ViNaFood21Dataset(Dataset):
                 # transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1), # Adjust colors
                 # transforms.RandomRotation(15), # Rotate slightly
                 transforms.ToTensor(), # Convert to tensor
-                # normalize # Normalize
+                normalize # Normalize
             ])
         else: # For validation/testing
             self.transform = transforms.Compose([
                 transforms.Resize((224, 224)), # Just resize
                 transforms.ToTensor(), # Convert to tensor
-                # normalize # Normalize
+                normalize # Normalize
             ])
 
         # --- Load all data into RAM ---
