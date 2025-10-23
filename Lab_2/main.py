@@ -98,7 +98,7 @@ if __name__ == "__main__":
 
     # --- DataLoaders ---
     batch_size = hp['batch_size']
-    num_workers = 0
+    num_workers = os.cpu_count() 
     train_dataloader = DataLoader(train_data, batch_size=batch_size, shuffle=True, collate_fn=collate_fn, num_workers=num_workers)
     test_dataloader = DataLoader(test_data, batch_size=batch_size, shuffle=False, collate_fn=collate_fn, num_workers=num_workers)
 
