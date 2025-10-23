@@ -62,13 +62,8 @@ class ViNaFood21Dataset(Dataset):
                     image_path = os.path.join(folder_path, image_file)
                     try:
                         image = Image.open(image_path).convert('RGB')
-
                         # Apply the appropriate transform (train or test)
-
-                        image_tensor = self.transform(image)
-
-                        images.append(image_tensor)
-
+                        images.append(image)
                         labels.append(current_label_id)
                     except Exception as e:
                         print(f"Warning: Could not load image {image_path}. Error: {e}")
