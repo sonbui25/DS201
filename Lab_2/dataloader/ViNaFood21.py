@@ -33,7 +33,7 @@ class ViNaFood21Dataset(Dataset):
             ])
 
         # --- Load ảnh gốc (PIL Image objects) vào RAM ---
-        self.images, self.labels = self._load_raw_images_labels()
+        self.images, self.labels = self.read_images_labels()
 
     def read_images_labels(self):
         images = []
