@@ -1,12 +1,12 @@
 # --- Global Settings ---
 seed: 42
-checkpoint_dir: "./checkpoints"
+checkpoint_dir: "/kaggle/working/DS201/checkpoints"
 
 # --- Dataset Definitions ---
 datasets:
   vinafood: # Chỉ cần định nghĩa vinafood
-    train_path: "./kaggle/input/vinafood21/VinaFood21/train"
-    test_path: "./kaggle/input/vinafood21/VinaFood21/test"
+    train_path: "/kaggle/input/vinafood21/VinaFood21/train"
+    test_path: "/kaggle/input/vinafood21/VinaFood21/test"
     classes: 21
 
 # --- Model Definitions ---
