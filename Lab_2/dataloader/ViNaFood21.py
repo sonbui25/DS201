@@ -1,9 +1,9 @@
 import torch
-import os
-from PIL import Image
 from torch.utils.data import Dataset
 from torchvision import transforms
-from tqdm.auto import tqdm # Import tqdm for progress bar
+from PIL import Image
+from tqdm.auto import tqdm
+import os
 
 class ViNaFood21Dataset(Dataset):
     def __init__(self, path, is_train=True):
@@ -13,14 +13,13 @@ class ViNaFood21Dataset(Dataset):
         self.label2idx = {}
         self.idx2label = {}
 
-        # --- Define Transforms (Sẽ được dùng trong getitem) ---
         normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                         std=[0.229, 0.224, 0.225]) # Giữ nguyên normalize
+                                         std=[0.229, 0.224, 0.225])
         if self.is_train:
             self.transform = transforms.Compose([
                 transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),
                 transforms.RandomHorizontalFlip(),
-                transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1), # Adjust colors
+                transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
                 transforms.RandomRotation(15),
                 transforms.ToTensor(),
                 normalize
@@ -32,57 +31,47 @@ class ViNaFood21Dataset(Dataset):
                 normalize
             ])
 
-        # --- Load ảnh gốc (PIL Image objects) vào RAM ---
-        self.images, self.labels = self.read_images_labels()
+        # 🟢 Chỉ lưu đường dẫn ảnh và nhãn
+        self.image_paths, self.labels = self._scan_image_paths()
 
-    def read_images_labels(self):
-        images = []
-        labels = []
-        label_id_counter = 0
+    def _scan_image_paths(self):
+        image_paths, labels = [], []
+        label_id = 0
         allowed_extensions = ('.jpg', '.jpeg', '.png')
 
-        print(f"Scanning and loading images from {self.path} into memory...")
-
-        # Prepare paths and load data in one go
+        print(f"Scanning image paths from {self.path}...")
         for folder in os.listdir(self.path):
             folder_path = os.path.join(self.path, folder)
             if not os.path.isdir(folder_path):
                 continue
-            label = folder
-            if label not in self.label2idx:
-                self.label2idx[label] = label_id_counter
-                self.idx2label[label_id_counter] = label
-                label_id_counter += 1
-            current_label_id = self.label2idx[label]
-            # Use tqdm here for iterating through files in a folder
 
-            file_list = os.listdir(folder_path)
-            for image_file in tqdm(file_list, desc=f"Loading {label}", leave=False):
-                if image_file.lower().endswith(allowed_extensions):
-                    image_path = os.path.join(folder_path, image_file)
-                    try:
-                        image = Image.open(image_path).convert('RGB')
-                        # Apply the appropriate transform (train or test)
-                        images.append(image)
-                        labels.append(current_label_id)
-                    except Exception as e:
-                        print(f"Warning: Could not load image {image_path}. Error: {e}")
-        print(f"Finished loading {len(images)} images into memory.")
-        return images, labels
+            # mapping nhãn
+            if folder not in self.label2idx:
+                self.label2idx[folder] = label_id
+                self.idx2label[label_id] = folder
+                label_id += 1
 
+            current_label_id = self.label2idx[folder]
+
+            for file_name in tqdm(os.listdir(folder_path), desc=f"Scanning {folder}", leave=False):
+                if file_name.lower().endswith(allowed_extensions):
+                    image_paths.append(os.path.join(folder_path, file_name))
+                    labels.append(current_label_id)
+
+        print(f"Found {len(image_paths)} images.")
+        return image_paths, labels
 
     def __len__(self):
-        return len(self.images)
+        return len(self.image_paths)
 
     def __getitem__(self, index):
-        # Lấy ảnh gốc từ RAM
-        image = self.images[index]
+        img_path = self.image_paths[index]
         label = self.labels[index]
 
-        # ÁP DỤNG TRANSFORM Ở ĐÂY (bao gồm augmentation ngẫu nhiên)
-        image_tensor = self.transform(image)
+        # 🟢 Mở ảnh khi cần (lazy load)
+        image = Image.open(img_path)
+        if image.mode != "RGB":
+            image = image.convert("RGB")
 
-        return {
-            "image": image_tensor,
-            "label": label
-        }
+        image_tensor = self.transform(image)
+        return {"image": image_tensor, "label": label}
