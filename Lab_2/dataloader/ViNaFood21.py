@@ -39,11 +39,13 @@ class ViNaFood21Dataset(Dataset):
             ])
 
         # --- Load all data into RAM ---
-        self.data = self._load_all_data() # Load everything here
+        self.images, self.labels = self.read_images_labels() # Load everything here
+
 
     # Combined function to get paths, load images, apply transforms, and store
-    def _load_all_data(self):
-        loaded_data = []
+    def read_images_labels(self):
+        images = []
+        labels = []
         label_id_counter = 0
         allowed_extensions = ('.jpg', '.jpeg', '.png')
         print(f"Scanning and loading images from {self.path} into memory...")
@@ -63,28 +65,28 @@ class ViNaFood21Dataset(Dataset):
             current_label_id = self.label2idx[label]
 
             # Use tqdm here for iterating through files in a folder
-            file_list = os.listdir(folder_path)
+            file_list = [f for f in os.listdir(folder_path) if f.lower().endswith(allowed_extensions) and 'gray' not in f.lower()]
             for image_file in tqdm(file_list, desc=f"Loading {label}", leave=False):
-                if image_file.lower().endswith(allowed_extensions):
                     image_path = os.path.join(folder_path, image_file)
                     try:
                         image = Image.open(image_path).convert('RGB')
                         # Apply the appropriate transform (train or test)
                         image_tensor = self.transform(image)
-                        loaded_data.append({
-                            "image": image_tensor,
-                            "label": current_label_id
-                        })
+                        images.append(image_tensor)
+                        labels.append(current_label_id)
                     except Exception as e:
                         print(f"Warning: Could not load image {image_path}. Error: {e}")
 
-        print(f"Finished loading {len(loaded_data)} images into memory.")
-        return loaded_data
+        print(f"Finished loading {len(images)} images into memory.")
+        return images, labels
 
     def __len__(self):
         # Length is now based on the loaded data
-        return len(self.data)
+        return len(self.images)
 
     def __getitem__(self, index):
         # Simply return the pre-loaded data dictionary
-        return self.data[index]
+        return {
+            "image": self.images[index],
+            "label": self.labels[index]
+        }

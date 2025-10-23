@@ -1,0 +1,28 @@
+# --- Global Settings ---
+seed: 42
+checkpoint_dir: "./checkpoints"
+
+# --- Dataset Definitions ---
+datasets:
+  vinafood: # Chỉ cần định nghĩa vinafood
+    train_path: "./kaggle/input/vinafood21/VinaFood21/train"
+    test_path: "./kaggle/input/vinafood21/VinaFood21/test"
+    classes: 21
+
+# --- Model Definitions ---
+models:
+  GoogleNet: models.GoogleNet.GoogleNet # Chỉ cần định nghĩa GoogleNet
+
+# --- Experiment Definition ---
+experiments:
+  - name: "GoogleNet_ViNaFood"
+    model: "GoogleNet"
+    dataset: "vinafood"
+    hyperparameters:
+      epochs: 250
+      lr: 0.001
+      weight_decay: 0.0001
+      batch_size: 128
+      early_stop: 10
+      optimizer: "Adam"
+      optimizer_params: {}
