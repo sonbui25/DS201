@@ -48,6 +48,7 @@ def show_images(images, title_texts):
     plt.show()
 
 def plot_metrics(results, epochs, model_name):
+    """Plots and manages display/saving of model training metrics."""
     metrics = [
         ("train_loss", "test_loss", "Loss"),
         ("train_acc", "test_acc", "Accuracy"),
@@ -55,16 +56,41 @@ def plot_metrics(results, epochs, model_name):
         ("train_recall", "test_recall", "Recall"),
         ("train_f1", "test_f1", "F1-score"),
     ]
+    
+    # Create figure
     plt.figure(figsize=(18, 10))
-    plt.suptitle(f"Metrics over Epochs of {model_name} model (turn off this window to continue training process of next model!)", fontsize=16)
+    plt.suptitle(f"Metrics over Epochs of {model_name} model (Auto-closing in 10 seconds)", fontsize=16)
+
+    # Plot each metric
     for i, (train_key, test_key, title) in enumerate(metrics, 1):
         plt.subplot(2, 3, i)
-        plt.plot(range(1, epochs+1), results[train_key], label="Train")
-        plt.plot(range(1, epochs+1), results[test_key], label="Test")
+        plt.plot(range(1, epochs + 1), results[train_key], label="Train")
+        plt.plot(range(1, epochs + 1), results[test_key], label="Test")
         plt.xlabel("Epoch")
         plt.ylabel(title)
         plt.title(title)
         plt.legend()
         plt.grid(True)
-    plt.tight_layout()
-    plt.show()
+
+    plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+        
+    # 1. Define and create save directory
+    save_dir = "results" 
+    os.makedirs(save_dir, exist_ok=True) 
+    file_name = f"metrics_{model_name}.png"
+    save_path = os.path.join(save_dir, file_name)
+
+    # 2. Display plot (Non-blocking)
+    plt.show(block=False) 
+    print(f"Displaying plot for '{model_name}' for 10 seconds...")
+
+    # 3. Pause for 10 seconds
+    plt.pause(10) 
+    
+    # 4. Save plot (MUST happen before close)
+    plt.savefig(save_path, dpi=300, bbox_inches='tight')
+    print(f"Plot saved to folder '{save_dir}' at: {save_path}")
+    
+    # 5. Close figure to free memory
+    plt.close() 
+    print("Plot automatically closed.")
