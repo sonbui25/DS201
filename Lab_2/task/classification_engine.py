@@ -53,8 +53,6 @@ class ClassificationTraining():
             train_precision += result_report['macro avg']['precision']
             train_recall += result_report['macro avg']['recall']
             train_f1 += result_report['macro avg']['f1-score']
-            if self.scheduler is not None:
-                self.scheduler.step()
         # Adjust metrics to get average loss and accuracy per batch
         len_data = len(self.train_dataloader)
         train_loss = train_loss / len_data
@@ -132,7 +130,7 @@ class ClassificationTraining():
             results["test_precision"].append(test_precision)
             results["test_recall"].append(test_recall)
             results["test_f1"].append(test_f1)
-
+            self.scheduler.step()
             print("\n\n", tabulate([row], headers=headers, tablefmt="github"))
 
             actual_epochs_ran = epoch + 1 # In case of early stopping

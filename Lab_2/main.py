@@ -131,7 +131,7 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"Error initializing optimizer: {e}")
         exit(1)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.1)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.1)
     # Khởi tạo Trainer
     trainer = classification_engine.ClassificationTraining(
         model=model,
