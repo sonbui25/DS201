@@ -12,14 +12,14 @@ import warnings
 
 warnings.filterwarnings("ignore", message=".*number of unique classes.*", category=UserWarning)
 
-# --- Main Execution ---
+#  Main Execution 
 if __name__ == "__main__":
-    # --- Parser Tham số Dòng lệnh ---
+    #  Parser Tham số Dòng lệnh 
     parser = argparse.ArgumentParser(description="Train a classification model based on a YAML config file.")
     parser.add_argument('--config', type=str, required=True, help='Path to the YAML configuration file.')
     args = parser.parse_args()
 
-    # --- Load Configuration ---
+    #  Load Configuration 
     print(f"Loading configuration from: {args.config}")
     try:
         with open(args.config, 'r') as f:
@@ -35,7 +35,7 @@ if __name__ == "__main__":
         print(f"Error processing YAML file: {e}")
         exit(1)
 
-    # --- Trích xuất thông tin từ Config ---
+    #  Trích xuất thông tin từ Config 
     exp_name = exp_config['name']
     model_key = exp_config['model']       # Tên model (vd: 'ResNet18')
     dataset_key = exp_config['dataset']     # Tên dataset (vd: 'vinafood')
@@ -44,18 +44,18 @@ if __name__ == "__main__":
     seed = global_settings.get('seed', 42)
     checkpoint_dir = global_settings.get('checkpoint_dir', "./checkpoints")
 
-    print(f"\n--- Running Experiment: {exp_name} ---")
+    print(f"\n Running Experiment: {exp_name} ")
     print(f"Model: {model_key}, Dataset: {dataset_key}")
     print(f"Hyperparameters: {hp}")
 
-    # --- Setup ---
+    #  Setup 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Using device: {device}")
     torch.manual_seed(seed)
     if device == "cuda":
         torch.cuda.manual_seed_all(seed)
 
-    # --- Map tên model sang Class (Giống code gốc) ---
+    #  Map tên model sang Class (Giống code gốc) 
     model_classes = {
         'LeNet': LeNet.LeNet,
         'GoogleNet': GoogleNet.GoogleNet,
@@ -66,8 +66,7 @@ if __name__ == "__main__":
         print(f"Error: Model '{model_key}' not found in model_classes mapping.")
         exit(1)
     ModelClass = model_classes[model_key]
-
-    # --- Load Dataset ---
+    #  Load Dataset 
     print(f"Loading dataset: {dataset_key}")
     try:
         dataset_info = config['datasets'][dataset_key]
@@ -93,10 +92,12 @@ if __name__ == "__main__":
          print(f"Error loading dataset: File not found - {e}")
          exit(1)
 
-    # --- Khởi tạo Model ---
+    #  Khởi tạo Model 
     model = ModelClass(num_classes=num_classes).to(device)
-
-    # --- DataLoaders ---
+    if torch.cuda.device_count() > 1:
+        print(f"Using {torch.cuda.device_count()} GPUs")
+        model = torch.nn.DataParallel(model)
+    #  DataLoaders 
     batch_size = hp['batch_size']
     num_workers = os.cpu_count() 
     train_dataloader = DataLoader(train_data, batch_size=batch_size, shuffle=True, collate_fn=collate_fn, num_workers=num_workers, pin_memory=True)
@@ -109,7 +110,7 @@ if __name__ == "__main__":
     print(f"Size sample data train(image, label) at index 0: {image_size}")
     print(f"Number of classes: {num_labels}")
 
-    # --- Training Setup ---
+    #  Training Setup 
     loss_fn = torch.nn.CrossEntropyLoss()
     
     # Chọn Optimizer
@@ -152,7 +153,7 @@ if __name__ == "__main__":
     if start_epoch > 0:
         print(f"Resuming training from epoch {start_epoch} for {exp_name}")
 
-    # --- Train ---
+    #  Train 
     results, actual_epochs_ran = trainer.train(
         epochs=hp['epochs'],
         early_stop_epochs=hp['early_stop'], # Truyền patience từ config
@@ -164,7 +165,7 @@ if __name__ == "__main__":
 
     print(f"DONE TRAINING {exp_name}. Ran for {actual_epochs_ran} epochs.")
 
-    # --- Plot Results ---
+    #  Plot Results 
     print(f"Plotting results for {exp_name}. Close plot to finish.")
     plot_metrics(results, epochs=actual_epochs_ran, model_name=exp_name)
 
