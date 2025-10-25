@@ -142,12 +142,12 @@ class ClassificationTraining():
                 self.save_model(target_dir=target_dir,
                                 model_name=model_name,
                                 epoch=epoch+1)
-                epochs_decrease = 0
-            else:
-                epochs_decrease += 1
-                if epochs_decrease > early_stop_epochs: # Triggered early stop
-                    print(f"TRIGGERED EARLY STOP AT {epoch}!")
-                    break
+            #     epochs_decrease = 0
+            # else:
+            #     epochs_decrease += 1
+            #     if epochs_decrease > early_stop_epochs: # Triggered early stop
+            #         print(f"TRIGGERED EARLY STOP AT {epoch}!")
+            #         break
 
 
             
