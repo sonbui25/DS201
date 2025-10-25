@@ -92,11 +92,6 @@ if __name__ == "__main__":
          print(f"Error loading dataset: File not found - {e}")
          exit(1)
 
-    #  Khởi tạo Model 
-    model = ModelClass(num_classes=num_classes).to(device)
-    if torch.cuda.device_count() > 1:
-        print(f"Using {torch.cuda.device_count()} GPUs")
-        model = torch.nn.DataParallel(model)
     #  DataLoaders 
     batch_size = hp['batch_size']
     num_workers = os.cpu_count() 
@@ -110,6 +105,12 @@ if __name__ == "__main__":
     print(f"Size sample data train(image, label) at index 0: {image_size}")
     print(f"Number of classes: {num_labels}")
 
+    #  Khởi tạo Model 
+    model = ModelClass(in_channels=image_size[0], num_classes=num_classes).to(device)
+    if torch.cuda.device_count() > 1:
+        print(f"Using {torch.cuda.device_count()} GPUs")
+        model = torch.nn.DataParallel(model)
+    
     #  Training Setup 
     loss_fn = torch.nn.CrossEntropyLoss()
     
