@@ -21,13 +21,15 @@ class ViNaFood21Dataset(Dataset):
                 # transforms.RandomHorizontalFlip(),
                 # transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
                 # transforms.RandomRotation(15),
-                transforms.Resize((224, 224)),
+                # transforms.Resize((224, 224)),
                 transforms.ToTensor(),
+                normalize,
             ])
         else:
             self.transform = transforms.Compose([
                 transforms.Resize((224, 224)),
                 transforms.ToTensor(),
+                normalize,
             ])
 
         # 🟢 Chỉ lưu đường dẫn ảnh và nhãn
@@ -69,8 +71,8 @@ class ViNaFood21Dataset(Dataset):
 
         # Mở ảnh khi cần (lazy load)
         image = Image.open(img_path)
-        if image.mode != "RGBA":
-            image = image.convert("RGBA")
+        # if image.mode != "RGB":
+        #     image = image.convert("RGB")
 
         image_tensor = self.transform(image)
         return {"image": image_tensor, "label": label}
