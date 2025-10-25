@@ -94,6 +94,7 @@ class GoogleNet(nn.Module):
             stride=1,
             padding=0
         )
+
         self.conv_3 = nn.Conv2d(
             in_channels=64,
             out_channels=192,
@@ -117,8 +118,8 @@ class GoogleNet(nn.Module):
             Inception(480, 192, (96, 208), (16, 48), 64), # Shape(B, 192 + 208 + 48 + 64 = 512, H, W)
             Inception(512, 160, (112, 224), (24, 64), 64), # Shape(B, 160 + 224 + 64 + 64 = 512, H, W)
             Inception(512, 128, (128, 256), (24, 64), 64), # Shape(B, 128 + 256 + 64 + 64 = 512, H, W)
-            Inception(512, 112, (144, 288), (32, 64), 64), # Shape(B, 112 + 288 + 32 + 64 = 496, H, W)
-            Inception(496, 256, (160, 320), (32, 128), 128) # Shape(B, 256 + 320 + 128 + 128 = 832, H, W)
+            Inception(512, 112, (144, 288), (32, 64), 64), # Shape(B, 112 + 288 + 32 + 64 = 528, H, W)
+            Inception(528, 256, (160, 320), (32, 128), 128) # Shape(B, 256 + 320 + 128 + 128 = 832, H, W)
         )
 
         self.inception_5 = nn.Sequential( # inception_5 includes two Inception modules (5a and 5b).
