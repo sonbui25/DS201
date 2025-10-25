@@ -17,18 +17,17 @@ class ViNaFood21Dataset(Dataset):
                                          std=[0.229, 0.224, 0.225])
         if self.is_train:
             self.transform = transforms.Compose([
-                transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),
-                transforms.RandomHorizontalFlip(),
-                transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
-                transforms.RandomRotation(15),
+                # transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),
+                # transforms.RandomHorizontalFlip(),
+                # transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
+                # transforms.RandomRotation(15),
+                transforms.Resize((224, 224)),
                 transforms.ToTensor(),
-                normalize
             ])
         else:
             self.transform = transforms.Compose([
                 transforms.Resize((224, 224)),
                 transforms.ToTensor(),
-                normalize
             ])
 
         # 🟢 Chỉ lưu đường dẫn ảnh và nhãn
@@ -37,7 +36,7 @@ class ViNaFood21Dataset(Dataset):
     def _scan_image_paths(self):
         image_paths, labels = [], []
         label_id = 0
-        allowed_extensions = ('.jpg', '.jpeg', '.png')
+        allowed_extensions = ('.jpg')
 
         print(f"Scanning image paths from {self.path}...")
         for folder in os.listdir(self.path):
@@ -68,7 +67,7 @@ class ViNaFood21Dataset(Dataset):
         img_path = self.image_paths[index]
         label = self.labels[index]
 
-        # 🟢 Mở ảnh khi cần (lazy load)
+        # Mở ảnh khi cần (lazy load)
         image = Image.open(img_path)
         if image.mode != "RGB":
             image = image.convert("RGB")
