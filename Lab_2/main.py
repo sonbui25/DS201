@@ -110,7 +110,6 @@ if __name__ == "__main__":
     label_counts = Counter(train_data.labels)
     total_samples = len(train_data)
     num_classes = len(label_counts)
-
     print(f"\nClass Distribution & Weights:")
     print("=" * 70)
     print(f"{'Class ID':<10s} {'Class Name':<30s} {'Count':<10s} {'Weight':<15s}")
@@ -127,11 +126,6 @@ if __name__ == "__main__":
     print("=" * 70)
 
     class_weights = torch.tensor(class_weights, dtype=torch.float32).to(device)
-    loss_fn = torch.nn.CrossEntropyLoss(weight=class_weights)
-
-    print(f"Class weights applied: {class_weights}")
-    print(f"Loss function: CrossEntropyLoss with class weights\n")
-
     # Tạo sample_weights cho từng sample dựa trên class_weights đã tính
     sample_weights = [class_weights[label_id] for label_id in train_data.labels]
     sample_weights_tensor = torch.DoubleTensor(sample_weights)
@@ -141,7 +135,9 @@ if __name__ == "__main__":
         num_samples=total_samples,
         replacement=True
     )
-    
+
+    loss_fn = torch.nn.CrossEntropyLoss()
+
     #  DataLoaders 
     batch_size = hp['batch_size']
     num_workers = os.cpu_count() 
