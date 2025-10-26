@@ -17,7 +17,7 @@ models:
 experiments:
   - name: "GoogleNet_Monkey"
     model: "GoogleNet"
-    dataset: "Monkey"
+    dataset: "monkey"
     hyperparameters:
       epochs: 250
       lr: 0.01
