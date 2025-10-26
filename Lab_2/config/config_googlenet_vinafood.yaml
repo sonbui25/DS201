@@ -23,6 +23,5 @@ experiments:
       lr: 0.001
       weight_decay: 0.00001
       batch_size: 32
-      early_stop: 10
       optimizer: "Adam"
       optimizer_params: {}
