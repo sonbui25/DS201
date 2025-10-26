@@ -119,6 +119,8 @@ if __name__ == "__main__":
     optimizer_params = hp.get('optimizer_params', {})
     learning_rate = hp['lr']
     weight_decay = hp['weight_decay']
+    step_size = hp['step_size']
+    gamma = hp['gamma']
 
     print(f"Using optimizer: {optimizer_name} with LR={learning_rate}, WeightDecay={weight_decay}")
     try:
@@ -133,7 +135,7 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"Error initializing optimizer: {e}")
         exit(1)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.1)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=gamma)
     # Khởi tạo Trainer
     trainer = classification_engine.ClassificationTraining(
         model=model,

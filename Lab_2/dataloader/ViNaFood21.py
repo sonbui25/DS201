@@ -13,24 +13,23 @@ class ViNaFood21Dataset(Dataset):
         self.label2idx = {}
         self.idx2label = {}
 
-        normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                         std=[0.229, 0.224, 0.225])
+        # normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         if self.is_train:
             self.transform = transforms.Compose([
-                # transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),
-                # transforms.RandomHorizontalFlip(),
-                # transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
-                # transforms.RandomRotation(15),
-                # transforms.Resize((224, 224)),
+                transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),
+                transforms.RandomHorizontalFlip(),
+                transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
+                transforms.RandomRotation(15),
                 transforms.ToTensor(),
             ])
         else:
             self.transform = transforms.Compose([
                 transforms.Resize((224, 224)),
+                transforms.CenterCrop(224),
                 transforms.ToTensor(),
             ])
 
-        # 🟢 Chỉ lưu đường dẫn ảnh và nhãn
+        # Chỉ lưu đường dẫn ảnh và nhãn
         self.image_paths, self.labels = self._scan_image_paths()
 
     def _scan_image_paths(self):
