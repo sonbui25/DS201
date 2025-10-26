@@ -16,13 +16,13 @@ models:
 # --- Experiment Definition ---
 experiments:
   - name: "Resnet18_ViNaFood"
-    model: "Resnet18"
+    model: "ResNet18"
     dataset: "vinafood"
     hyperparameters:
       epochs: 250
-      lr: 0.08
-      weight_decay: 0.00001
-      batch_size: 128
+      lr: 0.001
+      weight_decay: 0.0003
+      batch_size: 32
       optimizer: "Adam"
       step_size: 30
       gamma: 0.1
