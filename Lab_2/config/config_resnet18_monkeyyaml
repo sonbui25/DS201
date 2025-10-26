@@ -1,0 +1,29 @@
+# --- Global Settings ---
+seed: 42
+checkpoint_dir: "/kaggle/working/DS201/checkpoints"
+
+# --- Dataset Definitions ---
+datasets:
+  monkey: # Chỉ cần định nghĩa monkey
+    train_path: "/kaggle/input/monkey/train"
+    test_path: "/kaggle/input/monkey/test"
+    classes: 10
+
+# --- Model Definitions ---
+models:
+  ResNet18: models.ResNet18.ResNet18 # Chỉ cần định nghĩa ResNet18
+
+# --- Experiment Definition ---
+experiments:
+  - name: "ResNet18_Monkey"
+    model: "ResNet18"
+    dataset: "monkey"
+    hyperparameters:
+      epochs: 250
+      lr: 0.001
+      weight_decay: 0.00001
+      batch_size: 32
+      optimizer: "Adam"
+      step_size: 30
+      gamma: 0.1
+      optimizer_params: {}
