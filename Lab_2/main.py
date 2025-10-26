@@ -157,7 +157,6 @@ if __name__ == "__main__":
     #  Train 
     results, actual_epochs_ran = trainer.train(
         epochs=hp['epochs'],
-        early_stop_epochs=hp['early_stop'], # Truyền patience từ config
         target_dir=checkpoint_dir,
         model_name=model_filename,
         start_epoch=start_epoch
