@@ -22,6 +22,6 @@ experiments:
       epochs: 250
       lr: 0.01
       weight_decay: 0.00001
-      batch_size: 32
+      batch_size: 256
       optimizer: "Adam"
       optimizer_params: {}
