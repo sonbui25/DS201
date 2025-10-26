@@ -21,7 +21,7 @@ experiments:
     hyperparameters:
       epochs: 250
       lr: 0.01
-      weight_decay: 0.00001
+      weight_decay: 0.003
       batch_size: 128
       optimizer: "Adam"
       step_size: 30
