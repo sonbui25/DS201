@@ -93,7 +93,6 @@ class ClassificationTraining():
     def train(self, 
             epochs: int, 
             model_name: str,
-            early_stop_epochs: int,
             target_dir: str = "./checkpoints",
             start_epoch: int = 0) -> Dict[str, List]:
 
