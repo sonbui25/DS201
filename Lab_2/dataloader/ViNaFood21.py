@@ -13,7 +13,8 @@ class ViNaFood21Dataset(Dataset):
         self.label2idx = {}
         self.idx2label = {}
 
-        # normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], 
+                                         std=[0.229, 0.224, 0.225])
         if self.is_train:
             self.transform = transforms.Compose([
                 transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),
@@ -21,12 +22,14 @@ class ViNaFood21Dataset(Dataset):
                 transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
                 transforms.RandomRotation(15),
                 transforms.ToTensor(),
+                normalize,
             ])
         else:
             self.transform = transforms.Compose([
                 transforms.Resize((224, 224)),
                 transforms.CenterCrop(224),
                 transforms.ToTensor(),
+                normalize,
             ])
 
         # Chỉ lưu đường dẫn ảnh và nhãn
