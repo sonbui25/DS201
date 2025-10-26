@@ -2,17 +2,19 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 class BasicBlock(nn.Module):
-    def __init__(self, out_channels: int, stride: int = 1, use_1x1conv: bool = False, **kwargs):
+    def __init__(self, in_channels: int, out_channels: int, stride: int = 1, use_1x1conv: bool = False, **kwargs):
         super().__init__(**kwargs) 
        
-        self.conv_1 = nn.LazyConv2d(
+        self.conv_1 = nn.Conv2d(
+            in_channels = in_channels,
             out_channels = out_channels,
             kernel_size = 3,
             stride = stride, # if stride = 2 (meaning the skip connection between different number of kernels), the feature map size is halved, the number of ﬁlters is doubled so as to preserve the time complexity per layer. We perform downsampling directly by convolutional layers that have a stride of 2 according to original paper.
             padding = 1
         )
 
-        self.conv_2 = nn.LazyConv2d(
+        self.conv_2 = nn.Conv2d(
+            in_channels = out_channels,
             out_channels = out_channels,
             kernel_size = 3,
             stride = 1,
@@ -20,7 +22,8 @@ class BasicBlock(nn.Module):
         )
 
         if use_1x1conv:
-            self.shortcut_conv_3 = nn.LazyConv2d(
+            self.shortcut_conv_3 = nn.Conv2d(
+                in_channels = in_channels,
                 out_channels=out_channels,
                 kernel_size=1,
                 stride = stride,
@@ -44,9 +47,10 @@ class BasicBlock(nn.Module):
             return F.relu(x_res + self.shortcut_conv_3(x))
         return F.relu(x_res + x)
 class ResNet18(nn.Module):
-    def __init__(self, num_classes: int, **kwargs):
+    def __init__(self, in_channels: int, num_classes: int, **kwargs):
         super().__init__(**kwargs) 
-        self.conv1 = nn.LazyConv2d(
+        self.conv1 = nn.Conv2d(
+            in_channels=in_channels,
             out_channels=64,
             kernel_size=7,
             stride=2,
@@ -61,23 +65,23 @@ class ResNet18(nn.Module):
         )
 
         self.conv_2x = nn.Sequential(
-            BasicBlock(64),
-            BasicBlock(64)
+            BasicBlock(64, 64),
+            BasicBlock(64, 64)
         )
 
         self.conv_3x = nn.Sequential(
-            BasicBlock(128, stride=2, use_1x1conv=True),
-            BasicBlock(128),
+            BasicBlock(64, 128, stride=2, use_1x1conv=True),
+            BasicBlock(128, 128),
         )
 
         self.conv_4x = nn.Sequential(
-            BasicBlock(256, stride=2, use_1x1conv=True),
-            BasicBlock(256),
+            BasicBlock(128, 256, stride=2, use_1x1conv=True),
+            BasicBlock(256, 256),
         )
 
         self.conv_5x = nn.Sequential(
-            BasicBlock(512, stride=2, use_1x1conv=True),
-            BasicBlock(512),
+            BasicBlock(256, 512, stride=2, use_1x1conv=True),
+            BasicBlock(512, 512),
         )
         
         self.avg_pool = nn.AvgPool2d( # (bs, 512, 1, 1)
