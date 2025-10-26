@@ -117,14 +117,14 @@ if __name__ == "__main__":
     total_samples = len(train_data)
     num_classes = len(label_counts)
     
-    print(f"\n📊 Class Distribution & Weights:")
+    print(f"\nClass Distribution & Weights:")
     print("=" * 70)
     print(f"{'Class ID':<10s} {'Class Name':<30s} {'Count':<10s} {'Weight':<15s}")
     print("=" * 70)
     
     class_weights = []
-    # ✅ Sửa: Loop theo thứ tự thực tế của label IDs
-    for label_id in sorted(label_counts.keys()):
+    # ✅ Loop từ 0 đến num_classes-1 (đảm bảo thứ tự đúng với CrossEntropyLoss)
+    for label_id in range(num_classes):
         class_name = train_data.idx2label.get(label_id, f"Class_{label_id}")
         count = label_counts.get(label_id, 1)
         weight = total_samples / (num_classes * count)
@@ -136,8 +136,9 @@ if __name__ == "__main__":
     class_weights = torch.tensor(class_weights, dtype=torch.float32).to(device)
     loss_fn = torch.nn.CrossEntropyLoss(weight=class_weights)
     
-    print(f"✅ Class weights applied: {class_weights}")
-    print(f"Loss function: CrossEntropyLoss with class weights\n")
+    print(f"\n✅ Class weights applied: {class_weights}")
+    print(f"✅ Loss function: CrossEntropyLoss with class weights\n")
+    
     
     # Chọn Optimizer
     optimizer_name = hp['optimizer']
