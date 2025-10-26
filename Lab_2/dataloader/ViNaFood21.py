@@ -41,7 +41,7 @@ class ViNaFood21Dataset(Dataset):
         allowed_extensions = ('.jpg')
 
         print(f"Scanning image paths from {self.path}...")
-        for folder in os.listdir(self.path):
+        for folder in sorted(os.listdir(self.path)):
             folder_path = os.path.join(self.path, folder)
             if not os.path.isdir(folder_path):
                 continue
