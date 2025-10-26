@@ -113,22 +113,29 @@ if __name__ == "__main__":
         model = torch.nn.DataParallel(model)
     
     #  Training Setup 
-    loss_fn = torch.nn.CrossEntropyLoss()
     label_counts = Counter(train_data.labels)
     total_samples = len(train_data)
     num_classes = len(label_counts)
     
-    # Công thức: weight = total_samples / (num_classes * count_per_class)
+    print(f"\n📊 Class Distribution & Weights:")
+    print("=" * 70)
+    print(f"{'Class ID':<10s} {'Class Name':<30s} {'Count':<10s} {'Weight':<15s}")
+    print("=" * 70)
+    
     class_weights = []
     for i in range(num_classes):
+        class_name = train_data.idx2label.get(i, f"Class_{i}")
         count = label_counts.get(i, 1)
         weight = total_samples / (num_classes * count)
         class_weights.append(weight)
+        print(f"{i:<10d} {class_name:<30s} {count:<10d} {weight:<15.4f}")
+    
+    print("=" * 70)
     
     class_weights = torch.tensor(class_weights, dtype=torch.float32).to(device)
     loss_fn = torch.nn.CrossEntropyLoss(weight=class_weights)
     
-    print(f"Class weights applied: {class_weights}")
+    print(f"Loss function: CrossEntropyLoss with class weights\n")
     
     # Chọn Optimizer
     optimizer_name = hp['optimizer']
