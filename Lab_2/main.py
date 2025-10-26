@@ -1,13 +1,12 @@
 import os
 import torch
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, WeightedRandomSampler
 # Import các class cần thiết trực tiếp
 from models import LeNet, GoogleNet, ResNet18, ResNet50
 from task import classification_engine
 from dataloader import MNIST, ViNaFood21
 from utils.utils import plot_metrics, collate_fn
 from collections import Counter
-from torchsampler import ImbalancedDatasetSampler
 import argparse # Để đọc tham số dòng lệnh
 import yaml    # Để đọc YAML
 import warnings
@@ -94,12 +93,6 @@ if __name__ == "__main__":
          print(f"Error loading dataset: File not found - {e}")
          exit(1)
 
-    #  DataLoaders 
-    batch_size = hp['batch_size']
-    num_workers = os.cpu_count() 
-    train_dataloader = DataLoader(train_data, batch_size=batch_size, shuffle=True, collate_fn=collate_fn, num_workers=num_workers, pin_memory=True, sampler=ImbalancedDatasetSampler(train_data))
-    test_dataloader = DataLoader(test_data, batch_size=batch_size, shuffle=False, collate_fn=collate_fn, num_workers=num_workers, pin_memory=True)
-
     print(f"Length of train: {len(train_data)}")
     print(f"Length of test: {len(test_data)}")
     image_size = train_data[0]['image'].shape
@@ -117,29 +110,44 @@ if __name__ == "__main__":
     label_counts = Counter(train_data.labels)
     total_samples = len(train_data)
     num_classes = len(label_counts)
-    
+
     print(f"\nClass Distribution & Weights:")
     print("=" * 70)
     print(f"{'Class ID':<10s} {'Class Name':<30s} {'Count':<10s} {'Weight':<15s}")
     print("=" * 70)
-    
+
     class_weights = []
-    # Sửa: Loop theo thứ tự thực tế của label IDs
     for label_id in sorted(label_counts.keys()):
         class_name = train_data.idx2label.get(label_id, f"Class_{label_id}")
         count = label_counts.get(label_id, 1)
         weight = total_samples / (num_classes * count)
         class_weights.append(weight)
         print(f"{label_id:<10d} {class_name:<30s} {count:<10d} {weight:<15.4f}")
-    
+
     print("=" * 70)
-    
+
     class_weights = torch.tensor(class_weights, dtype=torch.float32).to(device)
     loss_fn = torch.nn.CrossEntropyLoss(weight=class_weights)
-    
+
     print(f"Class weights applied: {class_weights}")
     print(f"Loss function: CrossEntropyLoss with class weights\n")
+
+    # Tạo sample_weights cho từng sample dựa trên class_weights đã tính
+    sample_weights = [class_weights[label_id] for label_id in train_data.labels]
+    sample_weights_tensor = torch.DoubleTensor(sample_weights)
+
+    sampler = WeightedRandomSampler(
+        weights=sample_weights_tensor,
+        num_samples=total_samples,
+        replacement=True
+    )
     
+    #  DataLoaders 
+    batch_size = hp['batch_size']
+    num_workers = os.cpu_count() 
+    train_dataloader = DataLoader(train_data, batch_size=batch_size, shuffle=True, collate_fn=collate_fn, num_workers=num_workers, pin_memory=True, sampler=sampler)
+    test_dataloader = DataLoader(test_data, batch_size=batch_size, shuffle=False, collate_fn=collate_fn, num_workers=num_workers, pin_memory=True)
+
     # Chọn Optimizer
     optimizer_name = hp['optimizer']
     optimizer_params = hp.get('optimizer_params', {})
