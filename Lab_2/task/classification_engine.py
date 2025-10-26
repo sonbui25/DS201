@@ -31,14 +31,6 @@ class ClassificationTraining():
 
         # Setup train loss and train accuracy values
         for batch, (X, y) in enumerate(self.train_dataloader):
-            labels, counts = np.unique(y.cpu().numpy(), return_counts=True)
-            total = len(y)
-            distribution = [
-                [int(label), count, f"{100 * count / total:.2f}%"]
-                for label, count in zip(labels, counts)
-            ]
-            print(f"\nBatch {batch}: Label distribution")
-            print(tabulate(distribution, headers=["Label", "Count", "Percent"], tablefmt="github"))
             # Send data to target device
             X, y = X.to(self.device), y.to(self.device)
             # 1. Forward pass
