@@ -31,6 +31,10 @@ class ClassificationTraining():
 
         # Setup train loss and train accuracy values
         for batch, (X, y) in enumerate(self.train_dataloader):
+            labels, counts = np.unique(y.cpu().numpy(), return_counts=True)
+            total = len(y)
+            distribution = {int(label): round(100 * count / total, 2) for label, count in zip(labels, counts)}
+            print(f"Batch {batch}: Label distribution (%) {distribution}")
             # Send data to target device
             X, y = X.to(self.device), y.to(self.device)
             # 1. Forward pass
@@ -96,16 +100,6 @@ class ClassificationTraining():
             model_name: str,
             target_dir: str = "./checkpoints",
             start_epoch: int = 0) -> Dict[str, List]:
-        # KIỂM TRA CLASS DISTRIBUTION
-        print("\n[INFO] Analyzing class distribution in train set:")
-        train_labels = []
-        for _, y in self.train_dataloader:
-            train_labels.extend(y.cpu().numpy())
-        
-        unique, counts = np.unique(train_labels, return_counts=True)
-        class_dist = dict(zip(unique, counts))
-        print(f"Class distribution: {class_dist}")
-        print(f"Class weights (inverse frequency): {1 / np.array(counts) / np.sum(1 / np.array(counts))}\n")
         results = {"train_loss": [], "train_acc": [], "train_precision": [], "train_recall": [], "train_f1": [],
                 "test_loss": [], "test_acc": [], "test_precision": [], "test_recall": [], "test_f1": []}
         headers = ["Epoch", "Train Loss", "Train Acc", "Train Precision", "Train Recall", "Train F1",
