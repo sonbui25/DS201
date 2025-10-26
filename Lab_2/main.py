@@ -4,7 +4,7 @@ from torch.utils.data import DataLoader, WeightedRandomSampler
 # Import các class cần thiết trực tiếp
 from models import LeNet, GoogleNet, ResNet18, ResNet50
 from task import classification_engine
-from dataloader import MNIST, ViNaFood21
+from dataloader import MNIST, ViNaFood21, MonkeyDataset
 from utils.utils import plot_metrics, collate_fn
 from collections import Counter
 import argparse # Để đọc tham số dòng lệnh
@@ -58,10 +58,10 @@ if __name__ == "__main__":
 
     #  Map tên model sang Class (Giống code gốc) 
     model_classes = {
-        'LeNet': LeNet.LeNet,
-        'GoogleNet': GoogleNet.GoogleNet,
-        'ResNet18': ResNet18.ResNet18,
-        'ResNet50': ResNet50.ResNet50
+        'LeNet': LeNet,
+        'GoogleNet': GoogleNet,
+        'ResNet18': ResNet18,
+        'ResNet50': ResNet50
     }
     if model_key not in model_classes:
         print(f"Error: Model '{model_key}' not found in model_classes mapping.")
@@ -84,6 +84,9 @@ if __name__ == "__main__":
         elif dataset_key == 'vinafood':
             train_data = ViNaFood21.ViNaFood21Dataset(path=dataset_info['train_path'], is_train=True)
             test_data = ViNaFood21.ViNaFood21Dataset(path=dataset_info['test_path'], is_train=False)
+        elif dataset_key == 'monkey':
+            train_data = MonkeyDataset(path=dataset_info['train_path'], is_train=True)
+            test_data = MonkeyDataset(path=dataset_info['test_path'], is_train=False)
         else:
             raise ValueError(f"Unknown dataset key: {dataset_key}")
     except KeyError as e:
