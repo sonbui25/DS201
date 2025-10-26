@@ -6,6 +6,7 @@ from models import LeNet, GoogleNet, ResNet18, ResNet50
 from task import classification_engine
 from dataloader import MNIST, ViNaFood21
 from utils.utils import plot_metrics, collate_fn
+from collections import Counter
 import argparse # Để đọc tham số dòng lệnh
 import yaml    # Để đọc YAML
 import warnings
@@ -113,6 +114,21 @@ if __name__ == "__main__":
     
     #  Training Setup 
     loss_fn = torch.nn.CrossEntropyLoss()
+    label_counts = Counter(train_data.labels)
+    total_samples = len(train_data)
+    num_classes = len(label_counts)
+    
+    # Công thức: weight = total_samples / (num_classes * count_per_class)
+    class_weights = []
+    for i in range(num_classes):
+        count = label_counts.get(i, 1)
+        weight = total_samples / (num_classes * count)
+        class_weights.append(weight)
+    
+    class_weights = torch.tensor(class_weights, dtype=torch.float32).to(device)
+    loss_fn = torch.nn.CrossEntropyLoss(weight=class_weights)
+    
+    print(f"Class weights applied: {class_weights}")
     
     # Chọn Optimizer
     optimizer_name = hp['optimizer']
