@@ -58,7 +58,6 @@ class ViNaFood21Dataset(Dataset):
                 if file_name.lower().endswith(allowed_extensions):
                     image_paths.append(os.path.join(folder_path, file_name))
                     labels.append(current_label_id)
-                    print(f'Đang đọc ảnh: {file_name} với nhãn: {folder} (ID: {current_label_id})')
 
         print(f"Found {len(image_paths)} images.")
         return image_paths, labels
