@@ -47,7 +47,8 @@ class ClassificationTraining():
             #5. Optimizer step
             self.optimizer.step()
             # Calculate and accumulate accuracy metric across all batches
-            y_pred_class = torch.argmax(torch.softmax(y_pred, dim=1), dim=1)
+            y_pred_class = torch.argmax(y_pred, dim=1)
+            print(f"Predict: {y_pred_class}")
             result_report = classification_report(y.cpu(), y_pred_class.cpu(), output_dict=True, zero_division=0)
             train_acc += result_report['accuracy']
             train_precision += result_report['macro avg']['precision']
