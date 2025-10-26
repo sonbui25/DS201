@@ -5,10 +5,10 @@ checkpoint_dir: "kaggle/working/DS201/checkpoints"
 # --- Dataset Definitions ---
 datasets:
   mnist: # Chỉ cần định nghĩa mnist
-    train_images: "kaggle/input/mnist-dataset/train-images.idx3-ubyte"
-    train_labels: "kaggle/input/mnist-dataset/train-labels.idx1-ubyte"
-    test_images: "kaggle/input/mnist-dataset/t10k-images.idx3-ubyte"
-    test_labels: "kaggle/input/mnist-dataset/t10k-labels.idx1-ubyte"
+    train_images: "/kaggle/input/mnist-dataset/train-images.idx3-ubyte"
+    train_labels: "/kaggle/input/mnist-dataset/train-labels.idx1-ubyte"
+    test_images: "/kaggle/input/mnist-dataset/t10k-images.idx3-ubyte"
+    test_labels: "/kaggle/input/mnist-dataset/t10k-labels.idx1-ubyte"
     classes: 10
 
 # --- Model Definitions ---
