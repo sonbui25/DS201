@@ -49,6 +49,7 @@ class ClassificationTraining():
             # Calculate and accumulate accuracy metric across all batches
             y_pred_class = torch.argmax(y_pred, dim=1)
             print(f"Predict: {y_pred_class}")
+            print(f"Gold label: {y}")
             result_report = classification_report(y.cpu(), y_pred_class.cpu(), output_dict=True, zero_division=0)
             train_acc += result_report['accuracy']
             train_precision += result_report['macro avg']['precision']
@@ -76,7 +77,7 @@ class ClassificationTraining():
 
                 loss = self.loss_fn(y_logits, y)
 
-                test_pred_label = torch.argmax(torch.softmax(y_logits, dim=1), dim=1)
+                test_pred_label = torch.argmax(y_logits, dim=1)
                 test_loss += loss.item()
                 result_report = classification_report(y.cpu(), test_pred_label.cpu(), output_dict=True, zero_division=0)
                 test_acc += result_report['accuracy']
@@ -163,7 +164,7 @@ class ClassificationTraining():
             for batch, (X, y) in enumerate(self.test_dataloader):
                 X, y = X.to(self.device), y.to(self.device)
                 y_logits = self.model(X)
-                test_pred_label = torch.argmax(torch.softmax(y_logits, dim=1), dim=1)
+                test_pred_label = torch.argmax(y_logits, dim=1)
                 y_true_all.extend(y.cpu().numpy())
                 y_pred_all.extend(test_pred_label.cpu().numpy())
 
