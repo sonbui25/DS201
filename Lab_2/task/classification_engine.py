@@ -7,6 +7,7 @@ from  tqdm.auto import tqdm
 from typing import Dict, List, Tuple
 from sklearn.metrics import classification_report
 from torch.optim.lr_scheduler import StepLR
+import numpy as np
 class ClassificationTraining():
     def __init__(self,
                 model: torch.nn.Module,
