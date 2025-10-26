@@ -116,11 +116,11 @@ if __name__ == "__main__":
     print("=" * 70)
 
     class_weights = []
-    for label_id in sorted(label_counts.keys()):
-        class_name = train_data.idx2label.get(label_id, f"Class_{label_id}")
+    for label_id in train_data.idx2label.keys(): 
         count = label_counts.get(label_id, 1)
         weight = total_samples / (num_classes * count)
         class_weights.append(weight)
+        class_name = train_data.idx2label[label_id]
         print(f"{label_id:<10d} {class_name:<30s} {count:<10d} {weight:<15.4f}")
 
     print("=" * 70)
