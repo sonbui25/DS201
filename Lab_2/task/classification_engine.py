@@ -49,10 +49,7 @@ class ClassificationTraining():
             # Calculate and accumulate accuracy metric across all batches
             y_pred_class = torch.argmax(y_pred, dim=1)
             print(f"Predict: {y_pred_class}")
-<<<<<<< HEAD
             print(f"Gold label: {y}")
-=======
->>>>>>> a13eaa2d653e9fe7b4b4f98cbe8095f671c801e3
             result_report = classification_report(y.cpu(), y_pred_class.cpu(), output_dict=True, zero_division=0)
             train_acc += result_report['accuracy']
             train_precision += result_report['macro avg']['precision']
