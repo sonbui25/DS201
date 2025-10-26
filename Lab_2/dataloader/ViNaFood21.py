@@ -23,13 +23,11 @@ class ViNaFood21Dataset(Dataset):
                 # transforms.RandomRotation(15),
                 # transforms.Resize((224, 224)),
                 transforms.ToTensor(),
-                normalize,
             ])
         else:
             self.transform = transforms.Compose([
                 transforms.Resize((224, 224)),
                 transforms.ToTensor(),
-                normalize,
             ])
 
         # 🟢 Chỉ lưu đường dẫn ảnh và nhãn
