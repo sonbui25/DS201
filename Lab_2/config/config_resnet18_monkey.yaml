@@ -20,7 +20,7 @@ experiments:
     dataset: "monkey"
     hyperparameters:
       epochs: 250
-      lr: 0.01
+      lr: 0.001
       weight_decay: 0.003
       batch_size: 32
       optimizer: "Adam"
