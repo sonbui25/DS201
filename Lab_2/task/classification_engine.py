@@ -48,8 +48,6 @@ class ClassificationTraining():
             self.optimizer.step()
             # Calculate and accumulate accuracy metric across all batches
             y_pred_class = torch.argmax(y_pred, dim=1)
-            print(f"Predict: {y_pred_class}")
-            print(f"Gold label: {y}")
             result_report = classification_report(y.cpu(), y_pred_class.cpu(), output_dict=True, zero_division=0)
             train_acc += result_report['accuracy']
             train_precision += result_report['macro avg']['precision']
@@ -97,7 +95,16 @@ class ClassificationTraining():
             model_name: str,
             target_dir: str = "./checkpoints",
             start_epoch: int = 0) -> Dict[str, List]:
-
+        # KIỂM TRA CLASS DISTRIBUTION
+        print("\n[INFO] Analyzing class distribution in train set:")
+        train_labels = []
+        for _, y in self.train_dataloader:
+            train_labels.extend(y.cpu().numpy())
+        
+        unique, counts = np.unique(train_labels, return_counts=True)
+        class_dist = dict(zip(unique, counts))
+        print(f"Class distribution: {class_dist}")
+        print(f"Class weights (inverse frequency): {1 / np.array(counts) / np.sum(1 / np.array(counts))}\n")
         results = {"train_loss": [], "train_acc": [], "train_precision": [], "train_recall": [], "train_f1": [],
                 "test_loss": [], "test_acc": [], "test_precision": [], "test_recall": [], "test_f1": []}
         headers = ["Epoch", "Train Loss", "Train Acc", "Train Precision", "Train Recall", "Train F1",
