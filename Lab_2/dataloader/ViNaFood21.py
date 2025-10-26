@@ -71,8 +71,8 @@ class ViNaFood21Dataset(Dataset):
 
         # Mở ảnh khi cần (lazy load)
         image = Image.open(img_path)
-        # if image.mode != "RGB":
-        #     image = image.convert("RGB")
+        if image.mode != "RGB":
+            image = image.convert("RGB")
 
         image_tensor = self.transform(image)
         return {"image": image_tensor, "label": label}
