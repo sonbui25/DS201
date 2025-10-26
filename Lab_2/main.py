@@ -139,7 +139,7 @@ if __name__ == "__main__":
         replacement=True
     )
 
-    loss_fn = torch.nn.CrossEntropyLoss()
+    loss_fn = torch.nn.CrossEntropyLoss(weight=class_weights)
 
     #  DataLoaders 
     batch_size = hp['batch_size']
