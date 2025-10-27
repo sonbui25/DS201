@@ -47,7 +47,7 @@ def show_images(images, title_texts):
         index += 1
     plt.show()
 
-def plot_metrics(results, epochs, model_name):
+def plot_metrics(results, epochs, model_name, dataset_name):
     metrics = [
         ("train_loss", "test_loss", "Loss"),
         ("train_acc", "test_acc", "Accuracy"),
@@ -67,6 +67,8 @@ def plot_metrics(results, epochs, model_name):
         plt.legend()
         plt.grid(True)
     plt.tight_layout()
+    os.makedirs("results", exist_ok=True)  # Tạo thư mục nếu chưa có
+    plt.savefig(f"results/{model_name}_{dataset_name}_metrics.png")  # Lưu vào thư mục results
     plt.show()
 def collate_fn(samples: list[dict]) -> torch.Tensor:
     images = [sample['image'] for sample in samples]
