@@ -38,7 +38,7 @@ class ViNaFood21Dataset(Dataset):
     def _scan_image_paths(self):
         image_paths, labels = [], []
         label_id = 0
-        allowed_extensions = ('.jpg')
+        allowed_extensions = ('.jpg', '.jpeg', '.png')
 
         print(f"Scanning image paths from {self.path}...")
         for folder in sorted(os.listdir(self.path)):

@@ -112,7 +112,6 @@ if __name__ == "__main__":
     #  Training Setup 
     label_counts = Counter(train_data.labels)
     total_samples = len(train_data)
-    num_classes = len(label_counts)
     print(f"\nClass Distribution & Weights:")
     print("=" * 70)
     print(f"{'Class ID':<10s} {'Class Name':<30s} {'Count':<10s} {'Weight':<15s}")
