@@ -20,7 +20,7 @@ experiments:
     dataset: "vinafood"
     hyperparameters:
       epochs: 150
-      lr: 0.1
+      lr: 0.001
       weight_decay: 0.003
       batch_size: 64
       optimizer: "Adam"
