@@ -186,6 +186,7 @@ class ClassificationTraining():
 
         #Save the model state_dict()
         print(f"[INFO]: Saving best model at epoch {epoch} to: {save_path}")
+        state_dict = self.model.module.state_dict() if isinstance(self.model, torch.nn.DataParallel) else self.model.state_dict()
         torch.save({
             'epoch': epoch,
             'model_state_dict': self.model.state_dict(),
