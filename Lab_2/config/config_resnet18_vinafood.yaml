@@ -22,7 +22,7 @@ experiments:
       epochs: 150
       lr: 0.1
       weight_decay: 0.03
-      batch_size: 512
+      batch_size: 256
       optimizer: "Adam"
       step_size: 30
       gamma: 0.1
