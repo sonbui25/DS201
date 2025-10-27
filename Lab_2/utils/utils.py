@@ -67,8 +67,8 @@ def plot_metrics(results, epochs, model_name, dataset_name):
         plt.legend()
         plt.grid(True)
     plt.tight_layout()
-    os.makedirs("kaggle/working/DS201/results", exist_ok=True)  # Tạo thư mục nếu chưa có
-    plt.savefig(f"kaggle/working/DS201/results/{model_name}_{dataset_name}_metrics.png")  # Lưu vào thư mục results
+    os.makedirs("/kaggle/working/DS201/results", exist_ok=True)  # Tạo thư mục nếu chưa có
+    plt.savefig(f"/kaggle/working/DS201/results/{model_name}_{dataset_name}_metrics.png")  # Lưu vào thư mục results
     plt.show()
 def collate_fn(samples: list[dict]) -> torch.Tensor:
     images = [sample['image'] for sample in samples]
