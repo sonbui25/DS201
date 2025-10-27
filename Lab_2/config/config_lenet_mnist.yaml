@@ -21,7 +21,7 @@ experiments:
     model: "LeNet"
     dataset: "mnist"
     hyperparameters:
-      epochs: 50
+      epochs: 5
       lr: 0.001
       weight_decay: 0.0001
       batch_size: 128
