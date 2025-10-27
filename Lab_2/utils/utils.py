@@ -67,10 +67,10 @@ def plot_metrics(results, epochs, model_name, dataset_name):
         plt.legend()
         plt.grid(True)
     plt.tight_layout()
-    save_dir = "/kaggle/working/DS201/results"
+    save_dir = "/kaggle/working/DS201/Lab_2/results"
     os.makedirs(save_dir, exist_ok=True)
-    save_path = os.path.join(save_dir, f"{model_name}_{dataset_name}_metrics.png")
 
+    save_path = os.path.join(save_dir, f"{model_name}_{dataset_name}_metrics.png")
     plt.savefig(save_path)
     print(f"Metrics figure saved at: {save_path}")
     plt.show()
