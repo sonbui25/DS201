@@ -10,7 +10,8 @@ class BasicBlock(nn.Module):
             out_channels = out_channels,
             kernel_size = 3,
             stride = stride, # if stride = 2 (meaning the skip connection between different number of kernels), the feature map size is halved, the number of ﬁlters is doubled so as to preserve the time complexity per layer. We perform downsampling directly by convolutional layers that have a stride of 2 according to original paper.
-            padding = 1
+            padding = 1,
+            bias=False
         )
 
         self.conv_2 = nn.Conv2d(
@@ -18,16 +19,21 @@ class BasicBlock(nn.Module):
             out_channels = out_channels,
             kernel_size = 3,
             stride = 1,
-            padding = 1
+            padding = 1,
+            bias=False
         )
 
         if use_1x1conv:
-            self.shortcut_conv_3 = nn.Conv2d(
-                in_channels = in_channels,
-                out_channels=out_channels,
-                kernel_size=1,
-                stride = stride,
-                padding=0,
+            self.shortcut_conv_3 = nn.Sequential(
+                nn.Conv2d(
+                    in_channels = in_channels,
+                    out_channels=out_channels,
+                    kernel_size=1,
+                    stride = stride,
+                    padding=0,
+                    bias=False
+                ),
+                nn.BatchNorm2d(out_channels)
             )
         else:
             self.shortcut_conv_3 = None
@@ -52,6 +58,7 @@ class ResNet18(nn.Module):
             kernel_size=7,
             stride=2,
             padding=3,
+            bias=False
         )
 
         self.bn = nn.BatchNorm2d(64)
