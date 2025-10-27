@@ -34,15 +34,12 @@ class BasicBlock(nn.Module):
         self.bn_1 = nn.BatchNorm2d(out_channels)
         self.bn_2 = nn.BatchNorm2d(out_channels)
 
-        self.residual = nn.Sequential(
-            self.conv_1,
-            self.bn_1,
-            nn.ReLU(),
-            self.conv_2,
-            self.bn_2,
-        )
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x_res = self.residual(x)
+        x_res = self.conv_1(x)
+        x_res = self.bn_1(x_res)
+        x_res = F.relu(x_res)
+        x_res = self.conv_2(x_res)
+        x_res = self.bn_2(x_res)
         if self.shortcut_conv_3:
             return F.relu(x_res + self.shortcut_conv_3(x))
         return F.relu(x_res + x)
