@@ -209,6 +209,6 @@ if __name__ == "__main__":
 
     #  Plot Results 
     print(f"Plotting results for {exp_name}. Close plot to finish.")
-    plot_metrics(results, epochs=actual_epochs_ran, model_name=exp_name)
+    plot_metrics(results, epochs=actual_epochs_ran, model_name=exp_name, dataset_name=dataset_key)
 
     print(f"\nExperiment {exp_name} finished successfully!")

@@ -3,7 +3,7 @@ from torch import nn
 from transformers import ResNetForImageClassification
 
 class ResNet50(nn.Module):
-    def __init__(self, num_classes: int):
+    def __init__(self, in_channels: int, num_classes: int):
         super().__init__()
 
         basemodel = ResNetForImageClassification.from_pretrained("microsoft/resnet-50")
