@@ -112,8 +112,17 @@ class ResNet18(nn.Module):
         x = x.view(x.size(0), -1) # (bs, 512)
         x = self.fc(x) # (bs, num_classes)
         return x
-
-'''
+    
+    def _init_weights(self, m):
+        if isinstance(m , nn.Conv2d):
+            nn.init.kaiming_uniform_(m.weight, nonlinearity='relu')
+            if m.bias is not None:
+                nn.init.constant_(m.bias, 0)
+        elif isinstance(m, nn.Linear):
+            nn.init.xavier_uniform_(m.weight)
+            if m.bias is not None:
+                nn.init.constant_(m.bias, 0)
+"""
 Option 2 for more concise code
 
 class BasicBlock(nn.Module):
@@ -182,4 +191,4 @@ class ResNet18(nn.Module):
         out = out.view(out.size(0), -1)
         out = self.fc(out)
         return out
-'''
+"""

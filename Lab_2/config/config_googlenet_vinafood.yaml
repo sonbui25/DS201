@@ -19,11 +19,11 @@ experiments:
     model: "GoogleNet"
     dataset: "vinafood"
     hyperparameters:
-      epochs: 60
+      epochs: 80
       lr: 0.001
       weight_decay: 0
       batch_size: 32
       optimizer: "Adam"
-      step_size: 8
-      gamma: 0.04
+      step_size: 20
+      gamma: 0.1
       optimizer_params: {}
