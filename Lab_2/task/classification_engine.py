@@ -253,23 +253,27 @@ class ClassificationTraining():
         }, save_path)
 
     def load_checkpoint(self, checkpoint_path: str):
-        """Loads a checkpoint from a given path."""
+        """
+        Loads a checkpoint from a given path.
+        Handles both DataParallel and non-DataParallel models by checking and converting key prefixes.
+        """
         if os.path.isfile(checkpoint_path):
             try:
                 checkpoint = torch.load(checkpoint_path, map_location=self.device)
                 state_dict = checkpoint['model_state_dict']
-                # Xử lý trường hợp DataParallel và không DataParallel
+                # Handle DataParallel and non-DataParallel cases
                 if isinstance(self.model, torch.nn.DataParallel):
-                    # Nếu model hiện tại là DataParallel nhưng state_dict không có 'module.'
+                    # If current model is DataParallel but state_dict keys do not start with 'module.'
                     if not list(state_dict.keys())[0].startswith("module."):
-                        # Thêm 'module.' vào key
+                        # Add 'module.' prefix to keys
                         new_state_dict = {"module."+k: v for k, v in state_dict.items()}
                         self.model.load_state_dict(new_state_dict)
                     else:
                         self.model.load_state_dict(state_dict)
                 else:
-                    # Nếu model hiện tại không phải DataParallel nhưng state_dict có 'module.'
+                    # If current model is not DataParallel but state_dict keys start with 'module.'
                     if list(state_dict.keys())[0].startswith("module."):
+                        # Remove 'module.' prefix from keys
                         new_state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()}
                         self.model.load_state_dict(new_state_dict)
                     else:
