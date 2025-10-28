@@ -276,7 +276,7 @@ if __name__ == "__main__":
         epochs=hp['epochs'],
         target_dir=checkpoint_dir,
         model_name=model_filename,
-        start_epoch=start_epoch,
+        start_epoch=start_epoch + 1,  # <-- Start from the next epoch
         early_stop_epochs=early_stop_patience
     )
 
