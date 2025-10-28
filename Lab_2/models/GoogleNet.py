@@ -140,14 +140,7 @@ class GoogleNet(nn.Module):
             in_features=1024,
             out_features=num_classes
         )
-        self._init_weights()
  
-    def _init_weights(self):
-            for m in self.modules():
-                if isinstance(m, nn.Conv2d) or isinstance(m, nn.Linear):
-                    nn.init.xavier_uniform_(m.weight)
-                    if m.bias is not None:
-                        nn.init.zeros_(m.bias)
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = F.relu(self.conv_1(x)) 
         # (bs, 64, 112, 112)
