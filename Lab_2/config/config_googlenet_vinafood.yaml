@@ -20,10 +20,10 @@ experiments:
     dataset: "vinafood"
     hyperparameters:
       epochs: 60
-      lr: 0.0001
+      lr: 0.001
       weight_decay: 0
       batch_size: 32
       optimizer: "Adam"
-      step_size: 30
-      gamma: 0.1
+      step_size: 8
+      gamma: 0.04
       optimizer_params: {}
