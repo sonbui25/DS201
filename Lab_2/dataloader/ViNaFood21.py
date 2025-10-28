@@ -27,7 +27,6 @@ class ViNaFood21Dataset(Dataset):
         else:
             self.transform = transforms.Compose([
                 transforms.Resize((224, 224)),
-                transforms.CenterCrop(224),
                 transforms.ToTensor(),
                 normalize,
             ])
