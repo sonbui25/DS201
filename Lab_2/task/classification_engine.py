@@ -65,31 +65,32 @@ class ClassificationTraining():
 
     def test_step(self) -> Tuple[float, float, float, float, float]:
         self.model.eval()
-        test_loss, test_acc, test_precision, test_recall, test_f1 = 0, 0, 0, 0, 0
-        # Begin test mode
+        test_loss = 0
+        y_true_all, y_pred_all = [], []
+
         with torch.inference_mode():
-            for batch, (X, y) in enumerate(self.test_dataloader):
-
+            for X, y in self.test_dataloader:
                 X, y = X.to(self.device), y.to(self.device)
-
                 y_logits = self.model(X)
-
                 loss = self.loss_fn(y_logits, y)
-
-                test_pred_label = torch.argmax(y_logits, dim=1)
                 test_loss += loss.item()
-                result_report = classification_report(y.cpu(), test_pred_label.cpu(), output_dict=True, zero_division=0)
-                test_acc += result_report['accuracy']
-                test_precision += result_report['macro avg']['precision']
-                test_recall += result_report['macro avg']['recall']
-                test_f1 += result_report['macro avg']['f1-score']
-        len_data = len(self.test_dataloader)
-        test_loss = test_loss / len_data
-        test_acc = test_acc / len_data
-        test_precision = test_precision / len_data
-        test_recall = test_recall / len_data
-        test_f1 = test_f1 / len_data
+                
+                test_pred_label = torch.argmax(y_logits, dim=1)
+                y_true_all.extend(y.cpu().numpy())
+                y_pred_all.extend(test_pred_label.cpu().numpy())
+
+        # Tính trung bình loss
+        test_loss /= len(self.test_dataloader)
+
+        # Chỉ tính classification_report 1 lần cho toàn tập
+        result_report = classification_report(y_true_all, y_pred_all, output_dict=True, zero_division=0)
+        test_acc = result_report['accuracy']
+        test_precision = result_report['macro avg']['precision']
+        test_recall = result_report['macro avg']['recall']
+        test_f1 = result_report['macro avg']['f1-score']
+
         return test_loss, test_acc, test_precision, test_recall, test_f1
+
 
     def train(self, 
             epochs: int, 
