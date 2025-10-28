@@ -257,20 +257,24 @@ class ClassificationTraining():
         if os.path.isfile(checkpoint_path):
             try:
                 checkpoint = torch.load(checkpoint_path, map_location=self.device)
-                # Handle DataParallel wrapper (if model was saved with it)
                 state_dict = checkpoint['model_state_dict']
+                # Xử lý trường hợp DataParallel và không DataParallel
                 if isinstance(self.model, torch.nn.DataParallel):
-                    # If current model is DataParallel, just load
-                    self.model.load_state_dict(state_dict)
+                    # Nếu model hiện tại là DataParallel nhưng state_dict không có 'module.'
+                    if not list(state_dict.keys())[0].startswith("module."):
+                        # Thêm 'module.' vào key
+                        new_state_dict = {"module."+k: v for k, v in state_dict.items()}
+                        self.model.load_state_dict(new_state_dict)
+                    else:
+                        self.model.load_state_dict(state_dict)
                 else:
-                    # If current model is not, but checkpoint might be, strip 'module.'
-                    new_state_dict = {}
-                    for k, v in state_dict.items():
-                        name = k.replace("module.", "") if k.startswith("module.") else k
-                        new_state_dict[name] = v
-                    self.model.load_state_dict(new_state_dict)
+                    # Nếu model hiện tại không phải DataParallel nhưng state_dict có 'module.'
+                    if list(state_dict.keys())[0].startswith("module."):
+                        new_state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()}
+                        self.model.load_state_dict(new_state_dict)
+                    else:
+                        self.model.load_state_dict(state_dict)
                 self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-                # Load scheduler state if it exists
                 if 'scheduler_state_dict' in checkpoint:
                     self.scheduler.load_state_dict(checkpoint['scheduler_state_dict'])
                 start_epoch = checkpoint.get('epoch', 0)
