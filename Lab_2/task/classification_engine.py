@@ -43,14 +43,24 @@ class ClassificationTraining():
         self.model.train()
         train_loss, train_acc, train_precision, train_recall, train_f1 = 0, 0, 0, 0, 0
 
-        for data in self.train_dataloader:
-            X, y = data['image'].to(self.device), data['label'].to(self.device)
+        for batch, (X, y) in enumerate(self.train_dataloader):
+            # Send data to target device
+            X, y = X.to(self.device), y.to(self.device)
+            
+            # 1. Forward pass
             y_pred = self.model(X)
+            
+            # 2. Calculate loss/accuracy
             loss = self.loss_fn(y_pred, y)
             train_loss += loss.item()
 
+            # 3. Optimizer zero grad
             self.optimizer.zero_grad()
+            
+            # 4. Backward pass
             loss.backward()
+            
+            # 5. Optimizer step
             self.optimizer.step()
 
             # Calculate and accumulate metrics across all batches
@@ -81,8 +91,8 @@ class ClassificationTraining():
 
         # Turn on inference mode context manager
         with torch.inference_mode():
-            for data in self.val_dataloader:
-                X, y = data['image'].to(self.device), data['label'].to(self.device)
+            for X, y in self.val_dataloader:
+                X, y = X.to(self.device), y.to(self.device)
                 y_logits = self.model(X)
                 loss = self.loss_fn(y_logits, y)
                 val_loss += loss.item()
@@ -197,8 +207,8 @@ class ClassificationTraining():
 
         # Turn on inference mode context manager
         with torch.inference_mode():
-            for data in tqdm(dataloader, desc="Evaluating Test Set"):
-                X, y = data['image'].to(self.device), data['label'].to(self.device)
+            for X, y in tqdm(dataloader, desc="Evaluating Test Set"):
+                X, y = X.to(self.device), y.to(self.device)
                 y_logits = self.model(X)
                 loss = self.loss_fn(y_logits, y)
                 test_loss += loss.item()
