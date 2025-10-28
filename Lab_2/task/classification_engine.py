@@ -181,7 +181,7 @@ class ClassificationTraining():
                 self.save_model(
                     target_dir=target_dir,
                     model_name=model_name,
-                    epoch=epoch+1
+                    epoch=epoch
                 )
                 epochs_no_improve = 0 # Reset counter
             else:
