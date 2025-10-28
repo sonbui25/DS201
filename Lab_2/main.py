@@ -20,7 +20,7 @@ from utils.utils import plot_metrics, collate_fn
 
 # Setup warnings and seeds for reproducibility
 warnings.filterwarnings("ignore", message=".*number of unique classes.*", category=UserWarning)
-
+warnings.filterwarnings("ignore", message="Palette images with Transparency expressed in bytes should be converted to RGBA images", category=UserWarning)
 def seed_worker(worker_id):
     """Seed function for DataLoader workers"""
     worker_seed = torch.initial_seed() % 2**32
@@ -266,6 +266,7 @@ if __name__ == "__main__":
     # Load checkpoint if exists
     start_epoch = trainer.load_checkpoint(checkpoint_path)
     if start_epoch > 0:
+        start_epoch += 1 # Not overlap latest epoch
         print(f"Resuming training from epoch {start_epoch}")
 
     # Get early stopping patience from config, default to 10
@@ -276,7 +277,7 @@ if __name__ == "__main__":
         epochs=hp['epochs'],
         target_dir=checkpoint_dir,
         model_name=model_filename,
-        start_epoch=start_epoch + 1,  # <-- Start from the next epoch
+        start_epoch=start_epoch,  # <-- Start from the next epoch
         early_stop_epochs=early_stop_patience
     )
 
