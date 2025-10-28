@@ -136,7 +136,7 @@ class ClassificationTraining():
             "Val Loss", "Val Acc", "Val Precision", "Val Recall", "Val F1"
         ]
         # Track best result and early stopping
-        best_val_f1 = -float('inf')
+        best_val_loss = -float('inf')
         best_row = None
         epochs_no_improve = 0
         actual_epochs_ran = 0
@@ -174,8 +174,8 @@ class ClassificationTraining():
             actual_epochs_ran = epoch + 1 # Track total epochs run
 
             # Check for best model and implement early stopping
-            if val_f1 > best_val_f1: # Save best result based on val_f1
-                best_val_f1 = val_f1
+            if val_loss < best_val_loss: # Save best result based on val_loss
+                best_val_loss = val_loss
                 best_row = row
                 # Save the best model
                 self.save_model(
@@ -187,11 +187,11 @@ class ClassificationTraining():
             else:
                 epochs_no_improve += 1
                 if epochs_no_improve > early_stop_epochs: # Triggered early stop
-                    print(f"TRIGGERED EARLY STOP AT {epoch}! (Val F1 not improved for {early_stop_epochs} epochs)")
+                    print(f"TRIGGERED EARLY STOP AT {epoch}! (Val Loss not improved for {early_stop_epochs} epochs)")
                     break # Exit training loop
 
         # Print best result on validation set
-        print("\nBest result based on F1-score on validation set:")
+        print("\nBest result based on Loss on validation set:")
         if best_row:
             print(tabulate([best_row], headers=headers, tablefmt="github"))
         return results, actual_epochs_ran
