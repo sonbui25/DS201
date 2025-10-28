@@ -140,35 +140,32 @@ class GoogleNet(nn.Module):
             in_features=1024,
             out_features=num_classes
         )
+        
+        self.apply(self._init_weights)
  
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x = F.relu(self.conv_1(x)) 
-        # (bs, 64, 112, 112)
-        x = self.max_pool(x) 
-        # (bs, 64, 56, 56)
-        x = F.relu(self.conv_2(x)) 
-        # (bs, 64, 56, 56)
-        x = F.relu(self.conv_3(x)) 
-        # (bs, 192, 56, 56)
-        x = self.max_pool(x) 
-        # (bs, 192, 28, 28)
-        x = self.inception_3(x) 
-        # (bs, 480, 28, 28)
-        x = self.max_pool(x) 
-        # (bs, 480, 14, 14)
-        x = self.inception_4(x) 
-        # (bs, 832, 14, 14)
-        x = self.max_pool(x) 
-        # (bs, 832, 7, 7)
-        x = self.inception_5(x) 
-        # (bs, 1024, 7, 7)
-        x = self.avg_pool(x) 
-        # (bs, 1024, 1, 1)
-        x = self.flatten(x)
-        # Flatten the tensor to shape (bs, 1024)
-        x = self.dropout(x) 
-        # Apply Dropout (bs, 1024)
-        x = self.output(x) 
-        # (bs, num_classes)
+        x = F.relu(self.conv_1(x)) # (bs, 64, 112, 112)
+        x = self.max_pool(x) # (bs, 64, 56, 56)
+        x = F.relu(self.conv_2(x)) # (bs, 64, 56, 56)
+        x = F.relu(self.conv_3(x)) # (bs, 192, 56, 56)
+        x = self.max_pool(x) # (bs, 192, 28, 28)
+        x = self.inception_3(x) # (bs, 480, 28, 28)
+        x = self.max_pool(x) # (bs, 480, 14, 14)
+        x = self.inception_4(x) # (bs, 832, 14, 14)
+        x = self.max_pool(x) # (bs, 832, 7, 7)
+        x = self.inception_5(x) # (bs, 1024, 7, 7)
+        x = self.avg_pool(x) # (bs, 1024, 1, 1)
+        x = self.flatten(x) # Flatten the tensor to shape (bs, 1024)
+        x = self.dropout(x) # Apply Dropout (bs, 1024)
+        x = self.output(x) # (bs, num_classes)
         return x
-    
+
+    def _init_weights(self, m):
+        if isinstance(m, nn.Conv2d):
+            nn.init.kaiming_uniform_(m.weight, nonlinearity='relu') # He initialization for ReLU activation
+            if m.bias is not None:
+                nn.init.constant_(m.bias, 0)
+        elif isinstance(m, nn.Linear):
+            nn.init.xavier_uniform_(m.weight) # Xavier initialization for Linear layers
+            if m.bias is not None:
+                nn.init.constant_(m.bias, 0)
