@@ -98,6 +98,8 @@ class ResNet18(nn.Module):
             in_features=512,
             out_features=num_classes    
         )
+        
+        self.apply(self._init_weights)
 
         
     def forward(self, x: torch.Tensor) -> torch.Tensor:
