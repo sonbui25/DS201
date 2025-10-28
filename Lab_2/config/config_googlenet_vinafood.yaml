@@ -20,6 +20,7 @@ experiments:
     dataset: "vinafood"
     hyperparameters:
       epochs: 80
+      early_stop_patience: 10
       lr: 0.001
       weight_decay: 0
       batch_size: 32
