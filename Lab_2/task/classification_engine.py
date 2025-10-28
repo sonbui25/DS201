@@ -136,7 +136,7 @@ class ClassificationTraining():
             "Val Loss", "Val Acc", "Val Precision", "Val Recall", "Val F1"
         ]
         # Track best result and early stopping
-        best_val_loss = -float('inf')
+        best_val_loss = +float('inf')
         best_row = None
         epochs_no_improve = 0
         actual_epochs_ran = 0
