@@ -210,10 +210,6 @@ class ClassificationTraining():
             'model_state': self.model.state_dict(),
             'optimizer_state': self.optimizer.state_dict(),
             'scheduler_state': self.scheduler.state_dict() if self.scheduler else None,
-            'rng_state': torch.get_rng_state(),
-            'cuda_rng_state': torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None,
-            'numpy_rng_state': np.random.get_state(),
-            'python_rng_state': random.getstate(),
             'best_val_loss': self.best_val_loss,
             'best_val_f1': self.best_val_f1,
             'best_epoch': self.best_epoch
@@ -229,28 +225,27 @@ class ClassificationTraining():
 
         # Only set RNG states if they exist in the checkpoint
         if 'rng_state' in ckpt and isinstance(ckpt['rng_state'], torch.ByteTensor):
-            print(f"Activate torch.set_rng_state")
             torch.set_rng_state(ckpt['rng_state'])
 
         if 'cuda_rng_state' in ckpt and ckpt['cuda_rng_state'] is not None:
-            cuda_states = ckpt['cuda_rng_state']
-            if isinstance(cuda_states, list):
-                cuda_states = [
-                    torch.as_tensor(s, dtype=torch.uint8, device='cuda')
-                    for s in cuda_states
-                ]
-                print(f"Activate torch.cuda.set_rng_state_all")
+            try:
+                cuda_states = []
+                for s in ckpt['cuda_rng_state']:
+                    # Convert mọi thứ sang ByteTensor CUDA
+                    if not isinstance(s, torch.ByteTensor):
+                        s = torch.as_tensor(s, dtype=torch.uint8)
+                    cuda_states.append(s.to('cuda'))
+                print("Activate torch.cuda.set_rng_state_all")
                 torch.cuda.set_rng_state_all(cuda_states)
-            elif isinstance(cuda_states, torch.ByteTensor):
-                print(f"Activate torch.cuda.set_rng_state_all")
-                torch.cuda.set_rng_state_all([cuda_states])
-            else:
-                print(" Warning: CUDA RNG state has unexpected format, skipping restore.")
+            except Exception as e:
+                print(f"⚠️ Skip restoring CUDA RNG state due to error: {e}")
 
         if 'numpy_rng_state' in ckpt:
+            print("Activate np.random.set_state")
             np.random.set_state(ckpt['numpy_rng_state'])
 
         if 'python_rng_state' in ckpt:
+            print("Activate random.setstate")
             random.setstate(ckpt['python_rng_state'])
 
         #  Model 
