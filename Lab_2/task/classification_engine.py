@@ -181,7 +181,8 @@ class ClassificationTraining():
                 self.save_model(
                     target_dir=target_dir,
                     model_name=model_name,
-                    epoch=epoch
+                    epoch=epoch,
+                    best_metrics= best_val_loss
                 )
                 epochs_no_improve = 0 # Reset counter
             else:
@@ -212,15 +213,12 @@ class ClassificationTraining():
                 y_logits = self.model(X)
                 loss = self.loss_fn(y_logits, y)
                 test_loss += loss.item()
-                # Store predictions and true values
                 test_pred_label = torch.argmax(y_logits, dim=1)
                 y_true_all.extend(y.cpu().numpy())
                 y_pred_all.extend(test_pred_label.cpu().numpy())
 
-        # Adjust metrics to get average loss
         test_loss /= len(dataloader)
 
-        # Calculate metrics once for the entire set
         report_dict = classification_report(y_true_all, y_pred_all, output_dict=True, zero_division=0)
         report_str = classification_report(y_true_all, y_pred_all, zero_division=0)
         # Store metrics in a dictionary
@@ -233,7 +231,7 @@ class ClassificationTraining():
         }
         return test_metrics, report_str
 
-    def save_model(self, target_dir: str, model_name: str, epoch: int) -> None:
+    def save_model(self, target_dir: str, model_name: str, epoch: int, best_metrics: float) -> None:
         """Saves the model checkpoint (model, optimizer, and scheduler states)."""
         # Create target directory
         target_dir_path = Path(target_dir)
@@ -249,7 +247,8 @@ class ClassificationTraining():
             'epoch': epoch,
             'model_state_dict': model_state_dict,
             'optimizer_state_dict': self.optimizer.state_dict(),
-            'scheduler_state_dict': self.scheduler.state_dict()
+            'scheduler_state_dict': self.scheduler.state_dict(),
+            'best_metrics': best_metrics
         }, save_path)
 
     def load_checkpoint(self, checkpoint_path: str):
