@@ -251,7 +251,6 @@ if __name__ == "__main__":
 
     # Training loop
 print(f"START TRAINING {exp_name}...")
-model_filename = f"{exp_name}.pth"
 last_check_point_filename = f"{exp_name}_last_checkpoint.pth"
 checkpoint_path = os.path.join(checkpoint_dir, last_check_point_filename)
 
