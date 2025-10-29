@@ -177,16 +177,17 @@ if __name__ == "__main__":
     total_samples = len(original_labels)
     print(f"\nClass Distribution (from original train set):")
     print("="*70)
+    print(f"{'Class ID':<10s} {'Class Name':<30s} {'Count':<10s}")  # <-- thêm dòng này
 
     if original_idx2label:
         for label_id in sorted(original_idx2label.keys()):
             count = label_counts.get(label_id, 1)
-            class_name = original_idx2label[label_id]
+            class_name = original_idx2label[label_id] if original_idx2label[label_id] else str(label_id)
             print(f"{label_id:<10d} {class_name:<30s} {count:<10d}")
     else:
         for label_id in sorted(label_counts.keys()):
             count = label_counts[label_id]
-            print(f"{label_id:<10d} {'N/A':<30s} {count:<10d}")
+            print(f"{label_id:<10d} {str(label_id):<30s} {count:<10d}")
     print("="*70)
     
     # Loss function
