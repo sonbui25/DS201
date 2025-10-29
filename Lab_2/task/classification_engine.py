@@ -224,15 +224,19 @@ class ClassificationTraining():
         print(f"Loading checkpoint from {path}...")
         ckpt = torch.load(path, map_location=self.device, weights_only=False)
 
-        #  Load model state 
+         #  Load model state 
         state_dict = ckpt['model_state']
         # Handle DataParallel compatibility
-        if isinstance(self.model, torch.nn.DataParallel):
-            if not list(state_dict.keys())[0].startswith("module."):
-                state_dict = {"module." + k: v for k, v in state_dict.items()}
-        else:
-            if list(state_dict.keys())[0].startswith("module."):
-                state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()}
+        is_dp_model = isinstance(self.model, torch.nn.DataParallel)
+        has_module_prefix = list(state_dict.keys())[0].startswith("module.")
+
+        if is_dp_model and not has_module_prefix:
+            # Nếu model là DataParallel mà state_dict không có "module.", thêm vào
+            state_dict = {"module." + k: v for k, v in state_dict.items()}
+        elif not is_dp_model and has_module_prefix:
+            # Nếu model không phải DataParallel mà state_dict có "module.", bỏ đi
+            state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()}
+
         self.model.load_state_dict(state_dict)
 
         #  Load optimizer and scheduler 
