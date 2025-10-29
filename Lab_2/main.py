@@ -266,7 +266,7 @@ if __name__ == "__main__":
     # Load checkpoint if exists
     start_epoch = trainer.load_checkpoint(checkpoint_path)
     if start_epoch > 0:
-        start_epoch += 1 # Not overlap latest epoch
+        start_epoch += 1 # Start from next epoch after best
         print(f"Resuming training from epoch {start_epoch}")
 
     # Get early stopping patience from config, default to 10

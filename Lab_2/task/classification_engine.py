@@ -181,8 +181,7 @@ class ClassificationTraining():
                 self.save_model(
                     target_dir=target_dir,
                     model_name=model_name,
-                    epoch=epoch,
-                    best_metrics= best_val_loss
+                    best_epoch=epoch,
                 )
                 epochs_no_improve = 0 # Reset counter
             else:
@@ -231,7 +230,7 @@ class ClassificationTraining():
         }
         return test_metrics, report_str
 
-    def save_model(self, target_dir: str, model_name: str, epoch: int, best_metrics: float) -> None:
+    def save_model(self, target_dir: str, model_name: str, best_epoch: int) -> None:
         """Saves the model checkpoint (model, optimizer, and scheduler states)."""
         # Create target directory
         target_dir_path = Path(target_dir)
@@ -242,13 +241,12 @@ class ClassificationTraining():
         # Get model state_dict (handle DataParallel)
         model_state_dict = self.model.module.state_dict() if isinstance(self.model, torch.nn.DataParallel) else self.model.state_dict()
         # Save the checkpoint dictionary
-        print(f"\n[INFO]: Saving best model at epoch {epoch} to: {save_path}")
+        print(f"\n[INFO]: Saving best model at epoch {best_epoch} to: {save_path}")
         torch.save({
-            'epoch': epoch,
+            'best_epoch': best_epoch,
             'model_state_dict': model_state_dict,
             'optimizer_state_dict': self.optimizer.state_dict(),
             'scheduler_state_dict': self.scheduler.state_dict(),
-            'best_metrics': best_metrics
         }, save_path)
 
     def load_checkpoint(self, checkpoint_path: str):
@@ -260,19 +258,14 @@ class ClassificationTraining():
             try:
                 checkpoint = torch.load(checkpoint_path, map_location=self.device)
                 state_dict = checkpoint['model_state_dict']
-                # Handle DataParallel and non-DataParallel cases
                 if isinstance(self.model, torch.nn.DataParallel):
-                    # If current model is DataParallel but state_dict keys do not start with 'module.'
                     if not list(state_dict.keys())[0].startswith("module."):
-                        # Add 'module.' prefix to keys
                         new_state_dict = {"module."+k: v for k, v in state_dict.items()}
                         self.model.load_state_dict(new_state_dict)
                     else:
                         self.model.load_state_dict(state_dict)
                 else:
-                    # If current model is not DataParallel but state_dict keys start with 'module.'
                     if list(state_dict.keys())[0].startswith("module."):
-                        # Remove 'module.' prefix from keys
                         new_state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()}
                         self.model.load_state_dict(new_state_dict)
                     else:
@@ -280,9 +273,9 @@ class ClassificationTraining():
                 self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
                 if 'scheduler_state_dict' in checkpoint:
                     self.scheduler.load_state_dict(checkpoint['scheduler_state_dict'])
-                start_epoch = checkpoint.get('epoch', 0)
-                print(f"Loaded checkpoint '{checkpoint_path}' (epoch {start_epoch})")
-                return start_epoch
+                best_epoch = checkpoint.get('best_epoch', checkpoint.get('epoch', 0))
+                print(f"Loaded checkpoint '{checkpoint_path}' (best epoch {best_epoch})")
+                return best_epoch
             except Exception as e:
                 print(f"Error loading checkpoint: {e}. Training from scratch.")
                 return 0
