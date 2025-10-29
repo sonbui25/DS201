@@ -228,9 +228,9 @@ class ClassificationTraining():
         ckpt = torch.load(path, map_location=self.device, weights_only=False)
 
         # Only set RNG states if they exist in the checkpoint
-        if 'rng_state' in ckpt:
+        if 'rng_state' in ckpt and isinstance(ckpt['rng_state'], torch.ByteTensor):
             torch.set_rng_state(ckpt['rng_state'])
-        if torch.cuda.is_available() and 'cuda_rng_state' in ckpt:
+        if 'cuda_rng_state' in ckpt and ckpt['cuda_rng_state'] is not None:
             torch.cuda.set_rng_state_all(ckpt['cuda_rng_state'])
         if 'numpy_rng_state' in ckpt:
             np.random.set_state(ckpt['numpy_rng_state'])
