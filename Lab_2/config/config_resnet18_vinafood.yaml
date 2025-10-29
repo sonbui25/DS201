@@ -5,8 +5,8 @@ checkpoint_dir: "/kaggle/working/DS201/Lab_2/checkpoints"
 # --- Dataset Definitions ---
 datasets:
   vinafood: # Chỉ cần định nghĩa vinafood
-    train_path: "/kaggle/input/vinafood21/VinaFood21/train"
-    test_path: "/kaggle/input/vinafood21/VinaFood21/test"
+    train_path: "/kaggle/input/vinafood21-preprocessed/VinaFood21_Preprocessed/train"
+    test_path: "/kaggle/input/vinafood21-preprocessed/VinaFood21_Preprocessed/test"
     classes: 21
 
 # --- Model Definitions ---
