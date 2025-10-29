@@ -205,7 +205,7 @@ class ClassificationTraining():
         }, save_path)
 
     def save_checkpoint(self, path, epoch):
-        ckpt = {
+        check_point_dict = {
             'epoch': epoch,
             'model_state': self.model.state_dict(),
             'optimizer_state': self.optimizer.state_dict(),
@@ -214,60 +214,39 @@ class ClassificationTraining():
             'best_val_f1': self.best_val_f1,
             'best_epoch': self.best_epoch
         }
-        torch.save(ckpt, path)
+        torch.save(check_point_dict, path)
 
     def load_checkpoint(self, path):
         if not os.path.exists(path):
             print(f"No checkpoint found at {path}")
-            return 0  # train from beginning
+            return 0  # train from scratch
 
+        print(f"Loading checkpoint from {path}...")
         ckpt = torch.load(path, map_location=self.device, weights_only=False)
 
-        # Only set RNG states if they exist in the checkpoint
-        if 'rng_state' in ckpt and isinstance(ckpt['rng_state'], torch.ByteTensor):
-            torch.set_rng_state(ckpt['rng_state'])
-
-        if 'cuda_rng_state' in ckpt and ckpt['cuda_rng_state'] is not None:
-            try:
-                cuda_states = []
-                for s in ckpt['cuda_rng_state']:
-                    # Convert mọi thứ sang ByteTensor CUDA
-                    if not isinstance(s, torch.ByteTensor):
-                        s = torch.as_tensor(s, dtype=torch.uint8)
-                    cuda_states.append(s.to('cuda'))
-                print("Activate torch.cuda.set_rng_state_all")
-                torch.cuda.set_rng_state_all(cuda_states)
-            except Exception as e:
-                print(f"⚠️ Skip restoring CUDA RNG state due to error: {e}")
-
-        if 'numpy_rng_state' in ckpt:
-            print("Activate np.random.set_state")
-            np.random.set_state(ckpt['numpy_rng_state'])
-
-        if 'python_rng_state' in ckpt:
-            print("Activate random.setstate")
-            random.setstate(ckpt['python_rng_state'])
-
-        #  Model 
+        #  Load model state 
         state_dict = ckpt['model_state']
+        # Handle DataParallel compatibility
         if isinstance(self.model, torch.nn.DataParallel):
             if not list(state_dict.keys())[0].startswith("module."):
-                state_dict = {"module."+k: v for k, v in state_dict.items()}
+                state_dict = {"module." + k: v for k, v in state_dict.items()}
         else:
             if list(state_dict.keys())[0].startswith("module."):
                 state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()}
         self.model.load_state_dict(state_dict)
 
-        #  Optimizer & scheduler 
-        self.optimizer.load_state_dict(ckpt['optimizer_state'])
-        if self.scheduler and ckpt.get('scheduler_state'):
+        #  Load optimizer and scheduler 
+        if 'optimizer_state' in ckpt and ckpt['optimizer_state'] is not None:
+            self.optimizer.load_state_dict(ckpt['optimizer_state'])
+        if self.scheduler and 'scheduler_state' in ckpt and ckpt['scheduler_state'] is not None:
             self.scheduler.load_state_dict(ckpt['scheduler_state'])
 
-        #  Best metrics 
+        #  Restore best metrics 
         self.best_val_f1 = ckpt.get('best_val_f1', 0.0)
         self.best_val_loss = ckpt.get('best_val_loss', float('inf'))
         self.best_epoch = ckpt.get('best_epoch', -1)
 
         last_epoch = ckpt.get('epoch', 0)
+        print(f"Checkpoint loaded successfully (epoch {last_epoch})")
 
         return last_epoch + 1
