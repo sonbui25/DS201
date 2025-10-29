@@ -229,11 +229,27 @@ class ClassificationTraining():
 
         # Only set RNG states if they exist in the checkpoint
         if 'rng_state' in ckpt and isinstance(ckpt['rng_state'], torch.ByteTensor):
+            print(f"Activate torch.set_rng_state")
             torch.set_rng_state(ckpt['rng_state'])
+
         if 'cuda_rng_state' in ckpt and ckpt['cuda_rng_state'] is not None:
-            torch.cuda.set_rng_state_all(ckpt['cuda_rng_state'])
+            cuda_states = ckpt['cuda_rng_state']
+            if isinstance(cuda_states, list):
+                cuda_states = [
+                    torch.as_tensor(s, dtype=torch.uint8, device='cuda')
+                    for s in cuda_states
+                ]
+                print(f"Activate torch.cuda.set_rng_state_all")
+                torch.cuda.set_rng_state_all(cuda_states)
+            elif isinstance(cuda_states, torch.ByteTensor):
+                print(f"Activate torch.cuda.set_rng_state_all")
+                torch.cuda.set_rng_state_all([cuda_states])
+            else:
+                print(" Warning: CUDA RNG state has unexpected format, skipping restore.")
+
         if 'numpy_rng_state' in ckpt:
             np.random.set_state(ckpt['numpy_rng_state'])
+
         if 'python_rng_state' in ckpt:
             random.setstate(ckpt['python_rng_state'])
 
