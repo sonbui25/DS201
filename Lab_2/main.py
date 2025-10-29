@@ -68,7 +68,8 @@ if __name__ == "__main__":
 
     # Checkpoint directory
     checkpoint_dir = global_settings.get('checkpoint_dir', "./checkpoints")
-
+    os.makedirs(checkpoint_dir, exist_ok=True) 
+    
     print(f"\nRunning Experiment: {exp_name}")
     print(f"Model: {model_key}, Dataset: {dataset_key}")
     print(f"Hyperparameters: {hp}")
