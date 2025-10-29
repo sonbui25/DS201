@@ -292,6 +292,9 @@ if __name__ == "__main__":
 
     try:
         test_metrics, test_report_str = trainer.evaluate(test_dataloader)
+        for key in ['test_loss', 'test_acc', 'test_precision', 'test_recall', 'test_f1']:
+            results[key] = [test_metrics[key]] * actual_epochs_ran  # broadcast test metric for all epochs
+            
         print(f"[INFO] Test Set Results: Loss: {test_metrics['loss']:.4f}, Acc: {test_metrics['acc']:.4f}, Precision: {test_metrics['precision']:.4f}, Recall: {test_metrics['recall']:.4f}, F1: {test_metrics['f1']:.4f}")
         print("\nClassification report for final (unseen) test set:")
         print(test_report_str)
