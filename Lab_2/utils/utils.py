@@ -49,18 +49,18 @@ def show_images(images, title_texts):
 
 def plot_metrics(results, epochs, model_name, dataset_name):
     metrics = [
-        ("train_loss", "test_loss", "Loss"),
-        ("train_acc", "test_acc", "Accuracy"),
-        ("train_precision", "test_precision", "Precision"),
-        ("train_recall", "test_recall", "Recall"),
-        ("train_f1", "test_f1", "F1-score"),
+        ("train_loss", "val_loss", "Loss"),
+        ("train_acc", "val_acc", "Accuracy"),
+        ("train_precision", "val_precision", "Precision"),
+        ("train_recall", "val_recall", "Recall"),
+        ("train_f1", "val_f1", "F1-score"),
     ]
     plt.figure(figsize=(18, 10))
     plt.suptitle(f"Metrics over Epochs of {model_name} model (turn off this window to continue training process of next model!)", fontsize=16)
-    for i, (train_key, test_key, title) in enumerate(metrics, 1):
+    for i, (train_key, val_key, title) in enumerate(metrics, 1):
         plt.subplot(2, 3, i)
         plt.plot(range(1, epochs+1), results[train_key], label="Train")
-        plt.plot(range(1, epochs+1), results[test_key], label="Test")
+        plt.plot(range(1, epochs+1), results[val_key], label="Validation")
         plt.xlabel("Epoch")
         plt.ylabel(title)
         plt.title(title)
