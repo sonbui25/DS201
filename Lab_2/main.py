@@ -198,7 +198,7 @@ if __name__ == "__main__":
     class_weights = torch.tensor(class_weights, dtype=torch.float32).to(device)
 
     # Loss function
-    loss_fn = torch.nn.CrossEntropyLoss(weight=class_weights)
+    loss_fn = torch.nn.CrossEntropyLoss()
 
     # DataLoaders
     batch_size = hp['batch_size']
