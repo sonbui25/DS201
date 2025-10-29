@@ -252,7 +252,9 @@ if __name__ == "__main__":
     # Training loop
 print(f"START TRAINING {exp_name}...")
 model_filename = f"{exp_name}.pth"
-checkpoint_path = os.path.join(checkpoint_dir,  "last_checkpoint.pth")
+last_check_point_filename = f"{exp_name}_last_checkpoint.pth"
+checkpoint_path = os.path.join(checkpoint_dir, last_check_point_filename)
+
 
 # Load checkpoint if exists
 start_epoch = trainer.load_checkpoint(checkpoint_path)
@@ -269,7 +271,7 @@ early_stop_patience = hp.get('early_stop_patience', 10)
 results, actual_epochs_ran = trainer.train(
     epochs=hp['epochs'],
     target_dir=checkpoint_dir,
-    model_name=model_filename,
+    model_name=exp_name,
     start_epoch=start_epoch,
     early_stop_epochs=early_stop_patience
 )
