@@ -193,13 +193,13 @@ class ClassificationTraining():
         target_dir_path = Path(target_dir)
         target_dir_path.mkdir(parents=True, exist_ok=True)
         save_path = os.path.join(target_dir, model_name)
-        model_state_dict = self.model.module.state_dict() if isinstance(self.model, torch.nn.DataParallel) else self.model.state_dict()
+        model_state = self.model.module.state_dict() if isinstance(self.model, torch.nn.DataParallel) else self.model.state_dict()
         print(f"\n[INFO]: Saving best model at epoch {epoch} to: {save_path}")
         torch.save({
             'best_epoch': epoch,
-            'model_state_dict': model_state_dict,
-            'optimizer_state_dict': self.optimizer.state_dict(),
-            'scheduler_state_dict': self.scheduler.state_dict(),
+            'model_state': model_state,
+            'optimizer_state': self.optimizer.state_dict(),
+            'scheduler_state': self.scheduler.state_dict(),
             'best_val_loss': self.best_val_loss,
             'best_val_f1': self.best_val_f1
         }, save_path)
@@ -225,10 +225,10 @@ class ClassificationTraining():
             return 0  # train from beginning
 
         ckpt = torch.load(path, map_location=self.device)
-        self.model.load_state_dict(ckpt['model_state'])
-        self.optimizer.load_state_dict(ckpt['optimizer_state'])
+        self.model.load_state(ckpt['model_state'])
+        self.optimizer.load_state(ckpt['optimizer_state'])
         if self.scheduler and ckpt['scheduler_state']:
-            self.scheduler.load_state_dict(ckpt['scheduler_state'])
+            self.scheduler.load_state(ckpt['scheduler_state'])
 
         torch.set_rng_state(ckpt['rng_state'])
         if torch.cuda.is_available():
