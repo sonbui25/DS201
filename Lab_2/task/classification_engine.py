@@ -225,9 +225,9 @@ class ClassificationTraining():
             print(f"No checkpoint found at {path}")
             return 0  # train from beginning
 
-        ckpt = torch.load(path, map_location=self.device)
+        ckpt = torch.load(path, map_location=self.device, weights_only=False)
 
-        # an toàn: chỉ set RNG nếu có trong checkpoint
+        # Only set RNG states if they exist in the checkpoint
         if 'rng_state' in ckpt:
             torch.set_rng_state(ckpt['rng_state'])
         if torch.cuda.is_available() and 'cuda_rng_state' in ckpt:
