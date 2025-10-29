@@ -205,9 +205,11 @@ class ClassificationTraining():
         }, save_path)
 
     def save_checkpoint(self, path, epoch):
+        # Đảm bảo lưu state_dict không có prefix "module."
+        model_state = self.model.module.state_dict() if isinstance(self.model, torch.nn.DataParallel) else self.model.state_dict()
         check_point_dict = {
             'epoch': epoch,
-            'model_state': self.model.state_dict(),
+            'model_state': model_state,
             'optimizer_state': self.optimizer.state_dict(),
             'scheduler_state': self.scheduler.state_dict() if self.scheduler else None,
             'best_val_loss': self.best_val_loss,

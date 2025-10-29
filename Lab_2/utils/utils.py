@@ -56,7 +56,7 @@ def plot_metrics(results, epochs, model_name, dataset_name):
         ("train_f1", "val_f1", "F1-score"),
     ]
     plt.figure(figsize=(18, 10))
-    plt.suptitle(f"Metrics over Epochs of {model_name} model (turn off this window to continue training process of next model!)", fontsize=16)
+    plt.suptitle(f"Metrics over Epochs of {model_name} model", fontsize=16)
     for i, (train_key, val_key, title) in enumerate(metrics, 1):
         plt.subplot(2, 3, i)
         plt.plot(range(epochs), results[train_key], label="Train")
