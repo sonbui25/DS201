@@ -217,7 +217,27 @@ class ClassificationTraining():
             'best_epoch': self.best_epoch
         }
         torch.save(check_point_dict, path)
-
+        
+    def convert_state_dict(self, state_dict, to_dp):
+        """
+        Convert state_dict between DataParallel and non-DataParallel.
+        If to_dp=True: add 'module.' prefix to keys if not present.
+        If to_dp=False: remove 'module.' prefix from keys if present.
+        """
+        new_state_dict = {}
+        for k, v in state_dict.items():
+            if to_dp:
+                if not k.startswith("module."):
+                    new_state_dict["module." + k] = v
+                else:
+                    new_state_dict[k] = v
+            else:
+                if k.startswith("module."):
+                    new_state_dict[k[len("module."):]] = v
+                else:
+                    new_state_dict[k] = v
+        return new_state_dict
+    
     def load_checkpoint(self, path):
         if not os.path.exists(path):
             print(f"No checkpoint found at {path}")
@@ -226,33 +246,21 @@ class ClassificationTraining():
         print(f"Loading checkpoint from {path}...")
         ckpt = torch.load(path, map_location=self.device, weights_only=False)
 
-         #  Load model state 
         state_dict = ckpt['model_state']
-        # Handle DataParallel compatibility
         is_dp_model = isinstance(self.model, torch.nn.DataParallel)
-        has_module_prefix = list(state_dict.keys())[0].startswith("module.")
-
-        if is_dp_model and not has_module_prefix:
-            # Nếu model là DataParallel mà state_dict không có "module.", thêm vào
-            state_dict = {"module." + k: v for k, v in state_dict.items()}
-        elif not is_dp_model and has_module_prefix:
-            # Nếu model không phải DataParallel mà state_dict có "module.", bỏ đi
-            state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()}
-
+        state_dict = self.convert_state_dict(state_dict, to_dp=is_dp_model)
         self.model.load_state_dict(state_dict)
 
-        #  Load optimizer and scheduler 
+        #  optimizer, scheduler, metrics
         if 'optimizer_state' in ckpt and ckpt['optimizer_state'] is not None:
             self.optimizer.load_state_dict(ckpt['optimizer_state'])
         if self.scheduler and 'scheduler_state' in ckpt and ckpt['scheduler_state'] is not None:
             self.scheduler.load_state_dict(ckpt['scheduler_state'])
 
-        #  Restore best metrics 
         self.best_val_f1 = ckpt.get('best_val_f1', 0.0)
         self.best_val_loss = ckpt.get('best_val_loss', float('inf'))
         self.best_epoch = ckpt.get('best_epoch', -1)
 
         last_epoch = ckpt.get('epoch', 0)
         print(f"Checkpoint loaded successfully (epoch {last_epoch})")
-
         return last_epoch + 1
