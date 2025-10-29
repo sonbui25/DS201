@@ -19,7 +19,7 @@ experiments:
     model: "ResNet50"
     dataset: "vinafood"
     hyperparameters:
-      epochs: 1
+      epochs: 100
       early_stop_patience: 1
       lr: 0.001
       weight_decay: 0.0001
