@@ -259,7 +259,7 @@ if __name__ == "__main__":
     # Training loop
 print(f"START TRAINING {exp_name}...")
 model_filename = f"{exp_name}.pth"
-checkpoint_path = os.path.join(checkpoint_dir, model_filename)
+checkpoint_path = os.path.join(checkpoint_dir,  "last_checkpoint.pth")
 
 # Load checkpoint if exists
 start_epoch = trainer.load_checkpoint(checkpoint_path)
@@ -291,6 +291,8 @@ print(f"Loading best model from {checkpoint_path} for final test evaluation...")
 trainer.load_checkpoint(checkpoint_path)
 
 try:
+    best_model_path = os.path.join(checkpoint_dir, f"{exp_name}.pth")
+    trainer.load_checkpoint(best_model_path)
     test_metrics, test_report_str = trainer.evaluate(test_dataloader)
     print(f"[INFO] Test Set Results: Loss: {test_metrics['loss']:.4f}, Acc: {test_metrics['acc']:.4f}, Precision: {test_metrics['precision']:.4f}, Recall: {test_metrics['recall']:.4f}, F1: {test_metrics['f1']:.4f}")
     print("\nClassification report for final (unseen) test set:")
