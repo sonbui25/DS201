@@ -215,6 +215,7 @@ class ClassificationTraining():
             'numpy_rng_state': np.random.get_state(),
             'python_rng_state': random.getstate(),
             'best_val_loss': self.best_val_loss,
+            'best_val_f1': self.best_val_f1,
             'best_epoch': self.best_epoch
         }
         torch.save(ckpt, path)
