@@ -264,7 +264,6 @@ checkpoint_path = os.path.join(checkpoint_dir, model_filename)
 # Load checkpoint if exists
 start_epoch = trainer.load_checkpoint(checkpoint_path)
 if start_epoch > 0:
-    start_epoch += 1  # Start from next epoch after best
     # Hiển thị best val loss và best val f1 nếu có
     if hasattr(trainer, "best_epoch") and trainer.best_epoch != -1:
         print(f"Best validation at epoch {trainer.best_epoch}: val_loss={trainer.best_val_loss:.4f}, val_f1={trainer.best_val_f1:.4f}")
