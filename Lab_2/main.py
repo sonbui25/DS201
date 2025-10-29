@@ -54,10 +54,11 @@ if __name__ == "__main__":
     model_key = exp_config['model']
     dataset_key = exp_config['dataset']
     hp = exp_config['hyperparameters']
-    global_settings = config.get('global_settings', {})
-
+    
+    # Checkpoint directory
+    checkpoint_dir = config.get('checkpoint_dir', "./checkpoints")
     # Set random seeds for reproducibility
-    seed = global_settings.get('seed', 42)
+    seed = config.get('seed', 42)
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -65,10 +66,6 @@ if __name__ == "__main__":
     torch.backends.cudnn.benchmark = False
     g = torch.Generator()
     g.manual_seed(seed)
-
-    # Checkpoint directory
-    checkpoint_dir = global_settings.get('checkpoint_dir', "./checkpoints")
-    os.makedirs(checkpoint_dir, exist_ok=True) 
     
     print(f"\nRunning Experiment: {exp_name}")
     print(f"Model: {model_key}, Dataset: {dataset_key}")
