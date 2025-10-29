@@ -225,7 +225,7 @@ class ClassificationTraining():
             return 0  # train from beginning
 
         ckpt = torch.load(path, map_location=self.device)
-        self.model.load_state(ckpt['model_state'])
+        self.model.load_state_dict(ckpt['model_state'])
         self.optimizer.load_state(ckpt['optimizer_state'])
         if self.scheduler and ckpt['scheduler_state']:
             self.scheduler.load_state(ckpt['scheduler_state'])
@@ -236,7 +236,7 @@ class ClassificationTraining():
         np.random.set_state(ckpt['numpy_rng_state'])
         random.setstate(ckpt['python_rng_state'])
         # Load best validation metrics
-        self.best_val_f1 = ckpt.get('best_val_f1', 0.0)  # <-- load lại best_val_f1
+        self.best_val_f1 = ckpt.get('best_val_f1', 0.0) 
         self.best_val_loss = ckpt.get('best_val_loss', float('inf'))
         self.best_epoch = ckpt.get('best_epoch', -1)
 
