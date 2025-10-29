@@ -259,48 +259,50 @@ if __name__ == "__main__":
     )
 
     # Training loop
-    print(f"START TRAINING {exp_name}...")
-    model_filename = f"{exp_name}.pth"
-    checkpoint_path = os.path.join(checkpoint_dir, model_filename)
+print(f"START TRAINING {exp_name}...")
+model_filename = f"{exp_name}.pth"
+checkpoint_path = os.path.join(checkpoint_dir, model_filename)
 
-    # Load checkpoint if exists
-    start_epoch = trainer.load_checkpoint(checkpoint_path)
-    if start_epoch > 0:
-        start_epoch += 1 # Start from next epoch after best
-        print(f"Resuming training from epoch {start_epoch}")
+# Load checkpoint if exists
+start_epoch = trainer.load_checkpoint(checkpoint_path)
+if start_epoch > 0:
+    start_epoch += 1  # Start from next epoch after best
+    print(f"Resuming training from epoch {start_epoch}")
+    # Hiển thị best val loss và best val f1 nếu có
+    if hasattr(trainer, "best_epoch") and trainer.best_epoch != -1:
+        print(f"Best validation at epoch {trainer.best_epoch}: val_loss={trainer.best_val_loss:.4f}, val_f1={trainer.best_val_f1:.4f}")
 
-    # Get early stopping patience from config, default to 10
-    early_stop_patience = hp.get('early_stop_patience', 10)
+# Get early stopping patience from config, default to 10
+early_stop_patience = hp.get('early_stop_patience', 10)
 
-    # Train the model
-    results, actual_epochs_ran = trainer.train(
-        epochs=hp['epochs'],
-        target_dir=checkpoint_dir,
-        model_name=model_filename,
-        start_epoch=start_epoch,  # <-- Start from the next epoch
-        early_stop_epochs=early_stop_patience
-    )
+# Train the model
+results, actual_epochs_ran = trainer.train(
+    epochs=hp['epochs'],
+    target_dir=checkpoint_dir,
+    model_name=model_filename,
+    start_epoch=start_epoch,
+    early_stop_epochs=early_stop_patience
+)
 
-    print(f"DONE TRAINING {exp_name}. Ran for {actual_epochs_ran} epochs.")
+print(f"DONE TRAINING {exp_name}. Ran for {actual_epochs_ran} epochs.")
 
-    # Run final evaluation on the (unseen) test set
-    print(f"\n[INFO] Starting final evaluation on the (unseen) test set...")
+# Run final evaluation on the (unseen) test set
+print(f"\n[INFO] Starting final evaluation on the (unseen) test set...")
 
-    # Load the best model saved during training for final evaluation
-    print(f"Loading best model from {checkpoint_path} for final test evaluation...")
-    trainer.load_checkpoint(checkpoint_path)
+# Load the best model saved during training for final evaluation
+print(f"Loading best model from {checkpoint_path} for final test evaluation...")
+trainer.load_checkpoint(checkpoint_path)
 
-    try:
-        test_metrics, test_report_str = trainer.evaluate(test_dataloader)            
-        print(f"[INFO] Test Set Results: Loss: {test_metrics['loss']:.4f}, Acc: {test_metrics['acc']:.4f}, Precision: {test_metrics['precision']:.4f}, Recall: {test_metrics['recall']:.4f}, F1: {test_metrics['f1']:.4f}")
-        print("\nClassification report for final (unseen) test set:")
-        print(test_report_str)
-    except Exception as e:
-        print(f"[ERROR] Error during final test set evaluation: {e}")
+try:
+    test_metrics, test_report_str = trainer.evaluate(test_dataloader)
+    print(f"[INFO] Test Set Results: Loss: {test_metrics['loss']:.4f}, Acc: {test_metrics['acc']:.4f}, Precision: {test_metrics['precision']:.4f}, Recall: {test_metrics['recall']:.4f}, F1: {test_metrics['f1']:.4f}")
+    print("\nClassification report for final (unseen) test set:")
+    print(test_report_str)
+except Exception as e:
+    print(f"[ERROR] Error during final test set evaluation: {e}")
 
-    # Plot training metrics
-    # Note: The 'results' variable contains metrics from the *validation* set
-    print(f"Plotting training/validation results for {exp_name}.")
-    plot_metrics(results, epochs=actual_epochs_ran, model_name=exp_name, dataset_name=dataset_key)
+# Plot training metrics
+print(f"Plotting training/validation results for {exp_name}.")
+plot_metrics(results, epochs=actual_epochs_ran, model_name=exp_name, dataset_name=dataset_key)
 
-    print(f"\nExperiment {exp_name} finished successfully!")
+print(f"\nExperiment {exp_name} finished successfully!")
