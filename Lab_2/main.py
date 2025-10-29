@@ -172,31 +172,23 @@ if __name__ == "__main__":
         print(f"Using {torch.cuda.device_count()} GPUs")
         model = torch.nn.DataParallel(model)
 
-    # Compute class weights for imbalanced dataset (based on *original* train set)
+    # Print mapping label id to class name and distribution
     label_counts = Counter(original_labels)
     total_samples = len(original_labels)
-    print(f"\nClass Distribution & Weights (from original train set):")
+    print(f"\nClass Distribution (from original train set):")
     print("="*70)
 
-    class_weights = []
     if original_idx2label:
         for label_id in sorted(original_idx2label.keys()):
             count = label_counts.get(label_id, 1)
-            weight = total_samples / (num_classes * count)
-            class_weights.append(weight)
             class_name = original_idx2label[label_id]
-            print(f"{label_id:<10d} {class_name:<30s} {count:<10d} {weight:<15.4f}")
+            print(f"{label_id:<10d} {class_name:<30s} {count:<10d}")
     else:
         for label_id in sorted(label_counts.keys()):
             count = label_counts[label_id]
-            weight = total_samples / (num_classes * count)
-            class_weights.append(weight)
-            print(f"{label_id:<10d} {'N/A':<30s} {count:<10d} {weight:<15.4f}")
+            print(f"{label_id:<10d} {'N/A':<30s} {count:<10d}")
     print("="*70)
-
-    # Calculate class weights tensor
-    class_weights = torch.tensor(class_weights, dtype=torch.float32).to(device)
-
+    
     # Loss function
     loss_fn = torch.nn.CrossEntropyLoss()
 
@@ -287,11 +279,10 @@ print(f"DONE TRAINING {exp_name}. Ran for {actual_epochs_ran} epochs.")
 print(f"\n[INFO] Starting final evaluation on the (unseen) test set...")
 
 # Load the best model saved during training for final evaluation
-print(f"Loading best model from {checkpoint_path} for final test evaluation...")
-trainer.load_checkpoint(checkpoint_path)
+best_model_path = os.path.join(checkpoint_dir, f"{exp_name}.pth")
 
+print(f"Loading best model from {best_model_path} for final test evaluation...")
 try:
-    best_model_path = os.path.join(checkpoint_dir, f"{exp_name}.pth")
     trainer.load_checkpoint(best_model_path)
     test_metrics, test_report_str = trainer.evaluate(test_dataloader)
     print(f"[INFO] Test Set Results: Loss: {test_metrics['loss']:.4f}, Acc: {test_metrics['acc']:.4f}, Precision: {test_metrics['precision']:.4f}, Recall: {test_metrics['recall']:.4f}, F1: {test_metrics['f1']:.4f}")
