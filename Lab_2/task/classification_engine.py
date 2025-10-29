@@ -225,20 +225,36 @@ class ClassificationTraining():
             return 0  # train from beginning
 
         ckpt = torch.load(path, map_location=self.device)
-        self.model.load_state_dict(ckpt['model_state'])
-        self.optimizer.load_state(ckpt['optimizer_state'])
+        state_dict = ckpt['model_state']
+
+        # Xử lý DataParallel và non-DataParallel
+        if isinstance(self.model, torch.nn.DataParallel):
+            # Nếu state_dict không có prefix "module.", thêm vào
+            if not list(state_dict.keys())[0].startswith("module."):
+                new_state_dict = {"module."+k: v for k, v in state_dict.items()}
+                self.model.load_state_dict(new_state_dict)
+            else:
+                self.model.load_state_dict(state_dict)
+        else:
+            # Nếu state_dict có prefix "module.", bỏ đi
+            if list(state_dict.keys())[0].startswith("module."):
+                new_state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()}
+                self.model.load_state_dict(new_state_dict)
+            else:
+                self.model.load_state_dict(state_dict)
+
+        self.optimizer.load_state_dict(ckpt['optimizer_state'])
         if self.scheduler and ckpt['scheduler_state']:
-            self.scheduler.load_state(ckpt['scheduler_state'])
+            self.scheduler.load_state_dict(ckpt['scheduler_state'])
 
         torch.set_rng_state(ckpt['rng_state'])
         if torch.cuda.is_available():
             torch.cuda.set_rng_state_all(ckpt['cuda_rng_state'])
         np.random.set_state(ckpt['numpy_rng_state'])
         random.setstate(ckpt['python_rng_state'])
-        # Load best validation metrics
         self.best_val_f1 = ckpt.get('best_val_f1', 0.0) 
         self.best_val_loss = ckpt.get('best_val_loss', float('inf'))
         self.best_epoch = ckpt.get('best_epoch', -1)
 
         print(f"Loaded checkpoint from epoch {ckpt['epoch']}")
-        return ckpt['epoch']  # return the last trained epoch
+        return ckpt['epoch']
