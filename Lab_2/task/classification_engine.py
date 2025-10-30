@@ -133,7 +133,7 @@ class ClassificationTraining():
             results["val_precision"].append(val_precision)
             results["val_recall"].append(val_recall)
             results["val_f1"].append(val_f1)
-            self.scheduler.step()
+            # self.scheduler.step()
             print("\n\n", tabulate([row], headers=headers, tablefmt="github"))
             actual_epochs_ran = epoch + 1
 
@@ -201,7 +201,7 @@ class ClassificationTraining():
             'best_epoch': epoch,
             'model_state': model_state,
             'optimizer_state': self.optimizer.state_dict(),
-            'scheduler_state': self.scheduler.state_dict(),
+            # 'scheduler_state': self.scheduler.state_dict(),
             'best_val_loss': self.best_val_loss,
             'best_val_f1': self.best_val_f1
         }, save_path)
@@ -211,7 +211,7 @@ class ClassificationTraining():
             'epoch': epoch,
             'model_state': self.model.state_dict(),
             'optimizer_state': self.optimizer.state_dict(),
-            'scheduler_state': self.scheduler.state_dict() if self.scheduler else None,
+            # 'scheduler_state': self.scheduler.state_dict() if self.scheduler else None,
             'best_val_loss': self.best_val_loss,
             'best_val_f1': self.best_val_f1,
             'best_epoch': self.best_epoch
@@ -244,8 +244,8 @@ class ClassificationTraining():
         #  Load optimizer and scheduler 
         if 'optimizer_state' in ckpt and ckpt['optimizer_state'] is not None:
             self.optimizer.load_state_dict(ckpt['optimizer_state'])
-        if self.scheduler and 'scheduler_state' in ckpt and ckpt['scheduler_state'] is not None:
-            self.scheduler.load_state_dict(ckpt['scheduler_state'])
+        # if self.scheduler and 'scheduler_state' in ckpt and ckpt['scheduler_state'] is not None:
+        #     self.scheduler.load_state_dict(ckpt['scheduler_state'])
 
         #  Restore best metrics 
         self.best_val_f1 = ckpt.get('best_val_f1', 0.0)
