@@ -77,10 +77,10 @@ class Inception(nn.Module):
 
         return torch.cat((x_b1, x_b2_2, x_b3_2, x_b4_2), dim=1) # Shape(B, C, H, W)
 class GoogleNet(nn.Module):
-    def __init__(self, in_channels: int, num_classes: int):
+    def __init__(self, num_classes: int):
         super().__init__()
         self.conv_1 = nn.Conv2d(
-            in_channels=in_channels,
+            in_channels=3,
             out_channels=64,
             kernel_size=7,
             stride=2,

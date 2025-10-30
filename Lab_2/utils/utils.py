@@ -5,18 +5,19 @@ import kagglehub
 import matplotlib.pyplot as plt
 from typing import Tuple, List, Dict
 from pathlib import Path
+
 def download_data_and_clear_cache(dataset: str, target_dir: str):
-    # Nếu đã tồn tại dữ liệu ở target_dir thì bỏ qua
+    # If data already exists in target_dir, skip downloading
     if os.path.exists(target_dir) and os.listdir(target_dir):
         print(f"Dataset already exists in: {target_dir}")
         return target_dir
 
-    # B1: Download dataset về cache
+    # Step 1: Download dataset to cache
     cache_path = kagglehub.dataset_download(dataset)
-    # B2: Tạo thư mục đích nếu chưa có
+    # Step 2: Create target directory if it does not exist
     os.makedirs(target_dir, exist_ok=True)
 
-    # B3: Copy dữ liệu sang thư mục đích
+    # Step 3: Copy data from cache to target directory
     for item in os.listdir(cache_path):
         s = os.path.join(cache_path, item)
         d = os.path.join(target_dir, item)
@@ -25,8 +26,8 @@ def download_data_and_clear_cache(dataset: str, target_dir: str):
         else:
             shutil.copy2(s, d)
 
-    # B4: Xóa đúng dataset (thường lưu trong ổ C) vừa tải trong cache (không ảnh hưởng dataset khác)
-    dataset_root = os.path.dirname(os.path.dirname(os.path.dirname(cache_path)))  # quay lại 3 cấp để đến thư mục datasets
+    # Step 4: Remove the specific dataset cache (usually stored in C drive), does not affect other datasets
+    dataset_root = os.path.dirname(os.path.dirname(os.path.dirname(cache_path)))  # go up 3 levels to reach datasets folder
     shutil.rmtree(dataset_root, ignore_errors=True)
 
     print(f"Dataset copied to: {target_dir}")

@@ -57,6 +57,7 @@ if __name__ == "__main__":
     
     # Checkpoint directory
     checkpoint_dir = config.get('checkpoint_dir', "./checkpoints")
+    
     # Set random seeds for reproducibility
     seed = config.get('seed', 42)
     random.seed(seed)
@@ -95,7 +96,7 @@ if __name__ == "__main__":
         dataset_info = config['datasets'][dataset_key]
         num_classes = dataset_info['classes']
 
-        # Chọn class dataset
+        # Choose dataset class and load data
         if dataset_key == 'mnist':
             DatasetClass = MNIST.MNISTDataset
             train_data = DatasetClass(
@@ -115,8 +116,8 @@ if __name__ == "__main__":
                     labels_filepath=val_labels
                 )
             else:
-                # Split train data into train and validation (80/20) using stratified split
-                print("No 'val_path' found. Splitting training data into 80% train / 20% validation using stratified split.")
+                # Split train data into train and validation (90/10) using stratified split
+                print("No 'val_path' found. Splitting training data into 90% train / 10% validation using stratified split.")
                 indices = list(range(len(train_data)))
                 labels = train_data.labels
                 train_idx, val_idx = train_test_split(
@@ -135,7 +136,7 @@ if __name__ == "__main__":
                 val_data = DatasetClass(path=val_path, is_train=False)
                 train_data = train_data_full
             else:
-                print("No 'val_path' found. Splitting training data into 80% train / 20% validation using stratified split.")
+                print("No 'val_path' found. Splitting training data into 90% train / 10% validation using stratified split.")
                 indices = list(range(len(train_data_full)))
                 labels = train_data_full.labels
                 train_idx, val_idx = train_test_split(
@@ -148,7 +149,6 @@ if __name__ == "__main__":
             raise ValueError(f"Unknown dataset key: {dataset_key}")
 
         print(f"Train: {len(train_data)}, Val: {len(val_data)}, Test: {len(test_data)}")
-        # Lấy thông tin gốc để tính class weights
         original_dataset = train_data.dataset if isinstance(train_data, Subset) else train_data
         original_labels = original_dataset.labels
         original_idx2label = getattr(original_dataset, "idx2label", None)
@@ -167,10 +167,10 @@ if __name__ == "__main__":
     print(f"Sample image size: {image_size}, Number of classes: {num_labels}")
 
     # Initialize model
-    model = ModelClass(in_channels=image_size[0], num_classes=num_classes).to(device)
+    model = ModelClass(num_classes=num_classes).to(device)
     if torch.cuda.device_count() > 1:
         print(f"Using {torch.cuda.device_count()} GPUs")
-        model = torch.nn.DataParallel(model)
+        model = torch.nn.DataParallel(model) # Wrap model for multi-GPU
 
     # Print mapping label id to class name and distribution
     label_counts = Counter(original_labels)
@@ -258,7 +258,7 @@ last_check_point_path = os.path.join(checkpoint_dir, checkpoint_path)
 # Load checkpoint if exists
 start_epoch = trainer.load_checkpoint(last_check_point_path)
 if start_epoch > 0:
-    # Hiển thị best val loss và best val f1 nếu có
+    # Get best epoch info if available
     if hasattr(trainer, "best_epoch") and trainer.best_epoch != -1:
         print(f"Best validation at epoch {trainer.best_epoch}: Val_Loss={trainer.best_val_loss:.4f}, Val_F1={trainer.best_val_f1:.4f}")
     print(f"Resuming training from epoch {start_epoch}")

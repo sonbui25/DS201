@@ -161,7 +161,7 @@ class ClassificationTraining():
 
     def evaluate(self, dataloader: torch.utils.data.DataLoader) -> Tuple[Dict[str, float], str]:
         """
-        Evaluates the model on a given dataloader (e.g., the final test set).
+        Evaluates the model on a given dataloader (the final test set).
         Returns a dictionary of metrics and a classification report string.
         """
         self.model.eval()

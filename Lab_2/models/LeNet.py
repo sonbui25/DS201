@@ -1,10 +1,10 @@
 import torch
 from torch import nn
 class LeNet(nn.Module):
-    def __init__(self, in_channels: int, num_classes: int):
+    def __init__(self, num_classes: int):
         super().__init__()
         self.conv_1 = nn.Conv2d( # 32*32 -> 28*28
-            in_channels=in_channels,
+            in_channels=1,
             out_channels=6,
             kernel_size=(5,5), # Can set to 5 if square kernel
             stride=1,

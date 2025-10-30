@@ -50,10 +50,10 @@ class BasicBlock(nn.Module):
             return F.relu(x_res + self.shortcut_conv_3(x))
         return F.relu(x_res + x)
 class ResNet18(nn.Module):
-    def __init__(self, in_channels: int, num_classes: int, **kwargs):
+    def __init__(self, num_classes: int, **kwargs):
         super().__init__(**kwargs) 
         self.conv1 = nn.Conv2d(
-            in_channels=in_channels,
+            in_channels=3,
             out_channels=64,
             kernel_size=7,
             stride=2,
