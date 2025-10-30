@@ -156,7 +156,7 @@ class ClassificationTraining():
 
 
         print("\nBest result based on Loss on validation set:")
-        print(f"Best epoch: {self.best_epoch}, Best val loss: {self.best_val_loss:.4f}")
+        print(f"Best epoch: {self.best_epoch}, Best Val_Loss: {self.best_val_loss:.4f}, Val_F1: {self.best_val_f1:.4f}")
         return results, actual_epochs_ran
 
     def evaluate(self, dataloader: torch.utils.data.DataLoader) -> Tuple[Dict[str, float], str]:
