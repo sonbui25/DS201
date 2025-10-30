@@ -120,7 +120,7 @@ if __name__ == "__main__":
                 indices = list(range(len(train_data)))
                 labels = train_data.labels
                 train_idx, val_idx = train_test_split(
-                    indices, test_size=0.2, stratify=labels, random_state=seed
+                    indices, test_size=0.1, stratify=labels, random_state=seed
                 )
                 train_data = Subset(train_data, train_idx)
                 val_data = Subset(train_data.dataset, val_idx)
@@ -139,7 +139,7 @@ if __name__ == "__main__":
                 indices = list(range(len(train_data_full)))
                 labels = train_data_full.labels
                 train_idx, val_idx = train_test_split(
-                    indices, test_size=0.2, stratify=labels, random_state=seed
+                    indices, test_size=0.1, stratify=labels, random_state=seed
                 )
                 train_data = Subset(train_data_full, train_idx)
                 val_data = Subset(train_data_full, val_idx)
@@ -251,12 +251,12 @@ if __name__ == "__main__":
 
     # Training loop
 print(f"START TRAINING {exp_name}...")
-last_check_point_filename = f"{exp_name}_last_checkpoint.pth"
-checkpoint_path = os.path.join(checkpoint_dir, last_check_point_filename)
+checkpoint_path = f"{exp_name}_last_checkpoint.pth"
+last_check_point_path = os.path.join(checkpoint_dir, checkpoint_path)
 
 
 # Load checkpoint if exists
-start_epoch = trainer.load_checkpoint(checkpoint_path)
+start_epoch = trainer.load_checkpoint(last_check_point_path)
 if start_epoch > 0:
     # Hiển thị best val loss và best val f1 nếu có
     if hasattr(trainer, "best_epoch") and trainer.best_epoch != -1:

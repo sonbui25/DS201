@@ -140,7 +140,7 @@ class ClassificationTraining():
             # Early stopping logic
             if val_loss < self.best_val_loss:
                 self.best_val_loss = val_loss
-                self.best_val_f1 = val_f1  # <-- lưu lại best val f1
+                self.best_val_f1 = val_f1  
                 self.best_epoch = epoch
                 model_filename = f"{model_name}.pth"
                 self.save_best_model(target_dir, model_filename, epoch)
