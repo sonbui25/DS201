@@ -14,8 +14,8 @@ from sklearn.model_selection import train_test_split
 
 # Import models, dataset classes and task engine
 from models import LeNet, GoogleNet, ResNet18, ResNet50
-from task import classification_engine
-from dataloader import MNIST, ViNaFood21
+from tasks import classification_engine
+from dataloaders import MNIST, ViNaFood21
 from utils.utils import plot_metrics, collate_fn
 
 # Setup warnings and seeds for reproducibility
