@@ -1,0 +1,208 @@
+2025-11-27 17:15:59,166 - INFO - ==================================================
+2025-11-27 17:15:59,166 - INFO - STARTING PROCESS FOR EXPERIMENT: GRU_UIT_VSFC
+2025-11-27 17:15:59,166 - INFO - Log file location: ./results/text_classification\GRU_UIT_VSFC_training.log
+2025-11-27 17:15:59,166 - INFO - Loading configuration from: E:\DS201.Q11\DS201\Lab_3\config\GRU_UIT_VSFC.yml
+2025-11-27 17:15:59,166 - INFO - 
+Running Experiment: GRU_UIT_VSFC
+2025-11-27 17:15:59,166 - INFO - Model: GRU, Dataset: uit_vsfc
+2025-11-27 17:15:59,166 - INFO - Hyperparameters: {'epochs': 50, 'early_stop_patience': 10, 'lr': 0.0002, 'weight_decay': 1e-05, 'batch_size': 64, 'optimizer': 'Adam', 'step_size': 30, 'gamma': 0.1, 'optimizer_params': {}}
+2025-11-27 17:15:59,206 - INFO - Using device: cuda
+2025-11-27 17:15:59,688 - INFO - Loading dataset: uit_vsfc
+2025-11-27 17:15:59,727 - INFO - Train: 11426, Val: 1583, Test: 3166
+2025-11-27 17:15:59,744 - INFO - Sample sentence size: torch.Size([64]), Number of classes: 4
+2025-11-27 17:16:00,035 - INFO - 
+[INFO] Class Distribution (Raw Data - No Padding):
++------------------+---------+
+| Label            |   Count |
++==================+=========+
+| lecturer         |    8166 |
++------------------+---------+
+| training_program |    2201 |
++------------------+---------+
+| others           |     562 |
++------------------+---------+
+| facility         |     497 |
++------------------+---------+
+2025-11-27 17:16:00,035 - INFO - Using optimizer: Adam with LR=0.0002, WeightDecay=1e-05
+2025-11-27 17:16:02,620 - INFO - START TRAINING GRU_UIT_VSFC...
+2025-11-27 17:16:02,620 - INFO - No checkpoint found at checkpoints/GRU_UIT_VSFC/GRU_UIT_VSFC_last_checkpoint.pth
+2025-11-27 17:16:11,305 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|       0 |       0.8747 |       0.707 |            0.1823 |         0.2546 |      0.211 |     0.8448 |    0.7271 |          0.1818 |         0.25 |   0.2105 |
+2025-11-27 17:16:11,305 - INFO - 
+[INFO]: Saving best model at epoch 0 to: checkpoints/GRU_UIT_VSFC/GRU_UIT_VSFC_best_model.pth
+2025-11-27 17:16:19,723 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|       1 |       0.8534 |      0.7148 |             0.188 |         0.2608 |     0.2173 |     0.8484 |    0.7271 |          0.1818 |         0.25 |   0.2105 |
+2025-11-27 17:16:27,953 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|       2 |       0.8289 |      0.7169 |            0.2307 |         0.2714 |     0.2371 |      0.765 |    0.7669 |          0.4721 |       0.3952 |   0.4086 |
+2025-11-27 17:16:27,954 - INFO - 
+[INFO]: Saving best model at epoch 2 to: checkpoints/GRU_UIT_VSFC/GRU_UIT_VSFC_best_model.pth
+2025-11-27 17:16:35,945 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|       3 |       0.7278 |      0.7347 |            0.3189 |         0.3395 |     0.3185 |     0.7097 |    0.7618 |          0.3255 |       0.3202 |   0.3137 |
+2025-11-27 17:16:43,894 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|       4 |       0.6734 |      0.7634 |            0.3784 |         0.3936 |     0.3752 |     0.5931 |    0.7972 |          0.4901 |        0.555 |   0.5162 |
+2025-11-27 17:16:43,894 - INFO - 
+[INFO]: Saving best model at epoch 4 to: checkpoints/GRU_UIT_VSFC/GRU_UIT_VSFC_best_model.pth
+2025-11-27 17:16:51,845 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|       5 |       0.5474 |      0.7975 |            0.5243 |         0.5193 |     0.5045 |      0.484 |    0.8212 |          0.5898 |       0.5517 |    0.566 |
+2025-11-27 17:16:51,845 - INFO - 
+[INFO]: Saving best model at epoch 5 to: checkpoints/GRU_UIT_VSFC/GRU_UIT_VSFC_best_model.pth
+2025-11-27 17:16:59,769 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|       6 |       0.4779 |      0.8298 |            0.5937 |         0.5893 |     0.5762 |     0.4762 |    0.8263 |          0.5952 |       0.5556 |   0.5713 |
+2025-11-27 17:16:59,769 - INFO - 
+[INFO]: Saving best model at epoch 6 to: checkpoints/GRU_UIT_VSFC/GRU_UIT_VSFC_best_model.pth
+2025-11-27 17:17:07,732 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|       7 |       0.4294 |      0.8493 |            0.6012 |         0.6122 |     0.5956 |     0.4316 |    0.8402 |          0.5942 |        0.592 |    0.592 |
+2025-11-27 17:17:07,733 - INFO - 
+[INFO]: Saving best model at epoch 7 to: checkpoints/GRU_UIT_VSFC/GRU_UIT_VSFC_best_model.pth
+2025-11-27 17:17:15,726 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|       8 |       0.4065 |      0.8556 |             0.611 |         0.6232 |     0.6074 |     0.4225 |    0.8509 |          0.5943 |       0.6408 |   0.6155 |
+2025-11-27 17:17:15,727 - INFO - 
+[INFO]: Saving best model at epoch 8 to: checkpoints/GRU_UIT_VSFC/GRU_UIT_VSFC_best_model.pth
+2025-11-27 17:17:23,729 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|       9 |       0.3833 |      0.8664 |            0.6253 |         0.6394 |     0.6251 |     0.4383 |    0.8452 |          0.5882 |       0.6177 |   0.6022 |
+2025-11-27 17:17:31,645 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      10 |       0.3765 |      0.8692 |            0.6434 |         0.6484 |     0.6346 |     0.4348 |    0.8414 |          0.5775 |       0.6478 |   0.6058 |
+2025-11-27 17:17:39,584 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      11 |       0.3572 |      0.8748 |            0.6597 |         0.6614 |     0.6495 |     0.4126 |    0.8553 |          0.7636 |       0.6427 |   0.6568 |
+2025-11-27 17:17:39,595 - INFO - 
+[INFO]: Saving best model at epoch 11 to: checkpoints/GRU_UIT_VSFC/GRU_UIT_VSFC_best_model.pth
+2025-11-27 17:17:47,584 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      12 |       0.3348 |      0.8841 |            0.7445 |         0.7151 |     0.7128 |     0.3943 |    0.8654 |          0.7443 |       0.7178 |   0.7255 |
+2025-11-27 17:17:47,584 - INFO - 
+[INFO]: Saving best model at epoch 12 to: checkpoints/GRU_UIT_VSFC/GRU_UIT_VSFC_best_model.pth
+2025-11-27 17:17:55,621 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      13 |       0.3093 |      0.8966 |            0.7925 |         0.7504 |     0.7538 |     0.4115 |    0.8686 |          0.7424 |       0.7537 |    0.744 |
+2025-11-27 17:17:55,621 - INFO - 
+[INFO]: Saving best model at epoch 13 to: checkpoints/GRU_UIT_VSFC/GRU_UIT_VSFC_best_model.pth
+2025-11-27 17:18:03,459 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      14 |       0.2923 |      0.9014 |            0.8075 |         0.7646 |     0.7671 |     0.3742 |    0.8724 |          0.8019 |       0.7315 |   0.7569 |
+2025-11-27 17:18:03,460 - INFO - 
+[INFO]: Saving best model at epoch 14 to: checkpoints/GRU_UIT_VSFC/GRU_UIT_VSFC_best_model.pth
+2025-11-27 17:18:11,285 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      15 |       0.2835 |      0.9042 |            0.8178 |         0.7767 |     0.7799 |     0.3909 |    0.8661 |          0.7653 |       0.7309 |   0.7397 |
+2025-11-27 17:18:19,159 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      16 |       0.2665 |      0.9102 |            0.8377 |         0.7986 |      0.801 |     0.3929 |    0.8692 |          0.7844 |       0.7419 |   0.7553 |
+2025-11-27 17:18:26,920 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      17 |       0.2576 |      0.9136 |            0.8301 |         0.8013 |     0.7998 |     0.4096 |    0.8705 |          0.7958 |       0.7392 |   0.7527 |
+2025-11-27 17:18:34,723 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      18 |        0.242 |      0.9214 |            0.8532 |         0.8205 |     0.8213 |      0.411 |    0.8673 |          0.7679 |       0.7496 |   0.7499 |
+2025-11-27 17:18:42,570 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      19 |       0.2338 |      0.9227 |            0.8528 |         0.8267 |      0.827 |     0.4152 |    0.8648 |          0.7449 |       0.7631 |   0.7535 |
+2025-11-27 17:18:50,439 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      20 |       0.2172 |       0.929 |             0.871 |         0.8365 |     0.8383 |     0.4352 |    0.8762 |          0.7977 |       0.7492 |   0.7716 |
+2025-11-27 17:18:50,439 - INFO - 
+[INFO]: Saving best model at epoch 20 to: checkpoints/GRU_UIT_VSFC/GRU_UIT_VSFC_best_model.pth
+2025-11-27 17:18:58,278 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      21 |       0.2071 |      0.9353 |            0.8801 |         0.8523 |     0.8528 |     0.4319 |    0.8686 |          0.7709 |       0.7507 |   0.7587 |
+2025-11-27 17:19:06,688 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      22 |       0.1984 |       0.935 |             0.896 |         0.8654 |     0.8661 |     0.4773 |    0.8654 |          0.7451 |       0.7471 |   0.7393 |
+2025-11-27 17:19:15,246 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      23 |       0.1883 |      0.9387 |            0.9015 |         0.8713 |     0.8737 |     0.4619 |    0.8686 |          0.7763 |       0.7514 |   0.7624 |
+2025-11-27 17:19:23,856 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      24 |        0.179 |      0.9425 |            0.9032 |         0.8731 |     0.8778 |     0.5093 |    0.8648 |          0.7661 |       0.7383 |   0.7499 |
+2025-11-27 17:19:31,952 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      25 |       0.1634 |       0.951 |            0.9197 |         0.8892 |      0.894 |     0.5196 |     0.861 |          0.7666 |       0.7468 |   0.7511 |
+2025-11-27 17:19:39,886 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      26 |       0.1566 |      0.9534 |            0.9187 |         0.9016 |     0.9004 |     0.4962 |    0.8642 |          0.7417 |       0.7617 |   0.7497 |
+2025-11-27 17:19:47,711 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      27 |       0.1484 |      0.9554 |            0.9271 |         0.8961 |     0.9023 |     0.5119 |    0.8661 |          0.7728 |       0.7454 |   0.7523 |
+2025-11-27 17:19:55,595 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      28 |       0.1402 |      0.9586 |            0.9337 |         0.9102 |     0.9141 |     0.5389 |    0.8661 |          0.7703 |         0.75 |   0.7579 |
+2025-11-27 17:20:03,846 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      29 |       0.1328 |      0.9602 |            0.9351 |         0.9135 |      0.916 |      0.554 |    0.8686 |          0.7909 |       0.7413 |   0.7589 |
+2025-11-27 17:20:12,181 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      30 |       0.1069 |      0.9709 |             0.955 |         0.9355 |     0.9395 |     0.5662 |    0.8654 |          0.7638 |       0.7568 |   0.7578 |
+2025-11-27 17:20:20,219 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      31 |       0.0963 |      0.9745 |            0.9602 |         0.9421 |     0.9466 |     0.5896 |    0.8629 |          0.7573 |       0.7531 |   0.7533 |
+2025-11-27 17:20:20,220 - INFO - TRIGGERED EARLY STOP AT 31! (Val F1 not improved for 10 epochs)
+2025-11-27 17:20:20,221 - INFO - 
+Best result based on F1 on validation set:
+2025-11-27 17:20:20,222 - INFO - Best epoch: 20, Best Val_Loss: 0.4352, Val_F1: 0.7716
+2025-11-27 17:20:20,222 - INFO - DONE TRAINING GRU_UIT_VSFC. Ran for 32 epochs.
+2025-11-27 17:20:20,222 - INFO - 
+[INFO] Starting final evaluation on the (unseen) test set...
+2025-11-27 17:20:20,223 - INFO - Loading best model from checkpoints/GRU_UIT_VSFC/GRU_UIT_VSFC_best_model.pth for final test evaluation...
+2025-11-27 17:20:20,260 - INFO - [INFO] Best model loaded successfully.
+2025-11-27 17:20:21,021 - INFO - [INFO] Test evaluation completed successfully.
+2025-11-27 17:20:21,021 - INFO - [INFO] Test Set Results: Loss: 0.4330, Acc: 0.8699, Precision: 0.7766, Recall: 0.7419, F1: 0.7583
+2025-11-27 17:20:21,023 - INFO - 
+Classification report for final (unseen) test set:
+2025-11-27 17:20:21,023 - INFO - 
+              precision    recall  f1-score   support
+
+           0       0.93      0.83      0.88       145
+           1       0.92      0.94      0.93      2290
+           2       0.52      0.50      0.51       159
+           3       0.74      0.70      0.72       572
+
+    accuracy                           0.87      3166
+   macro avg       0.78      0.74      0.76      3166
+weighted avg       0.87      0.87      0.87      3166
+
+2025-11-27 17:20:21,023 - INFO - Plotting training/validation results for GRU_UIT_VSFC.
+2025-11-27 17:20:44,982 - INFO - 
+Experiment GRU_UIT_VSFC finished successfully!
