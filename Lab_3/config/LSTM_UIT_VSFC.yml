@@ -1,0 +1,45 @@
+vocab:
+  vocab_prefix: "UIT_VSFC"
+  unk_piece: "<UNK>"
+  bos_piece: "<BOS>"
+  eos_piece: "<EOS>"
+  pad_piece: "<PAD>"
+  path:
+    train: "E://DS201.Q11//DS201//Lab_3//data//UIT-VSFC//UIT-VSFC-train_preprocessed.json"
+    val:   "E://DS201.Q11//DS201//Lab_3//data//UIT-VSFC//UIT-VSFC-dev_preprocessed.json"
+    test:  "E://DS201.Q11//DS201//Lab_3//data//UIT-VSFC//UIT-VSFC-test_preprocessed.json"
+  text: "sentence"
+  label: "topic"
+  max_length: 64
+  task_type: "text_classification" # or seq_labeling
+
+# --- Global Settings ---
+seed: 42
+checkpoint_dir: "checkpoints/LSTM_UIT_VSFC/"
+
+# --- Dataset Definitions ---
+datasets:
+  uit_vsfc:
+    train_path: "E://DS201.Q11//DS201//Lab_3//data//UIT-VSFC//UIT-VSFC-train_preprocessed.json"
+    val_path: "E://DS201.Q11//DS201//Lab_3//data//UIT-VSFC//UIT-VSFC-dev_preprocessed.json"
+    test_path: "E://DS201.Q11//DS201//Lab_3//data//UIT-VSFC//UIT-VSFC-test_preprocessed.json"
+
+# --- Model Definitions ---
+models:
+  LSTM: models.LSTM.LSTM 
+
+# --- Experiment Definition ---
+experiments:
+  - name: "LSTM_UIT_VSFC"
+    model: "LSTM"
+    dataset: "uit_vsfc"
+    hyperparameters:
+      epochs: 70
+      early_stop_patience: 20
+      lr: 0.0001
+      weight_decay: 0.00001
+      batch_size: 64
+      optimizer: "Adam"
+      step_size: 30
+      gamma: 0.1
+      optimizer_params: {}

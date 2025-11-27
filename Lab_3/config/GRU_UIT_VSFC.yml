@@ -1,0 +1,44 @@
+vocab:
+  vocab_prefix: "UIT_VSFC"
+  unk_piece: "<UNK>"
+  bos_piece: "<BOS>"
+  eos_piece: "<EOS>"
+  pad_piece: "<PAD>"
+  path:
+    train: "E://DS201.Q11//DS201//Lab_3//data//UIT-VSFC//UIT-VSFC-train_preprocessed.json"
+    val:   "E://DS201.Q11//DS201//Lab_3//data//UIT-VSFC//UIT-VSFC-dev_preprocessed.json"
+    test:  "E://DS201.Q11//DS201//Lab_3//data//UIT-VSFC//UIT-VSFC-test_preprocessed.json"
+  text: "sentence"
+  label: "topic"
+  max_length: 64
+  task_type: "text_classification" # or seq_labeling
+# --- Global Settings ---
+seed: 42
+checkpoint_dir: "checkpoints/GRU_UIT_VSFC/"
+
+# --- Dataset Definitions ---
+datasets:
+  uit_vsfc:
+    train_path: "E://DS201.Q11//DS201//Lab_3//data//UIT-VSFC//UIT-VSFC-train_preprocessed.json"
+    val_path: "E://DS201.Q11//DS201//Lab_3//data//UIT-VSFC//UIT-VSFC-dev_preprocessed.json"
+    test_path: "E://DS201.Q11//DS201//Lab_3//data//UIT-VSFC//UIT-VSFC-test_preprocessed.json"
+
+# --- Model Definitions ---
+models:
+  GRU: models.GRU.GRU 
+
+# --- Experiment Definition ---
+experiments:
+  - name: "GRU_UIT_VSFC"
+    model: "GRU"
+    dataset: "uit_vsfc"
+    hyperparameters:
+      epochs: 50
+      early_stop_patience: 10
+      lr: 0.0002
+      weight_decay: 0.00001
+      batch_size: 64
+      optimizer: "Adam"
+      step_size: 30
+      gamma: 0.1
+      optimizer_params: {}
