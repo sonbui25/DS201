@@ -26,7 +26,11 @@ class PhoNER_COVID19Dataset(Dataset):
         
         # Encode words
         joined_sentence = " ".join(words_list)
-        input_ids = self.vocab.encode_sentence(joined_sentence, max_len=self.config['vocab']['max_length'])
+        input_ids = self.vocab.encode_sequence_labeling(joined_sentence, max_len=self.config['vocab']['max_length'])
+        # print("Input IDs:", input_ids)
+        # Decode (for debugging)
+        # decoded_sentence = self.vocab.decode_sentence(input_ids.unsqueeze(0), join_words=False)
+        # print("Decoded Sentence:", decoded_sentence)
         label_ids = [self.vocab.encode_label(tag) for tag in tags]
 
         # Padding labels to match input_ids length
@@ -38,3 +42,4 @@ class PhoNER_COVID19Dataset(Dataset):
             "input_ids": input_ids,
             "label": torch.tensor(label_ids).long()
         }
+

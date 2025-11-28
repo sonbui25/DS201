@@ -203,7 +203,7 @@ def main():
     # tablefmt="grid" tạo khung viền đẹp
     distribution_table = tabulate(table_data, headers=table_headers, tablefmt="grid")
     
-    logger.info(f"\n[INFO] Class Distribution (Raw Data - No Padding):\n{distribution_table}")
+    logger.info(f"\n[INFO] Class Distribution (Train Data):\n{distribution_table}")
     # ---------------------------------------
     
     loss_fn = torch.nn.CrossEntropyLoss()

@@ -127,14 +127,15 @@ class ClassificationTraining():
         pbar = tqdm(range(start_epoch, epochs), desc="Epoch", total=pbar_total, initial=start_epoch)
         
         for epoch in pbar:
+            
             train_loss, train_acc, train_precision, train_recall, train_f1 = self.train_step(epoch_pbar=pbar)
             val_loss, val_acc, val_precision, val_recall, val_f1 = self.val_step()
-            
+
             row = [
                 epoch, f"{train_loss:.4f}", f"{train_acc:.4f}", f"{train_precision:.4f}", f"{train_recall:.4f}", f"{train_f1:.4f}",
                 f"{val_loss:.4f}", f"{val_acc:.4f}", f"{val_precision:.4f}", f"{val_recall:.4f}", f"{val_f1:.4f}"
             ]
-            
+
             results["train_loss"].append(train_loss)
             results["train_acc"].append(train_acc)
             results["train_precision"].append(train_precision)
@@ -145,7 +146,7 @@ class ClassificationTraining():
             results["val_precision"].append(val_precision)
             results["val_recall"].append(val_recall)
             results["val_f1"].append(val_f1)
-            
+
             if self.scheduler is not None:
                 self.scheduler.step()
 
@@ -155,7 +156,7 @@ class ClassificationTraining():
             # ---------------------
 
             actual_epochs_ran = epoch + 1
-            
+
             # Early stopping & checkpoint logic
             if val_f1 > self.best_val_f1:
                 self.best_val_loss = val_loss
@@ -165,10 +166,10 @@ class ClassificationTraining():
                 epochs_no_improve = 0
             else:
                 epochs_no_improve += 1
-                if epochs_no_improve > early_stop_epochs:
-                    self.log(f"TRIGGERED EARLY STOP AT {epoch}! (Val F1 not improved for {early_stop_epochs} epochs)")
-                    break
             
+            if epochs_no_improve >= early_stop_epochs:
+                self.log(f"TRIGGERED EARLY STOP AT {epoch}! (Val F1 not improved for {early_stop_epochs} epochs)")
+                break
             # Always save last checkpoint
             self.save_last_checkpoint(last_ckpt_path, epoch)
             

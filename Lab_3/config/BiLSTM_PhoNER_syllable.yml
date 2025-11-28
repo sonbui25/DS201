@@ -34,8 +34,8 @@ experiments:
     dataset: "phoner_syllable"
     hyperparameters:
       epochs: 50
-      early_stop_patience: 10
-      lr: 0.002
+      early_stop_patience: 20
+      lr: 0.003
       weight_decay: 0.00001
       batch_size: 64
       optimizer: "Adam"
