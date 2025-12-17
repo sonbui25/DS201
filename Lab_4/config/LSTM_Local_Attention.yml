@@ -5,9 +5,9 @@ vocab:
   eos_piece: "<EOS>"
   pad_piece: "<PAD>"
   path:
-    train: "/kaggle/input/small-phomt/train.json"
-    val:   "/kaggle/input/small-phomt/dev.json"
-    test:  "/kaggle/input/small-phomt/test.json"
+    train: "./data/small-PhoMT/train.json"
+    val:   "./data/small-PhoMT/dev.json"
+    test:  "./data/small-PhoMT/test.json"
   source_text: "english"
   target_text: "vietnamese"
   max_length: 64
@@ -15,23 +15,23 @@ vocab:
 
 # --- Global Settings ---
 seed: 42
-checkpoint_dir: "/kaggle/working/DS201/checkpoints/LSTM_PhoMT/"
+checkpoint_dir: "./checkpoints/LSTM_Local_Attention_PhoMT/"
 
 # --- Dataset Definitions ---
 datasets:
   pho_mt:
-    train_path: "/kaggle/input/small-phomt/train.json"
-    val_path: "/kaggle/input/small-phomt/dev.json"
-    test_path: "/kaggle/input/small-phomt/test.json"
+    train_path: "./data/small-PhoMT/train.json"
+    val_path: "./data/small-PhoMT/dev.json"
+    test_path: "./data/small-PhoMT/test.json"
 
 # --- Model Definitions ---
 models:
-  LSTM: models.LSTM.LSTM 
+  LSTM_Local_Attention: models.LSTM_Local_Attention.LSTM_Local_Attention 
 
 # --- Experiment Definition ---
 experiments:
-  - name: "LSTM_PhoMT"
-    model: "LSTM"
+  - name: "LSTM_Local_Attention_PhoMT"
+    model: "LSTM_Local_Attention"
     dataset: "pho_mt"
     hyperparameters:
       epochs: 30
@@ -48,3 +48,4 @@ experiments:
       encoder_layers: 3
       decoder_layers: 3
       dropout: 0.1
+      D: 10

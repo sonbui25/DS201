@@ -52,25 +52,32 @@ class Seq2SeqTraining():
         for batch, (X, y) in enumerate(self.train_loader):
             X, y = X.to(self.device), y.to(self.device)
             y_pred = self.model(X, y) # (batch_size, seq_len, vocab_size)
-            
             # Reshape for loss computation
-            y_pred = y_pred.view(-1, y_pred.shape[-1]) # (batch_size*seq_len, vocab_size)
-            y = y.view(-1) # (batch_size*seq_len)
-            loss = self.loss_fn(y_pred, y)
+            y_pred_flat = y_pred.view(-1, y_pred.shape[-1]) # (batch_size*seq_len, vocab_size)
+            
+            # Compute loss
+            # Shift y for loss computation (remove <BOS>)
+            y_target = y[:, 1:] # (batch_size, seq_len)
+            y_target_flat = y_target.reshape(-1) # (batch_size*seq_len)
+            
+            loss = self.loss_fn(y_pred_flat, y_target_flat)
+                
             train_loss.append(loss.item()) # Loss for this batch
             self.optimizer.zero_grad()
             loss.backward()
             self.optimizer.step()
-            
-            y_pred_class = torch.argmax(y_pred, dim=1)
-            
-            # Compute ROUGE-L
+            y_pred_class = torch.argmax(y_pred, dim=2) # (batch_size, seq_len)
+            # print(y_target.shape)
+            # print(y_pred_class.shape)
+            # Loop qua từng sample trong batch
             scorer = rouge_scorer.RougeScorer(['rougeL'], use_stemmer=True)
-            references = self.vocab.decode_sentence(y.unsqueeze(0), self.vocab.tgt_language)
-            predictions = self.vocab.decode_sentence(y_pred_class.unsqueeze(0), self.vocab.tgt_language)
-    
-            rouge_L_scores = [scorer.score(ref, pred)['rougeL'].fmeasure for ref, pred in zip(references, predictions)]
-            train_rouge_L.append(rouge_L_scores)
+            for i in range(y_target.shape[0]):  # Iterate batch size
+                ref_list = self.vocab.decode_sentence(y_target[i].unsqueeze(0), self.vocab.tgt_language)
+                references = ref_list[0]
+                pred_list = self.vocab.decode_sentence(y_pred_class[i].unsqueeze(0), self.vocab.tgt_language)
+                predictions = pred_list[0]
+                rouge_L = scorer.score(references, predictions)['rougeL'].fmeasure
+                train_rouge_L.append(rouge_L)
             
             # update postfix on outer epoch tqdm so loss can be monitored
             if epoch_pbar is not None:
@@ -88,22 +95,33 @@ class Seq2SeqTraining():
         with torch.inference_mode():
             for X, y in self.val_loader:
                 X, y = X.to(self.device), y.to(self.device)
-                y_pred = self.predict(X)
+                y_pred = self.model(X)
+                # Reshape for loss computation
+                y_pred_flat = y_pred.view(-1, y_pred.shape[-1]) # (batch_size*seq_len, vocab_size)
                 
                 # Compute loss
-                loss = self.loss_fn(y_pred, y)
-                val_loss.append(loss.item())
-                y_pred_class = torch.argmax(y_pred, dim=1)
-                y_true_all.extend(y.cpu().numpy())
-                y_pred_all.extend(y_pred_class.cpu().numpy())
+                # Shift y for loss computation (remove <BOS>)
+                y_target = y[:, 1:]
+                y_target_flat = y_target.reshape(-1) # (batch_size*seq_len)
                 
-                # Compute ROUGE-L
+                loss = self.loss_fn(y_pred_flat, y_target_flat)
+                    
+                val_loss.append(loss.item()) # Loss for this batch
+                
+                y_pred_class = torch.argmax(y_pred, dim=2)
+                
+                # Compute ROUGE-L for each sample in batch
                 scorer = rouge_scorer.RougeScorer(['rougeL'], use_stemmer=True)
-                references = [self.val_loader.dataset.vocab.decode_sentence(y_i.cpu().numpy()) for y_i in y_true_all]
-                predictions = [self.val_loader.dataset.vocab.decode_sentence(y_i.cpu().numpy()) for y_i in y_pred_all]
-                rouge_L_scores = [scorer.score(ref, pred)['rougeL'].fmeasure for ref, pred in zip(references, predictions)]
-                val_rouge_L.extend(rouge_L_scores)
-                                  
+                for i in range(y_target.shape[0]):
+                    ref_list = self.vocab.decode_sentence(y_target[i].unsqueeze(0), self.vocab.tgt_language)
+                    references = ref_list[0]
+                    
+                    pred_list = self.vocab.decode_sentence(y_pred_class[i].unsqueeze(0), self.vocab.tgt_language)
+                    predictions = pred_list[0]
+                    
+                    rouge_L = scorer.score(references, predictions)['rougeL'].fmeasure
+                    val_rouge_L.append(rouge_L)
+                                    
 
         val_loss = np.mean(val_loss)
         val_rouge_L = np.mean(val_rouge_L)
@@ -186,13 +204,6 @@ class Seq2SeqTraining():
         self.log("\nBest result based on ROUGE-L on validation set:")
         self.log(f"Best epoch: {self.best_epoch}, Best Val_Loss: {self.best_val_loss:.4f}, Val_ROUGE-L: {self.best_val_rouge_L:.4f}")
         
-        # # Cleanup handlers
-        # if self.logger:
-        #     for handler in self.logger.handlers:
-        #         handler.close()
-        #         self.logger.removeHandler(handler)
-        #     self.logger = None
-
         return results, actual_epochs_ran
 
     def evaluate(self, dataloader: torch.utils.data.DataLoader) -> Tuple[Dict[str, float], str]:
@@ -207,21 +218,32 @@ class Seq2SeqTraining():
         with torch.inference_mode():
             for X, y in tqdm(dataloader, desc="Evaluating Test Set"):
                 X, y = X.to(self.device), y.to(self.device)
-                y_pred= self.predict(X)
+                y_pred = self.model(X)
+                # Reshape for loss computation
+                y_pred_flat = y_pred.view(-1, y_pred.shape[-1]) # (batch_size*seq_len, vocab_size)
                 
                 # Compute loss
-                loss = self.loss_fn(y_pred, y)
-                test_loss += loss.item()
-                test_pred_label = torch.argmax(y_pred, dim=1)
-                y_true_all.extend(y.cpu().numpy())
-                y_pred_all.extend(test_pred_label.cpu().numpy())
+                # Shift y for loss computation (remove <BOS>)
+                y_target = y[:, 1:]
+                y_target_flat = y_target.reshape(-1) # (batch_size*seq_len)
                 
-                # Compute ROUGE-L
+                loss = self.loss_fn(y_pred_flat, y_target_flat)
+                    
+                test_loss.append(loss.item()) # Loss for this batch
+                
+                y_pred_class = torch.argmax(y_pred, dim=2)
+                
+                # Compute ROUGE-L for each sample in batch
                 scorer = rouge_scorer.RougeScorer(['rougeL'], use_stemmer=True)
-                references = [dataloader.dataset.vocab.decode_sentence(y_i.cpu().numpy()) for y_i in y_true_all]
-                predictions = [dataloader.dataset.vocab.decode_sentence(y_i.cpu().numpy()) for y_i in y_pred_all]
-                rouge_L_scores = [scorer.score(ref, pred)['rougeL'].fmeasure for ref, pred in zip(references, predictions)]
-                test_rouge_L.extend(rouge_L_scores)
+                for i in range(y_target.shape[0]):
+                    ref_list = self.vocab.decode_sentence(y_target[i].unsqueeze(0), self.vocab.tgt_language)
+                    references = ref_list[0]
+                    
+                    pred_list = self.vocab.decode_sentence(y_pred_class[i].unsqueeze(0), self.vocab.tgt_language)
+                    predictions = pred_list[0]
+                    
+                    rouge_L = scorer.score(references, predictions)['rougeL'].fmeasure
+                    test_rouge_L.append(rouge_L)
                                   
 
         test_loss /= len(dataloader)

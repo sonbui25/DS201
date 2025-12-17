@@ -3,7 +3,8 @@ from torch import nn
 import torch.nn.functional as F
 import random
 
-class LSTM(nn.Module):
+# Bahdanau Attention based on "Neural Machine Translation by Jointly Learning to Align and Translate" (Bahdanau et al., 2015)
+class LSTM_Bahdanau(nn.Module):
     def __init__(self, vocab, config):
         super().__init__()
         self.config = config
@@ -43,7 +44,20 @@ class LSTM(nn.Module):
         # Encoder Output Dim = hidden_dim * 2 (do 2 chiều: Forward + Backward)
         self.enc_output_dim = self.hidden_dim * 2
         
-        #  2. DECODER (Multi-layer LSTMCells) 
+        #  2. ATTENTION LAYERS (Bahdanau) 
+        # e_ij = v_a * tanh(W_a * s_{i-1} + U_a * h_j)
+        
+        # W_a: Chiếu Decoder Hidden state (s_{i-1})
+        self.W_a = nn.Linear(self.enc_output_dim, self.enc_output_dim) 
+        
+        # U_a: Chiếu Encoder Outputs (h_j)
+        self.U_a = nn.Linear(self.enc_output_dim, self.enc_output_dim) 
+        
+        # v_a: Chiếu về 1 scalar score
+        self.v_a = nn.Linear(self.enc_output_dim, 1, bias=False)
+        
+        #  3. DECODER (Multi-layer LSTMCells) 
+        # Vì cần can thiệp vào từng bước time-step để tính Attention -> dùng ModuleList chứa các LSTMCell thay vì nn.LSTM.
         
         self.decoder_cells = nn.ModuleList()
         
@@ -66,6 +80,28 @@ class LSTM(nn.Module):
         self.fc_out = nn.Linear(self.enc_output_dim, vocab.get_tgt_vocab_size())
         self.dropout = nn.Dropout(self.dropout_rate)
 
+    def calculate_attention(self, s_prev, enc_outputs):
+        """
+        s_prev: Hidden state của lớp Decoder CUỐI CÙNG (Top layer) tại bước trước [batch, dec_hidden_dim]
+        enc_outputs: Output của encoder [batch, src_len, dec_hidden_dim]
+        """
+        # s_prev: [batch, dec_hidden] -> [batch, 1, dec_hidden]
+        s_prev_expanded = s_prev.unsqueeze(1)
+        
+        # Energy: [batch, src_len, dec_hidden]
+        energy = torch.tanh(self.W_a(s_prev_expanded) + self.U_a(enc_outputs))
+        
+        # Scores: [batch, src_len, 1]
+        scores = self.v_a(energy)
+        
+        # Weights: [batch, src_len, 1]
+        weights = F.softmax(scores, dim=1)
+        
+        # Context: [batch, dec_hidden]
+        context = torch.sum(weights * enc_outputs, dim=1)
+        
+        return context
+
     def forward(self, x, y=None):
         """
         x: [batch, src_len]
@@ -80,19 +116,13 @@ class LSTM(nn.Module):
         # hidden, cell: [2 * enc_layers, batch, hidden_dim]
         enc_outputs, (hidden, cell) = self.encoder(embedded_x)
         
-        # CONTEXT VECTOR (Dùng hidden state cuối cùng của Encoder)
-        # Lấy hidden state cuối cùng của cả chiều Forward và Backward
-        hidden_fwd = hidden[-2]
-        hidden_bwd = hidden[-1]
-        context = torch.cat((hidden_fwd, hidden_bwd), dim=1)  # [batch, hidden_dim * 2]
-        
         #  PREPARE DECODER STATES
-        # Reshape để tách chiều Forward/Backward
+        # 1. Reshape để tách chiều Forward/Backward
         # [2*layers, batch, hidden] -> [layers, 2, batch, hidden]
         hidden = hidden.view(self.encoder_layers, 2, batch_size, self.hidden_dim)
         cell = cell.view(self.encoder_layers, 2, batch_size, self.hidden_dim)
         
-        # Concat Forward và Backward để khớp với decoder_hidden_dim (là 2*hidden_dim)
+        # 2. Concat Forward và Backward để khớp với decoder_hidden_dim (là 2*hidden_dim)
         # -> [layers, batch, 2*hidden]
         dec_hidden_states = torch.cat((hidden[:, 0, :, :], hidden[:, 1, :, :]), dim=2)
         dec_cell_states = torch.cat((cell[:, 0, :, :], cell[:, 1, :, :]), dim=2)
@@ -118,13 +148,19 @@ class LSTM(nn.Module):
         # Bắt đầu từ 1 vì 0 là <BOS> đã xử lý
         # Tuy nhiên nếu y=None, loop đến max_len. 
         # Nếu y!=None, loop đến max_len hoặc đến khi gặp EOS.      
+       
         num_steps = range(1, max_len) if y is not None else range(max_len)
         
         for t in num_steps:
-            # Embed input: [batch, emb_dim]
+            # 1. Embed input: [batch, emb_dim]
             emb_input = self.dropout(self.tgt_embedding(decoder_input))
             
-            # Decoder Layer 0 (Input + Context)
+            # 2. Calculate Attention
+            # Dùng hidden state của layer cuối cùng (top layer) từ bước trước để tính attention
+            s_top_prev = h_states[-1] 
+            context = self.calculate_attention(s_top_prev, enc_outputs)
+            
+            # 3. Decoder Layer 0 (Input + Context)
             # print(emb_input.shape, context.shape)
             emb_and_context = torch.cat((emb_input, context), dim=1) # [batch, emb_dim + enc_output_dim]
             
@@ -133,18 +169,18 @@ class LSTM(nn.Module):
             # Input cho các layer tiếp theo là hidden state của layer trước
             current_layer_input = h_states[0]
             
-            # Decoder Layers 1...N (Duyệt xong layer 0 rồi duyệt tiếp các layer còn lại trong cùng 1 time-step)
+            # 4. Decoder Layers 1...N (Duyệt xong layer 0 rồi duyệt tiếp các layer còn lại trong cùng 1 time-step)
             for i in range(1, self.decoder_layers):
                 # Có thể thêm dropout giữa các layer LSTM nếu muốn
                 # current_layer_input = self.dropout(current_layer_input) 
                 h_states[i], c_states[i] = self.decoder_cells[i](current_layer_input, (h_states[i], c_states[i]))
                 current_layer_input = h_states[i]
             
-            # Prediction (Dùng output của layer cuối cùng)
+            # 5. Prediction (Dùng output của layer cuối cùng)
             prediction = self.fc_out(h_states[-1]) # [batch, vocab_size]
             outputs.append(prediction.unsqueeze(1))
             
-            # Chọn input cho bước tiếp theo
+            # 6. Chọn input cho bước tiếp theo
             if y is not None:
                 # Training: Teacher Forcing (Dùng từ thật)
                 decoder_input = y[:, t] 

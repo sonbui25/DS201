@@ -14,7 +14,7 @@ from torch.utils.data import DataLoader, Subset
 from sklearn.model_selection import train_test_split
 
 # Import models, dataset classes and task engine
-from models import LSTM
+from models import LSTM, LSTM_Bahdanau, LSTM_Local_Attention
 from tasks import seq2seq_engine
 from dataloaders import PhoMTDataset
 from utils.utils import plot_metrics, collate_fn
@@ -127,8 +127,8 @@ def main():
     # Map model names to classes
     model_classes = {
         'LSTM': LSTM,
-        # 'GRU': GRU,
-        # 'BiLSTM': BiLSTM
+        'LSTM_Bahdanau': LSTM_Bahdanau,
+        'LSTM_Local_Attention': LSTM_Local_Attention
     }
     if model_key not in model_classes:
         logger.error(f"Error: Model '{model_key}' not found in model_classes mapping.")
