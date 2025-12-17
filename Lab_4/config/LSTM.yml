@@ -5,9 +5,9 @@ vocab:
   eos_piece: "<EOS>"
   pad_piece: "<PAD>"
   path:
-    train: "/kaggle/input/small-phomt/train.json"
-    val:   "/kaggle/input/small-phomt/dev.json"
-    test:  "/kaggle/input/small-phomt/test.json"
+    train: "/kaggle/input/small-phomt/train_preprocessed.json"
+    val:   "/kaggle/input/small-phomt/dev_preprocessed.json"
+    test:  "/kaggle/input/small-phomt/test_preprocessed.json"
   source_text: "english"
   target_text: "vietnamese"
   task_type: "machine_translation" 
@@ -19,9 +19,9 @@ checkpoint_dir: "/kaggle/working/DS201/checkpoints/LSTM_PhoMT/"
 # --- Dataset Definitions ---
 datasets:
   pho_mt:
-    train_path: "/kaggle/input/small-phomt/train.json"
-    val_path: "/kaggle/input/small-phomt/dev.json"
-    test_path: "/kaggle/input/small-phomt/test.json"
+    train_path: "/kaggle/input/small-phomt/train_preprocessed.json"
+    val_path: "/kaggle/input/small-phomt/dev_preprocessed.json"
+    test_path: "/kaggle/input/small-phomt/test_preprocessed.json"
 
 # --- Model Definitions ---
 models:
@@ -33,8 +33,8 @@ experiments:
     model: "LSTM"
     dataset: "pho_mt"
     hyperparameters:
-      epochs: 30
-      early_stop_patience: 5
+      epochs: 50
+      early_stop_patience: 10
       lr: 0.001
       weight_decay: 0.00001
       batch_size: 32

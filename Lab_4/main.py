@@ -14,12 +14,13 @@ from torch.utils.data import DataLoader, Subset
 from sklearn.model_selection import train_test_split
 
 # Import models, dataset classes and task engine
-from models import LSTM, LSTM_Bahdanau, LSTM_Local_Attention
+from models import LSTM, LSTM_Bahdanau, LSTM_Global_Attention, LSTM_Local_Attention
 from tasks import seq2seq_engine
 from dataloaders import PhoMTDataset
 from utils.utils import plot_metrics, collate_fn
 from utils.vocab import Vocab
 from functools import partial
+import os
 
 # Setup warnings
 warnings.filterwarnings("ignore", message=".*number of unique classes.*", category=UserWarning)
@@ -109,18 +110,24 @@ def main():
     torch.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
-    g = torch.Generator()
-    g.manual_seed(seed)
     
-    logger.info(f"\nRunning Experiment: {exp_name}")
-    logger.info(f"Model: {model_key}, Dataset: {dataset_key}")
-    logger.info(f"Hyperparameters: {hp}")
-
     # Setup device
     device = "cuda" if torch.cuda.is_available() else "cpu"
     logger.info(f"Using device: {device}")
     if device == "cuda":
-        torch.cuda.manual_seed_all(seed)
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)  # Nếu dùng multi-GPU
+        # Thêm biến môi trường để tăng reproducibility với CUDA
+        os.environ['CUBLAS_WORKSPACE_CONFIG'] = ':16:8'
+        os.environ['PYTHONHASHSEED'] = str(seed)
+    
+    g = torch.Generator()
+    g.manual_seed(seed)
+    
+    logger.info(f"Random seed set to: {seed}")
+    logger.info(f"\nRunning Experiment: {exp_name}")
+    logger.info(f"Model: {model_key}, Dataset: {dataset_key}")
+    logger.info(f"Hyperparameters: {hp}")
         
     # Load tokenizer
     vocab = Vocab(config['vocab'])
@@ -130,6 +137,7 @@ def main():
     model_classes = {
         'LSTM': LSTM,
         'LSTM_Bahdanau': LSTM_Bahdanau,
+        'LSTM_Global_Attention': LSTM_Global_Attention,
         'LSTM_Local_Attention': LSTM_Local_Attention
     }
     if model_key not in model_classes:
@@ -257,18 +265,18 @@ def main():
     logger.info(f"DONE TRAINING {exp_name}. Ran for {actual_epochs_ran} epochs.")
 
     # Run final evaluation
-    logger.info(f"\n[INFO] Starting final evaluation on the (unseen) test set...")
+    logger.info(f"\n Starting final evaluation on the (unseen) test set...")
     best_model_path = os.path.join(checkpoint_dir, f"{exp_name}_best_model.pth")
     logger.info(f"Loading best model from {best_model_path} for final test evaluation...")
 
     try:
         trainer.load_best_model_for_eval(best_model_path)
-        logger.info("[INFO] Best model loaded successfully.")
+        logger.info(" Best model loaded successfully.")
         test_metrics = trainer.evaluate(test_dataloader, output_log_path=output_log_path)
-        logger.info("[INFO] Test evaluation completed successfully.")
-        logger.info(f"[INFO] Test Set Results: Loss: {test_metrics['loss']:.4f}, ROUGE-L: {test_metrics['rouge_L']:.4f}")
+        logger.info(" Test evaluation completed successfully.")
+        logger.info(f" Test Set Results: Loss: {test_metrics['loss']:.4f}, ROUGE-L: {test_metrics['rouge_L']:.4f}")
     except Exception as e:
-        logger.error(f"[ERROR] Error during final test set evaluation: {e}")
+        logger.error(f"Error during final test set evaluation: {e}")
 
     logger.info(f"Plotting training/validation results for {exp_name}.")
     plot_metrics(results, epochs=actual_epochs_ran, model_name=exp_name, dataset_name=dataset_key)

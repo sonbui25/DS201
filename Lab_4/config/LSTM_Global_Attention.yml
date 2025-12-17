@@ -14,7 +14,7 @@ vocab:
 
 # --- Global Settings ---
 seed: 42
-checkpoint_dir: "/kaggle/working/DS201/checkpoints/LSTM_Local_Attention_PhoMT/"
+checkpoint_dir: "/kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/"
 
 # --- Dataset Definitions ---
 datasets:
@@ -25,12 +25,12 @@ datasets:
 
 # --- Model Definitions ---
 models:
-  LSTM_Local_Attention: models.LSTM_Local_Attention.LSTM_Local_Attention 
+  LSTM_Global_Attention: models.LSTM_Global_Attention.LSTM_Global_Attention 
 
 # --- Experiment Definition ---
 experiments:
-  - name: "LSTM_Local_Attention_PhoMT"
-    model: "LSTM_Local_Attention"
+  - name: "LSTM_Global_Attention_PhoMT"
+    model: "LSTM_Global_Attention"
     dataset: "pho_mt"
     hyperparameters:
       epochs: 50
@@ -47,5 +47,4 @@ experiments:
       encoder_layers: 3
       decoder_layers: 3
       dropout: 0.1
-      D: 10
       max_length: 64

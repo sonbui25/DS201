@@ -1,185 +1,133 @@
 import json
 import re
-from num2words import num2words
 import os
 from unicodedata import normalize
-from typing import List, Tuple
+try:
+    from num2words import num2words
+except ImportError:
+    print("Vui lòng cài đặt thư viện num2words: pip install num2words")
+    num2words = None
 
-def replace_numbers_with_words(text):
-    """Chuyển đổi chuỗi số thành chữ tiếng Việt."""
+def detect_language_simple(text: str) -> str:
+    """Nhận diện ngôn ngữ đơn giản: 'vi' hoặc 'en'."""
+    vietnamese_chars = set("àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ")
+    if any(char in vietnamese_chars for char in text.lower()):
+        return 'vi'
+    return 'en'
+
+def replace_numbers(text: str, lang: str) -> str:
+    """Chuyển đổi số thành chữ (giữ nguyên logic ưu tiên float/int)."""
+    if num2words is None: return text 
+
     def replace(match):
         number_str = match.group()
         try:
             # Ưu tiên float nếu có dấu chấm, ngược lại là int
             number = float(number_str) if '.' in number_str else int(number_str)
-            return num2words(number, lang='vi')
+            # num2words trả về chuỗi (vd: "mười chín"), ta trả về luôn để regex thay thế
+            return num2words(number, lang=lang)
         except:
             return number_str
+            
     # Regex bắt số nguyên hoặc số thập phân
     return re.sub(r'-?\d+(\.\d+)?', replace, text)
 
-def process_single_token(token: str) -> List[str]:
+def preprocess_sentence(sentence: str, lang: str = None) -> str:
     """
-    Xử lý một token đơn lẻ: chuẩn hóa, tách ký tự đặc biệt, đổi số.
-    Trả về danh sách các sub-tokens.
+    Tiền xử lý câu:
+    1. Chuẩn hóa & Lowercase
+    2. Tách các ký tự đặc biệt
+    3. Chuyển số thành chữ
     """
-    token = token.lower()
-    token = normalize("NFKC", token)
+    if not isinstance(sentence, str) or not sentence.strip():
+        return ""
     
-    # 1. Tách các ký tự đặc biệt bằng cách thêm khoảng trắng
-    if len(token) > 1:
-        token = re.sub(r"!", " ! ", token)
-        token = re.sub(r"\?", " ? ", token)
-        token = re.sub(r":", " : ", token)
-        token = re.sub(r";", " ; ", token)
-        token = re.sub(r",", " , ", token)
-        token = re.sub(r"\"", " \" ", token)
-        token = re.sub(r"'", " ' ", token)
-        token = re.sub(r"\(", " ( ", token)
-        token = re.sub(r"\[", " [ ", token)
-        token = re.sub(r"\)", " ) ", token)
-        token = re.sub(r"\]", " ] ", token)
-        token = re.sub(r"/", " / ", token)
-        token = re.sub(r"\.", " . ", token)
-        token = re.sub(r"-", " - ", token)
-        token = re.sub(r"\$", " $ ", token)
-        token = re.sub(r"\&", " & ", token)
-        token = re.sub(r"\*", " * ", token)
+    # 1. Chuẩn hóa & Lowercase
+    sentence = normalize("NFKC", sentence).lower().strip()
+    
+    # 2. Tách các ký tự đặc biệt
+    sentence = re.sub(r"!", " ! ", sentence)
+    sentence = re.sub(r"\?", " ? ", sentence)
+    sentence = re.sub(r":", " : ", sentence)
+    sentence = re.sub(r";", " ; ", sentence)
+    sentence = re.sub(r",", " , ", sentence)
+    sentence = re.sub(r"\"", " \" ", sentence)
+    sentence = re.sub(r"'", " ' ", sentence)
+    sentence = re.sub(r"\(", " ( ", sentence)
+    sentence = re.sub(r"\[", " [ ", sentence)
+    sentence = re.sub(r"\)", " ) ", sentence)
+    sentence = re.sub(r"\]", " ] ", sentence)
+    sentence = re.sub(r"/", " / ", sentence)
+    # Lưu ý: Dấu chấm có thể là kết thúc câu hoặc số thập phân. 
+    sentence = re.sub(r"(?<!\d)\.(?!\d)", " . ", sentence) 
+    sentence = re.sub(r"-", " - ", sentence)
+    sentence = re.sub(r"\$", " $ ", sentence)
+    sentence = re.sub(r"\&", " & ", sentence)
+    sentence = re.sub(r"\*", " * ", sentence)
 
-    # 2. Split ra thành các sub-token (ví dụ "COVID-19" -> ["covid", "-", "19"])
-    sub_tokens = token.strip().split()
+    # 3. Nhận diện ngôn ngữ (nếu chưa có)
+    if lang is None:
+        lang = detect_language_simple(sentence)
 
-    # 3. Đổi số thành chữ cho từng sub-token
+    # 4. Chuyển số thành chữ (xử lý trên từng từ sau khi đã tách đặc biệt)
+    # Split ra để xử lý số, tránh bị dính các ký tự lạ còn sót
+    tokens = sentence.split()
     final_tokens = []
-    for sub in sub_tokens:
-        wordified = replace_numbers_with_words(sub)
-        # num2words có thể trả về chuỗi có khoảng trắng (ví dụ "mười chín")
-        # nên cần split tiếp để đảm bảo cấu trúc phẳng
-        final_tokens.extend(wordified.split())
-        
-    return final_tokens
+    for token in tokens:
+        # Gọi hàm đổi số
+        wordified = replace_numbers(token, lang)
+        final_tokens.append(wordified)
+    
+    # Nối lại thành chuỗi
+    return " ".join(final_tokens)
 
-def preprocess_token_list(word_list: List[str]) -> Tuple[List[str], List[int]]:
-    """
-    Xử lý danh sách các từ (input list) và trả về danh sách mới + mapping index gốc.
-    """
-    new_words = []
-    original_indices = []
-
-    for i, token in enumerate(word_list):
-        # Xử lý token hiện tại
-        processed_tokens = process_single_token(token)
-        
-        # Thêm vào danh sách mới
-        new_words.extend(processed_tokens)
-        
-        # Mapping: Các token mới sinh ra đều trỏ về index i của token gốc
-        # Ví dụ: token cũ là "19" (index 5) -> "mười", "chín" -> cả 2 đều có index 5
-        original_indices.extend([i] * len(processed_tokens))
-
-    return new_words, original_indices
-
-def convert_numbers_in_file(input_path, output_path, task, text_key, label_key):
-    # Đọc file
-    try:
-        data = []
-        with open(input_path, 'r', encoding='utf-8') as f:
-            for line in f:
-                line = line.strip()
-                if line:
-                    try:
-                        data.append(json.loads(line))
-                    except json.JSONDecodeError:
-                        print(f"Lỗi format JSON ở dòng: {line[:50]}...")
-    except FileNotFoundError:
-        print(f"File not found: {input_path}")
+def process_translation_file(input_path, output_path, src_key="english", tgt_key="vietnamese"):
+    if not os.path.exists(input_path):
+        print(f"[BỎ QUA] Không tìm thấy: {input_path}")
         return
 
-    new_data = []
-    skipped_count = 0
+    try:
+        with open(input_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+    except Exception as e:
+        print(f"[LỖI] Đọc file thất bại: {e}")
+        return
 
-    for index, sample in enumerate(data):
-        if text_key not in sample:
-            continue
-
-        raw_words = sample[text_key] # Đây là List: ["Từ", "Từ", ...]
+    processed_data = []
+    
+    for item in data:
+        src_text = item.get(src_key, "")
+        tgt_text = item.get(tgt_key, "")
         
-        # Kiểm tra kiểu dữ liệu để đảm bảo đúng format
-        if isinstance(raw_words, str):
-            # Fallback nếu dữ liệu lỡ là string (tách tạm bằng split)
-            raw_words = raw_words.split() 
-
-        # --- XỬ LÝ CHÍNH ---
-        # Hàm mới trả về list words đã xử lý và mapping index
-        new_words, original_indices = preprocess_token_list(raw_words)
+        # Xử lý với ngôn ngữ cụ thể
+        clean_src = preprocess_sentence(src_text, lang='en')
+        clean_tgt = preprocess_sentence(tgt_text, lang='vi')
         
-        # Cập nhật lại words mới vào sample
-        sample[text_key] = new_words 
+        if clean_src and clean_tgt:
+            processed_data.append({
+                src_key: clean_src,
+                tgt_key: clean_tgt
+            })
 
-        # Xử lý Labels (Tags) cho bài toán Seq Labeling
-        if task == "seq_labeling":
-            if label_key in sample:
-                raw_tags = sample[label_key]
-                new_tags = []
-                
-                # Mapping tag dựa trên index gốc
-                valid_sample = True
-                for original_idx in original_indices:
-                    if original_idx < len(raw_tags):
-                        new_tags.append(raw_tags[original_idx])
-                    else:
-                        print(f"Warning: Index {original_idx} out of range for tags at sample {index}")
-                        valid_sample = False
-                        break
-                
-                if valid_sample:
-                    sample[label_key] = new_tags
-                    new_data.append(sample)
-                else:
-                    skipped_count += 1
-            else:
-                # Nếu không có label thì chỉ lưu words (dùng cho inference)
-                new_data.append(sample)
-        
-        elif task == "text_classification" or task == "aspect_based":
-            # Với classification,nối lại thành câu string
-            sample[text_key] = " ".join(new_words)
-            new_data.append(sample)
-
-    # Lưu file
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, 'w', encoding='utf-8') as f:
-        # Ghi theo format JSON Lines (mỗi dòng 1 object) cho đúng chuẩn đầu vào Dataset
-        for item in new_data:
-            f.write(json.dumps(item, ensure_ascii=False) + "\n")
-            
-    print(f"Done: {input_path} -> {output_path}")
-    print(f"Số mẫu: {len(new_data)}, Bỏ qua: {skipped_count}")
+        json.dump(processed_data, f, ensure_ascii=False, indent=2)
+        
+    print(f"[XONG] {input_path} -> {output_path} ({len(processed_data)} mẫu)")
 
 if __name__ == "__main__":
-    # Cấu hình đường dẫn
-    base_dir = "data"
-    dataset_folder = r"E:\DS201.Q11\DS201\Lab_3\data\PhoNER_COVID19\data\syllable"
+    #  CẤU HÌNH 
+    dataset_folder = r".\kaggle\input\small-phomt" 
     
-    text_key = "words"
-    label_key = "tags"
-    task = "seq_labeling"
-
-    input_paths = {
-        "train": os.path.join(dataset_folder, "train_syllable.json"),
-        "dev":   os.path.join(dataset_folder, "dev_syllable.json"),
-        "test":  os.path.join(dataset_folder, "test_syllable.json")
-    }
-    
-    # Sửa lại đường dẫn output cho gọn hoặc giữ nguyên tùy bạn
-    output_paths = {
-        "train": os.path.join(dataset_folder, "train_syllable_preprocessed.json"),
-        "dev":   os.path.join(dataset_folder, "dev_syllable_preprocessed.json"),
-        "test":  os.path.join(dataset_folder, "test_syllable_preprocessed.json")
+    files_to_process = {
+        "train": ("train.json", "train_preprocessed.json"),
+        "dev":   ("dev.json",   "dev_preprocessed.json"),
+        "test":  ("test.json",  "test_preprocessed.json")
     }
 
-    for split, path in input_paths.items():
-        if os.path.exists(path):
-            convert_numbers_in_file(path, output_paths[split], task, text_key, label_key)
-        else:
-            print(f"Không tìm thấy file: {path}")
+    print(" BẮT ĐẦU TIỀN XỬ LÝ (REGEX ĐẶC BIỆT + SỐ -> CHỮ) ")
+    for split, (in_f, out_f) in files_to_process.items():
+        process_translation_file(
+            os.path.join(dataset_folder, in_f),
+            os.path.join(dataset_folder, out_f)
+        )

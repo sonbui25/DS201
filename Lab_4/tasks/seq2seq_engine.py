@@ -32,7 +32,8 @@ class Seq2SeqTraining():
         self.device = device
         self.scheduler = scheduler
         self.vocab = vocab
-        self.best_rouge_L = 0.0
+        self.best_val_loss = float('inf')
+        self.best_val_rouge_L = 0.0
         self.best_epoch = -1
         
         # Logger placeholder
@@ -62,14 +63,13 @@ class Seq2SeqTraining():
             y_target_flat = y_target.reshape(-1) # (batch_size*seq_len)
             
             loss = self.loss_fn(y_pred_flat, y_target_flat)
-                
+            
             train_loss.append(loss.item()) # Loss for this batch
             self.optimizer.zero_grad()
             loss.backward()
             self.optimizer.step()
             y_pred_class = torch.argmax(y_pred, dim=2) # (batch_size, seq_len)
-            # print(y_target.shape)
-            # print(y_pred_class.shape)
+            
             # Loop qua từng sample trong batch
             scorer = rouge_scorer.RougeScorer(['rougeL'], use_stemmer=True)
             for i in range(y_target.shape[0]):  # Iterate batch size
@@ -123,9 +123,14 @@ class Seq2SeqTraining():
                     
                     pred_list = self.vocab.decode_sentence(y_pred_class[i].unsqueeze(0), self.vocab.tgt_language)
                     predictions = pred_list[0]
-                    
+                
                     rouge_L = scorer.score(references, predictions)['rougeL'].fmeasure
                     val_rouge_L.append(rouge_L)
+                    
+                    src_sentence = self.vocab.decode_sentence(X[i].unsqueeze(0), self.vocab.src_language)[0]
+                    # print(f"\n[Source]: {src_sentence}")
+                    # print(f"[Target]: {references}")
+                    # print(f"[Prediction]: {predictions}\n\n")
                                     
 
         val_loss = np.mean(val_loss)
@@ -162,7 +167,7 @@ class Seq2SeqTraining():
         
         epochs_no_improve = 0
         actual_epochs_ran = start_epoch
-        pbar_total = epochs - start_epoch
+        pbar_total = epochs
         pbar = tqdm(range(start_epoch, epochs), desc="Epoch", total=pbar_total, initial=start_epoch)
         
         for epoch in pbar:
@@ -171,8 +176,11 @@ class Seq2SeqTraining():
             val_loss, val_rouge_L = self.val_step()
 
             row = [
-                epoch, f"{train_loss:.4f}",
-                f"{val_loss:.4f}", f"{val_rouge_L:.4f}"
+                epoch, 
+                f"{train_loss:.4f}",
+                f"{train_rouge_L:.4f}",  # Thêm dòng này
+                f"{val_loss:.4f}", 
+                f"{val_rouge_L:.4f}"
             ]
 
             results["train_loss"].append(train_loss)
@@ -186,7 +194,6 @@ class Seq2SeqTraining():
             # --- LOGGING TABLE ---
             table_str = tabulate([row], headers=headers, tablefmt="github")
             self.log("\n" + table_str)
-            # ---------------------
 
             actual_epochs_ran = epoch + 1
 
@@ -216,7 +223,7 @@ class Seq2SeqTraining():
         Evaluates the model on a given dataloader (the final test set).
         """
         self.model.eval()
-        test_loss = 0
+        test_loss = []  # Initialize as list, not int
         test_rouge_L = []
         y_true_all, y_pred_all = [], []
         predictions_log = []  # Store predictions for logging
@@ -272,7 +279,7 @@ class Seq2SeqTraining():
                     })
                                   
 
-        test_loss /= len(dataloader)
+        test_loss = np.mean(test_loss)  # Calculate mean instead of dividing
         test_metrics = {
             "loss": test_loss,
             "rouge_L": np.mean(test_rouge_L)
@@ -285,12 +292,11 @@ class Seq2SeqTraining():
         return test_metrics
     
     def _save_predictions_log(self, filepath: str, predictions: List[Dict]) -> None:
-        """Save predictions to a JSON log file."""
+        """Save predictions to a formatted JSON file."""
         Path(filepath).parent.mkdir(parents=True, exist_ok=True)
         with open(filepath, 'w', encoding='utf-8') as f:
-            for pred in predictions:
-                f.write(json.dumps(pred, ensure_ascii=False) + '\n')
-        self.log(f"[INFO]: Predictions log saved to {filepath}")
+            json.dump(predictions, f, ensure_ascii=False, indent=2)
+        self.log(f"Predictions log saved to {filepath}")
 
     def save_best_model(self, path: str, epoch: int) -> None:
         dir_path = os.path.dirname(path) or "."

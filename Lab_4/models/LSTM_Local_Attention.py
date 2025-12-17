@@ -1,6 +1,7 @@
 import torch
 from torch import nn
 import torch.nn.functional as F
+from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 import random
 
 # Local Attention based on "Effective Approaches to Attention-based Neural Machine Translation" (Luong et al., 2015)
@@ -41,7 +42,7 @@ class LSTM_Local_Attention(nn.Module):
             num_layers=self.encoder_layers,
             batch_first=True,
             bidirectional=True, 
-            dropout=self.dropout_rate if self.encoder_layers > 1 else 0
+            dropout=self.dropout_rate
         )
         
         self.enc_output_dim = self.hidden_dim * 2 # Bidirectional
@@ -79,6 +80,45 @@ class LSTM_Local_Attention(nn.Module):
         # Output projection
         self.fc_out = nn.Linear(self.dec_hidden_dim, vocab.get_tgt_vocab_size())
         
+    def calculate_attention(self, h_t, enc_outputs, attention_mask):
+        """
+        h_t: [batch, dec_hidden_dim]
+        enc_outputs: [batch, src_len, enc_output_dim]
+        """
+        batch_size, src_len, _ = enc_outputs.shape
+        
+        # 1. Dự đoán vị trí tập trung p_t (Predictive Alignment)
+        # p_t là một số thực từ [0, src_len]
+        p_t = src_len * torch.sigmoid(self.v_p(torch.tanh(self.W_p(h_t)))) # [batch, 1]
+        
+        # 2. Tính Scores theo kiểu General: h_t^T * W_a * h_s
+        # [batch, 1, dec_hidden] * [batch, dec_hidden, src_len] -> [batch, 1, src_len]
+        enc_proj = self.W_a(enc_outputs) 
+        scores = torch.bmm(h_t.unsqueeze(1), enc_proj.transpose(1, 2)).squeeze(1) # [batch, src_len]
+
+        # Apply mask cho các token PAD
+        scores = scores.masked_fill(attention_mask == 0, -1e9)
+        
+        # 3. Tính Gaussian Window để giới hạn vùng chú ý
+        # Tạo ma trận chỉ số [0, 1, 2, ..., src_len-1]
+        indices = torch.arange(src_len, device=self.device).unsqueeze(0) # [1, src_len]
+        sigma = self.D / 2
+        # Trọng số Gaussian: tập trung cao nhất tại p_t và giảm dần ra xa
+        gaussian_weights = torch.exp(-((indices - p_t)**2) / (2 * sigma**2)) # [batch, src_len]
+        
+        # 4. Kết hợp Softmax Scores và Gaussian Weights
+        # align_weights = Softmax(scores) * exp(-...)
+        align_weights = F.softmax(scores, dim=1) * gaussian_weights
+        
+        # Re-normalize để tổng trọng số bằng 1 (tránh bị triệt tiêu sau khi nhân Gaussian)
+        align_weights = align_weights / (torch.sum(align_weights, dim=1, keepdim=True) + 1e-10)
+        
+        # 5. Context Vector: Tổng có trọng số của encoder outputs
+        # [batch, 1, src_len] * [batch, src_len, enc_output_dim] -> [batch, enc_output_dim]
+        context = torch.bmm(align_weights.unsqueeze(1), enc_outputs).squeeze(1)
+        
+        return context
+        
     def forward(self, x, y=None):
         """
         x: [batch, src_len]
@@ -87,13 +127,24 @@ class LSTM_Local_Attention(nn.Module):
         batch_size = x.shape[0]
         src_len = x.shape[1]
 
-        #  0. REVERSE SOURCE 
-        # Đảo ngược chuỗi nguồn (Source Sentence Reversing)
-        x_reversed = torch.flip(x, dims=[1])
+        # Tính số lượng token khác PAD trong mỗi câu
+        src_lens = torch.sum(x != self.vocab.pad_id, dim=1).cpu()
+        
+        # Đảo ngược câu nguồn, chỉ đảo phần từ thật, giữ nguyên padding ở cuối
+        x_reversed = x.clone()
+        for i, length in enumerate(src_lens):
+            x_reversed[i, :length] = torch.flip(x[i, :length], dims=[0])
         
         #  ENCODER STEP 
         embedded_x = self.dropout(self.src_embedding(x_reversed))
-        enc_outputs, (hidden, cell) = self.encoder(embedded_x)
+        
+        # Sử dụng Packed Sequence để bỏ qua tính toán trên các token PAD
+        packed_embedded = pack_padded_sequence(embedded_x, 
+            src_lens, 
+            batch_first=True, 
+            enforce_sorted=False
+        )
+        enc_outputs, (hidden, cell) = self.encoder(packed_embedded)
         
         #  PREPARE DECODER STATES 
         # Khởi tạo hidden state cho Decoder từ trạng thái cuối của Encoder (Concat FWD/BWD)
@@ -118,7 +169,13 @@ class LSTM_Local_Attention(nn.Module):
         else:
             max_len = self.config['max_length']
             decoder_input = torch.tensor([self.vocab.bos_id] * batch_size, device=x.device)
-
+        
+        # Tạo attention mask từ src_lens: 1 = valid token, 0 = padding
+        # mask shape: [batch, src_len]
+        max_src_len = x.shape[1]
+        attention_mask = torch.arange(max_src_len).unsqueeze(0).to(x.device) < src_lens.unsqueeze(1).to(x.device)
+        attention_mask = attention_mask.float()  # [batch, src_len]
+        
         num_steps = range(1, max_len) if y is not None else range(max_len)
         
         for t in num_steps:
@@ -144,22 +201,8 @@ class LSTM_Local_Attention(nn.Module):
             p_t = src_len * torch.sigmoid(self.v_p(torch.tanh(self.W_p(h_t))))
             
             # B. Tính General Score: h_t^T * W_a * h_s
-            enc_proj = self.W_a(enc_outputs)
-            scores = torch.bmm(h_t.unsqueeze(1), enc_proj.transpose(1, 2)).squeeze(1)
-
-            # C. Gaussian Window Masking
-            indices = torch.arange(src_len, device=x.device).unsqueeze(0)
-            sigma = self.D / 2
-            gaussian_weights = torch.exp(-((indices - p_t)**2) / (2 * sigma**2))
-            
-            # Apply Attention: Softmax(scores) * Gaussian
-            align_weights = F.softmax(scores, dim=1) * gaussian_weights
-            align_weights = align_weights / (torch.sum(align_weights, dim=1, keepdim=True) + 1e-10)
-            
-            # BỎ: Lưu weights (saved_attentions.append...)
-
-            # D. Context Vector: Sum(weights * enc_outputs)
-            context = torch.bmm(align_weights.unsqueeze(1), enc_outputs).squeeze(1)
+            enc_outputs_unpacked, _ = pad_packed_sequence(enc_outputs, batch_first=True, total_length=src_len)
+            context = self.calculate_attention(h_t, enc_outputs_unpacked, attention_mask)
 
             #  5. ATTENTIONAL VECTOR (h_tilde) 
             # h_tilde = Tanh(W_c * [c_t; h_t]) -> Dùng cho Input Feeding bước sau

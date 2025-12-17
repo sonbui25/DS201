@@ -10,10 +10,7 @@ from unicodedata import normalize
 def plot_metrics(results, epochs, model_name, dataset_name):
     metrics = [
         ("train_loss", "val_loss", "Loss"),
-        ("train_acc", "val_acc", "Accuracy"),
-        ("train_precision", "val_precision", "Precision"),
-        ("train_recall", "val_recall", "Recall"),
-        ("train_f1", "val_f1", "F1-score"),
+        ("train_rouge_L", "val_rouge_L", "ROUGE-L"),
     ]
     plt.figure(figsize=(18, 10))
     plt.suptitle(f"Metrics over Epochs of {model_name} model", fontsize=16)

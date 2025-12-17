@@ -1,6 +1,7 @@
 import torch
 from torch import nn
 import torch.nn.functional as F
+from torch.nn.utils.rnn import pack_padded_sequence
 import random
 
 class LSTM(nn.Module):
@@ -40,123 +41,115 @@ class LSTM(nn.Module):
             dropout=self.dropout_rate if self.encoder_layers > 1 else 0
         )
         
-        # Encoder Output Dim = hidden_dim * 2 (do 2 chiều: Forward + Backward)
-        self.enc_output_dim = self.hidden_dim * 2
+        self.enc_output_dim = self.hidden_dim * 2 # Bidirectional
         
         #  2. DECODER (Multi-layer LSTMCells) 
-        
         self.decoder_cells = nn.ModuleList()
         
         for i in range(self.decoder_layers):
-            # Input của layer đầu tiên = Embedding + Context Vector
+            # Layer 0: Nhận Embedding + Context Vector
             if i == 0:
                 input_size = self.embedding_dim + self.enc_output_dim
             else:
-                # Input của các layer sau = Hidden state của layer trước (kích thước enc_output_dim)
                 input_size = self.enc_output_dim
             
             self.decoder_cells.append(
                 nn.LSTMCell(
                     input_size=input_size, 
-                    hidden_size=self.enc_output_dim # Decoder hidden phải khớp với Encoder bidirectional
+                    hidden_size=self.enc_output_dim 
                 )
             )
 
-        # Output projection
         self.fc_out = nn.Linear(self.enc_output_dim, vocab.get_tgt_vocab_size())
         self.dropout = nn.Dropout(self.dropout_rate)
 
     def forward(self, x, y=None):
         """
         x: [batch, src_len]
-        y: [batch, tgt_len] (Optional). Nếu None -> Chế độ Predict
+        y: [batch, tgt_len]
         """
         batch_size = x.shape[0]
         
-        #  ENCODER STEP 
-        embedded_x = self.dropout(self.src_embedding(x))
+        #  BƯỚC 1: TÍNH ĐỘ DÀI CÂU (Bỏ qua Padding) 
+        # Tính số lượng token khác PAD trong mỗi câu
+        src_lens = torch.sum(x != self.vocab.pad_id, dim=1).cpu()
         
-        # enc_outputs: [batch, src_len, hidden_dim * 2]
-        # hidden, cell: [2 * enc_layers, batch, hidden_dim]
-        enc_outputs, (hidden, cell) = self.encoder(embedded_x)
+        #  BƯỚC 2: ĐẢO NGƯỢC CÂU NGUỒN (REVERSE SOURCE) 
+        # Chỉ đảo phần từ thật, giữ nguyên padding ở cuối
+        x_reversed = x.clone()
+        for i, length in enumerate(src_lens):
+            # Chỉ đảo ngược đoạn [0 : length] của từng câu
+            x_reversed[i, :length] = torch.flip(x[i, :length], dims=[0])
+            
+        #  BƯỚC 3: ENCODER (Với Packed Sequence) 
+        embedded_x = self.dropout(self.src_embedding(x_reversed))
+        # Nén input: Giúp LSTM bỏ qua tính toán trên các token PAD
+        packed_embedded = pack_padded_sequence(
+            embedded_x, 
+            src_lens, 
+            batch_first=True, 
+            enforce_sorted=False 
+        )
+        # Chạy Encoder
+        packed_outputs, (hidden, cell) = self.encoder(packed_embedded)
         
-        # CONTEXT VECTOR (Dùng hidden state cuối cùng của Encoder)
-        # Lấy hidden state cuối cùng của cả chiều Forward và Backward
+        #  BƯỚC 4: LẤY CONTEXT VECTOR 
+        # Lấy hidden state cuối cùng (đại diện cho toàn bộ câu nguồn)
+        # hidden shape: [2 * layers, batch, hidden_dim]
         hidden_fwd = hidden[-2]
         hidden_bwd = hidden[-1]
         context = torch.cat((hidden_fwd, hidden_bwd), dim=1)  # [batch, hidden_dim * 2]
         
-        #  PREPARE DECODER STATES
-        # Reshape để tách chiều Forward/Backward
-        # [2*layers, batch, hidden] -> [layers, 2, batch, hidden]
+        #  PREPARE DECODER STATES 
+        # Reshape lại để khớp với Decoder (Layer by Layer)
         hidden = hidden.view(self.encoder_layers, 2, batch_size, self.hidden_dim)
         cell = cell.view(self.encoder_layers, 2, batch_size, self.hidden_dim)
         
-        # Concat Forward và Backward để khớp với decoder_hidden_dim (là 2*hidden_dim)
-        # -> [layers, batch, 2*hidden]
+        # Gộp chiều Fwd và Bwd
         dec_hidden_states = torch.cat((hidden[:, 0, :, :], hidden[:, 1, :, :]), dim=2)
         dec_cell_states = torch.cat((cell[:, 0, :, :], cell[:, 1, :, :]), dim=2)
         
-        # Chuyển thành list các tensor để dễ quản lý từng layer trong vòng lặp
-        # Mỗi phần tử trong list là trạng thái của 1 layer: [batch, 2*hidden]
         h_states = [dec_hidden_states[i] for i in range(self.decoder_layers)]
         c_states = [dec_cell_states[i] for i in range(self.decoder_layers)]
 
         #  DECODER LOOP 
         outputs = []
         
-        # Xác định độ dài vòng lặp
         if y is not None:
             max_len = y.shape[1]
-            # Lấy input đầu tiên từ y (thường là <BOS>)
             decoder_input = y[:, 0] 
         else:
             max_len = self.config['max_length']
-            # Tạo input <BOS>
             decoder_input = torch.tensor([self.vocab.bos_id] * batch_size, device=x.device)
 
-        # Bắt đầu từ 1 vì 0 là <BOS> đã xử lý
-        # Tuy nhiên nếu y=None, loop đến max_len. 
-        # Nếu y!=None, loop đến max_len hoặc đến khi gặp EOS.      
         num_steps = range(1, max_len) if y is not None else range(max_len)
         
         for t in num_steps:
-            # Embed input: [batch, emb_dim]
+            # 1. Embed Input
             emb_input = self.dropout(self.tgt_embedding(decoder_input))
             
-            # Decoder Layer 0 (Input + Context)
-            # print(emb_input.shape, context.shape)
-            emb_and_context = torch.cat((emb_input, context), dim=1) # [batch, emb_dim + enc_output_dim]
+            # 2. Context Injection: Nối Context vào Input Decoder layer 0
+            emb_and_context = torch.cat((emb_input, context), dim=1)
             
+            # 3. Chạy các layer LSTM
             h_states[0], c_states[0] = self.decoder_cells[0](emb_and_context, (h_states[0], c_states[0]))
+            curr_input = h_states[0]
             
-            # Input cho các layer tiếp theo là hidden state của layer trước
-            current_layer_input = h_states[0]
-            
-            # Decoder Layers 1...N (Duyệt xong layer 0 rồi duyệt tiếp các layer còn lại trong cùng 1 time-step)
             for i in range(1, self.decoder_layers):
-                # Có thể thêm dropout giữa các layer LSTM nếu muốn
-                # current_layer_input = self.dropout(current_layer_input) 
-                h_states[i], c_states[i] = self.decoder_cells[i](current_layer_input, (h_states[i], c_states[i]))
-                current_layer_input = h_states[i]
+                h_states[i], c_states[i] = self.decoder_cells[i](curr_input, (h_states[i], c_states[i]))
+                curr_input = h_states[i]
             
-            # Prediction (Dùng output của layer cuối cùng)
-            prediction = self.fc_out(h_states[-1]) # [batch, vocab_size]
+            # 4. Prediction
+            prediction = self.fc_out(h_states[-1])
             outputs.append(prediction.unsqueeze(1))
             
-            # Chọn input cho bước tiếp theo
+            # 5. Chọn input tiếp theo
             if y is not None:
-                # Training: Teacher Forcing (Dùng từ thật)
                 decoder_input = y[:, t] 
             else:
-                # Inference: Dùng từ vừa dự đoán
                 decoder_input = prediction.argmax(1)
-                
-                # Early break nếu tất cả sample trong batch gặp EOS
                 if (decoder_input == self.vocab.eos_id).all():
                     break
 
-        # Nối các output lại: [batch, seq_len, vocab_size]
         logits = torch.cat(outputs, dim=1)
-        
         return logits

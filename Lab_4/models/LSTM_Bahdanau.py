@@ -1,8 +1,7 @@
 import torch
 from torch import nn
 import torch.nn.functional as F
-import random
-
+from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 # Bahdanau Attention based on "Neural Machine Translation by Jointly Learning to Align and Translate" (Bahdanau et al., 2015)
 class LSTM_Bahdanau(nn.Module):
     def __init__(self, vocab, config):
@@ -80,10 +79,11 @@ class LSTM_Bahdanau(nn.Module):
         self.fc_out = nn.Linear(self.enc_output_dim, vocab.get_tgt_vocab_size())
         self.dropout = nn.Dropout(self.dropout_rate)
 
-    def calculate_attention(self, s_prev, enc_outputs):
+    def calculate_attention(self, s_prev, enc_outputs, mask=None):
         """
         s_prev: Hidden state của lớp Decoder CUỐI CÙNG (Top layer) tại bước trước [batch, dec_hidden_dim]
         enc_outputs: Output của encoder [batch, src_len, dec_hidden_dim]
+        mask: Attention mask [batch, src_len] (1 = valid, 0 = padding)
         """
         # s_prev: [batch, dec_hidden] -> [batch, 1, dec_hidden]
         s_prev_expanded = s_prev.unsqueeze(1)
@@ -93,6 +93,12 @@ class LSTM_Bahdanau(nn.Module):
         
         # Scores: [batch, src_len, 1]
         scores = self.v_a(energy)
+        
+        # Apply mask to scores (before softmax)
+        if mask is not None:
+            # mask: [batch, src_len] -> [batch, src_len, 1]
+            mask = mask.unsqueeze(-1)
+            scores = scores + (1 - mask) * (-1e9)  # Set padding scores to very negative
         
         # Weights: [batch, src_len, 1]
         weights = F.softmax(scores, dim=1)
@@ -109,20 +115,33 @@ class LSTM_Bahdanau(nn.Module):
         """
         batch_size = x.shape[0]
         
-        #  ENCODER STEP 
-        embedded_x = self.dropout(self.src_embedding(x))
+        # Tính số lượng token khác PAD trong mỗi câu
+        src_lens = torch.sum(x != self.vocab.pad_id, dim=1).cpu()
         
+        # Đảo ngược câu nguồn, chỉ đảo phần từ thật, giữ nguyên padding ở cuối
+        x_reversed = x.clone()
+        for i, length in enumerate(src_lens):
+            x_reversed[i, :length] = torch.flip(x[i, :length], dims=[0])
+        #  ENCODER STEP 
+        embedded_x = self.dropout(self.src_embedding(x_reversed))
+        
+        # Sử dụng Packed Sequence để bỏ qua tính toán trên các token PAD
+        packed_embedded = pack_padded_sequence(embedded_x, 
+            src_lens, 
+            batch_first=True, 
+            enforce_sorted=False
+        )
         # enc_outputs: [batch, src_len, hidden_dim * 2]
         # hidden, cell: [2 * enc_layers, batch, hidden_dim]
-        enc_outputs, (hidden, cell) = self.encoder(embedded_x)
+        enc_outputs, (hidden, cell) = self.encoder(packed_embedded)
         
         #  PREPARE DECODER STATES
-        # 1. Reshape để tách chiều Forward/Backward
+        # Reshape để tách chiều Forward/Backward
         # [2*layers, batch, hidden] -> [layers, 2, batch, hidden]
         hidden = hidden.view(self.encoder_layers, 2, batch_size, self.hidden_dim)
         cell = cell.view(self.encoder_layers, 2, batch_size, self.hidden_dim)
         
-        # 2. Concat Forward và Backward để khớp với decoder_hidden_dim (là 2*hidden_dim)
+        # Concat Forward và Backward để khớp với decoder_hidden_dim (là 2*hidden_dim)
         # -> [layers, batch, 2*hidden]
         dec_hidden_states = torch.cat((hidden[:, 0, :, :], hidden[:, 1, :, :]), dim=2)
         dec_cell_states = torch.cat((cell[:, 0, :, :], cell[:, 1, :, :]), dim=2)
@@ -149,18 +168,25 @@ class LSTM_Bahdanau(nn.Module):
         # Tuy nhiên nếu y=None, loop đến max_len. 
         # Nếu y!=None, loop đến max_len hoặc đến khi gặp EOS.      
        
+        # Tạo attention mask từ src_lens: 1 = valid token, 0 = padding
+        # mask shape: [batch, src_len]
+        max_src_len = x.shape[1]
+        attention_mask = torch.arange(max_src_len).unsqueeze(0).to(x.device) < src_lens.unsqueeze(1).to(x.device)
+        attention_mask = attention_mask.float()  # [batch, src_len]
         num_steps = range(1, max_len) if y is not None else range(max_len)
         
         for t in num_steps:
-            # 1. Embed input: [batch, emb_dim]
+            # Embed input: [batch, emb_dim]
             emb_input = self.dropout(self.tgt_embedding(decoder_input))
             
-            # 2. Calculate Attention
+            # Calculate Attention
             # Dùng hidden state của layer cuối cùng (top layer) từ bước trước để tính attention
             s_top_prev = h_states[-1] 
-            context = self.calculate_attention(s_top_prev, enc_outputs)
             
-            # 3. Decoder Layer 0 (Input + Context)
+            enc_outputs_unpacked, batch_size = pad_packed_sequence(enc_outputs, batch_first=True, total_length=x.shape[1])
+            context = self.calculate_attention(s_top_prev, enc_outputs_unpacked, mask=attention_mask)
+            
+            # Decoder Layer 0 (Input + Context)
             # print(emb_input.shape, context.shape)
             emb_and_context = torch.cat((emb_input, context), dim=1) # [batch, emb_dim + enc_output_dim]
             
@@ -169,18 +195,18 @@ class LSTM_Bahdanau(nn.Module):
             # Input cho các layer tiếp theo là hidden state của layer trước
             current_layer_input = h_states[0]
             
-            # 4. Decoder Layers 1...N (Duyệt xong layer 0 rồi duyệt tiếp các layer còn lại trong cùng 1 time-step)
+            # Decoder Layers 1...N (Duyệt xong layer 0 rồi duyệt tiếp các layer còn lại trong cùng 1 time-step)
             for i in range(1, self.decoder_layers):
                 # Có thể thêm dropout giữa các layer LSTM nếu muốn
                 # current_layer_input = self.dropout(current_layer_input) 
                 h_states[i], c_states[i] = self.decoder_cells[i](current_layer_input, (h_states[i], c_states[i]))
                 current_layer_input = h_states[i]
             
-            # 5. Prediction (Dùng output của layer cuối cùng)
+            # Prediction (Dùng output của layer cuối cùng)
             prediction = self.fc_out(h_states[-1]) # [batch, vocab_size]
             outputs.append(prediction.unsqueeze(1))
             
-            # 6. Chọn input cho bước tiếp theo
+            # Chọn input cho bước tiếp theo
             if y is not None:
                 # Training: Teacher Forcing (Dùng từ thật)
                 decoder_input = y[:, t] 
