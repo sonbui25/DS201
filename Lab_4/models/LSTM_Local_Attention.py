@@ -116,7 +116,7 @@ class LSTM_Local_Attention(nn.Module):
             max_len = y.shape[1]
             decoder_input = y[:, 0] 
         else:
-            max_len = self.vocab['max_length']
+            max_len = self.config['max_length']
             decoder_input = torch.tensor([self.vocab.bos_id] * batch_size, device=x.device)
 
         num_steps = range(1, max_len) if y is not None else range(max_len)

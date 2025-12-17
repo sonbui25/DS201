@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import logging
+import json
 from pathlib import Path
 import random
 from tabulate import tabulate
@@ -206,7 +207,7 @@ class Seq2SeqTraining():
         
         return results, actual_epochs_ran
 
-    def evaluate(self, dataloader: torch.utils.data.DataLoader) -> Tuple[Dict[str, float], str]:
+    def evaluate(self, dataloader: torch.utils.data.DataLoader, output_log_path: str = None) -> Tuple[Dict[str, float], str]:
         """
         Evaluates the model on a given dataloader (the final test set).
         """
@@ -214,6 +215,7 @@ class Seq2SeqTraining():
         test_loss = 0
         test_rouge_L = []
         y_true_all, y_pred_all = [], []
+        predictions_log = []  # Store predictions for logging
 
         with torch.inference_mode():
             for X, y in tqdm(dataloader, desc="Evaluating Test Set"):
@@ -244,6 +246,21 @@ class Seq2SeqTraining():
                     
                     rouge_L = scorer.score(references, predictions)['rougeL'].fmeasure
                     test_rouge_L.append(rouge_L)
+                    
+                    # Store prediction log if dataset has source/target text
+                    if hasattr(dataloader.dataset, 'data'):
+                        sample_data = dataloader.dataset.data[i] if i < len(dataloader.dataset.data) else {}
+                        src_text = sample_data.get(self.vocab.src_language, "")
+                        tgt_text = sample_data.get(self.vocab.tgt_language, "")
+                    else:
+                        src_text = ""
+                        tgt_text = ""
+                    
+                    predictions_log.append({
+                        f"{self.vocab.src_language}_source": src_text,
+                        f"{self.vocab.tgt_language}_gold_label": references,
+                        "prediction": predictions
+                    })
                                   
 
         test_loss /= len(dataloader)
@@ -251,7 +268,20 @@ class Seq2SeqTraining():
             "loss": test_loss,
             "rouge_L": np.mean(test_rouge_L)
         }
+        
+        # Save predictions log to file
+        if output_log_path:
+            self._save_predictions_log(output_log_path, predictions_log)
+        
         return test_metrics
+    
+    def _save_predictions_log(self, filepath: str, predictions: List[Dict]) -> None:
+        """Save predictions to a JSON log file."""
+        Path(filepath).parent.mkdir(parents=True, exist_ok=True)
+        with open(filepath, 'w', encoding='utf-8') as f:
+            for pred in predictions:
+                f.write(json.dumps(pred, ensure_ascii=False) + '\n')
+        self.log(f"[INFO]: Predictions log saved to {filepath}")
 
     def save_best_model(self, path: str, epoch: int) -> None:
         dir_path = os.path.dirname(path) or "."

@@ -10,7 +10,6 @@ vocab:
     test:  "/kaggle/input/small-phomt/test.json"
   source_text: "english"
   target_text: "vietnamese"
-  max_length: 64
   task_type: "machine_translation" 
 
 # --- Global Settings ---
@@ -49,3 +48,4 @@ experiments:
       decoder_layers: 3
       dropout: 0.1
       D: 10
+      max_length: 64

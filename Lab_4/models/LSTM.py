@@ -111,7 +111,7 @@ class LSTM(nn.Module):
             # Lấy input đầu tiên từ y (thường là <BOS>)
             decoder_input = y[:, 0] 
         else:
-            max_len = self.vocab['max_length']
+            max_len = self.config['max_length']
             # Tạo input <BOS>
             decoder_input = torch.tensor([self.vocab.bos_id] * batch_size, device=x.device)
 

@@ -82,9 +82,11 @@ def main():
     #Task
     task = config['vocab']['task_type']
     
-    # Tạo đường dẫn file log (CÙNG TÊN với file log trong ClassificationTraining)
+    # Tạo thư mục cho từng experiment
     if task == "machine_translation":
-        log_file_path = os.path.join('./results/machine_translation', f"{exp_name}_training.log")
+        exp_dir = os.path.join('/kaggle/working/DS201/Lab_4/results', exp_name)
+        log_file_path = os.path.join(exp_dir, f"{exp_name}_training.log")
+        output_log_path = os.path.join(exp_dir, f"{exp_name}_test_predictions.jsonl")
     
     # KHỞI TẠO LOGGER
     logger = setup_main_logger(log_file_path)
@@ -262,7 +264,7 @@ def main():
     try:
         trainer.load_best_model_for_eval(best_model_path)
         logger.info("[INFO] Best model loaded successfully.")
-        test_metrics = trainer.evaluate(test_dataloader)
+        test_metrics = trainer.evaluate(test_dataloader, output_log_path=output_log_path)
         logger.info("[INFO] Test evaluation completed successfully.")
         logger.info(f"[INFO] Test Set Results: Loss: {test_metrics['loss']:.4f}, ROUGE-L: {test_metrics['rouge_L']:.4f}")
     except Exception as e:
