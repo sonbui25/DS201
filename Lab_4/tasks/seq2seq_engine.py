@@ -193,7 +193,11 @@ class Seq2SeqTraining():
 
             # --- LOGGING TABLE ---
             table_str = tabulate([row], headers=headers, tablefmt="github")
-            self.log("\n" + table_str)
+            # Chỉ log thông qua logger để tránh duplicate
+            if self.logger:
+                self.logger.info("\n" + table_str)
+            else:
+                print("\n" + table_str)
 
             actual_epochs_ran = epoch + 1
 
@@ -208,13 +212,23 @@ class Seq2SeqTraining():
                 epochs_no_improve += 1
             
             if epochs_no_improve >= early_stop_epochs:
-                self.log(f"TRIGGERED EARLY STOP AT {epoch}! (Val ROUGE-L not improved for {early_stop_epochs} epochs)")
+                msg = f"TRIGGERED EARLY STOP AT {epoch}! (Val ROUGE-L not improved for {early_stop_epochs} epochs)"
+                if self.logger:
+                    self.logger.info(msg)
+                else:
+                    print(msg)
                 break
             # Always save last checkpoint
             self.save_last_checkpoint(last_ckpt_path, epoch)
             
-        self.log("\nBest result based on ROUGE-L on validation set:")
-        self.log(f"Best epoch: {self.best_epoch}, Best Val_Loss: {self.best_val_loss:.4f}, Val_ROUGE-L: {self.best_val_rouge_L:.4f}")
+        best_msg_1 = "\nBest result based on ROUGE-L on validation set:"
+        best_msg_2 = f"Best epoch: {self.best_epoch}, Best Val_Loss: {self.best_val_loss:.4f}, Val_ROUGE-L: {self.best_val_rouge_L:.4f}"
+        if self.logger:
+            self.logger.info(best_msg_1)
+            self.logger.info(best_msg_2)
+        else:
+            print(best_msg_1)
+            print(best_msg_2)
         
         return results, actual_epochs_ran
 
@@ -308,7 +322,11 @@ class Seq2SeqTraining():
             else self.model.state_dict()
         )
 
-        self.log(f"\n[INFO]: Saving best model at epoch {epoch} to: {path}")
+        save_msg = f"\n[INFO]: Saving best model at epoch {epoch} to: {path}"
+        if self.logger:
+            self.logger.info(save_msg)
+        else:
+            print(save_msg)
         torch.save({
             "model_state": model_state,
             "best_val_loss": self.best_val_loss,
