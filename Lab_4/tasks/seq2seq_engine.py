@@ -152,11 +152,11 @@ class Seq2SeqTraining():
         last_ckpt_path = os.path.join(target_dir, f"{base_name}_last_checkpoint.pth")
         
         results = {
-            "train_loss": [],
+            "train_loss": [], "train_rouge_L": [],
             "val_loss": [], "val_rouge_L": []
         }
         headers = [
-            "Epoch", "Train Loss",
+            "Epoch", "Train Loss", "Train ROUGE-L",
             "Val Loss", "Val ROUGE-L"
         ]
         
