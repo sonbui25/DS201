@@ -33,6 +33,9 @@ def setup_main_logger(log_file_path):
 
     logger = logging.getLogger("Main_Logger")
     logger.setLevel(logging.INFO)
+    
+    # Không propagate cho parent logger để tránh duplicate
+    logger.propagate = False
 
     # Clear handlers cũ nếu có để tránh duplicate logs
     if logger.hasHandlers():
@@ -44,7 +47,7 @@ def setup_main_logger(log_file_path):
     file_handler.setFormatter(file_formatter)
     logger.addHandler(file_handler)
 
-    # 2. Console Handler
+    # 2. Console Handler (để xem real-time trên Kaggle)
     stream_handler = logging.StreamHandler()
     stream_handler.setFormatter(logging.Formatter('%(message)s'))
     logger.addHandler(stream_handler)
