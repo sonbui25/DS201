@@ -5,9 +5,9 @@ vocab:
   eos_piece: "<EOS>"
   pad_piece: "<PAD>"
   path:
-    train: "./data/small-PhoMT/train.json"
-    val:   "./data/small-PhoMT/dev.json"
-    test:  "./data/small-PhoMT/test.json"
+    train: "/kaggle/input/small-phomt/train.json"
+    val:   "/kaggle/input/small-phomt/dev.json"
+    test:  "/kaggle/input/small-phomt/test.json"
   source_text: "english"
   target_text: "vietnamese"
   max_length: 64
@@ -20,9 +20,9 @@ checkpoint_dir: "./checkpoints/LSTM_Bahdanau_PhoMT/"
 # --- Dataset Definitions ---
 datasets:
   pho_mt:
-    train_path: "./data/small-PhoMT/train.json"
-    val_path: "./data/small-PhoMT/dev.json"
-    test_path: "./data/small-PhoMT/test.json"
+    train_path: "/kaggle/input/small-phomt/train.json"
+    val_path: "/kaggle/input/small-phomt/dev.json"
+    test_path: "/kaggle/input/small-phomt/test.json"
 
 # --- Model Definitions ---
 models:
