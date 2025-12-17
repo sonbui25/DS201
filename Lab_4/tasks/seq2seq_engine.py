@@ -102,7 +102,7 @@ class Seq2SeqTraining():
                 min_len = min(y_pred.shape[1], y.shape[1] - 1)
                 y_pred = y_pred[:, :min_len, :]
                 # Reshape for loss computation
-                y_pred_flat = y_pred.view(-1, y_pred.shape[-1]) # (batch_size*seq_len, vocab_size)
+                y_pred_flat = y_pred.reshape(-1, y_pred.shape[-1]) # (batch_size*seq_len, vocab_size)
                 
                 # Compute loss
                 # Shift y for loss computation (remove <BOS>)
@@ -231,7 +231,7 @@ class Seq2SeqTraining():
                 y_pred = y_pred[:, :min_len, :]
                 
                 # Reshape for loss computation
-                y_pred_flat = y_pred.view(-1, y_pred.shape[-1]) # (batch_size*seq_len, vocab_size)
+                y_pred_flat = y_pred.reshape(-1, y_pred.shape[-1]) # (batch_size*seq_len, vocab_size)
                 
                 # Compute loss
                 # Shift y for loss computation (remove <BOS>)
