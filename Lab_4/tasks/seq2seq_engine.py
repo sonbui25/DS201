@@ -96,13 +96,17 @@ class Seq2SeqTraining():
         with torch.inference_mode():
             for X, y in self.val_loader:
                 X, y = X.to(self.device), y.to(self.device)
-                y_pred = self.model(X)
+                y_pred = self.model(X)  # Inference mode - không truyền y
+                
+                # Handle length mismatch
+                min_len = min(y_pred.shape[1], y.shape[1] - 1)
+                y_pred = y_pred[:, :min_len, :]
                 # Reshape for loss computation
                 y_pred_flat = y_pred.view(-1, y_pred.shape[-1]) # (batch_size*seq_len, vocab_size)
                 
                 # Compute loss
                 # Shift y for loss computation (remove <BOS>)
-                y_target = y[:, 1:]
+                y_target = y[:, 1:min_len+1]  # Match with truncated y_pred
                 y_target_flat = y_target.reshape(-1) # (batch_size*seq_len)
                 
                 loss = self.loss_fn(y_pred_flat, y_target_flat)
@@ -220,13 +224,18 @@ class Seq2SeqTraining():
         with torch.inference_mode():
             for X, y in tqdm(dataloader, desc="Evaluating Test Set"):
                 X, y = X.to(self.device), y.to(self.device)
-                y_pred = self.model(X)
+                y_pred = self.model(X)  # Inference mode - không truyền y
+                
+                # Handle length mismatch - truncate to minimum length
+                min_len = min(y_pred.shape[1], y.shape[1] - 1)
+                y_pred = y_pred[:, :min_len, :]
+                
                 # Reshape for loss computation
                 y_pred_flat = y_pred.view(-1, y_pred.shape[-1]) # (batch_size*seq_len, vocab_size)
                 
                 # Compute loss
                 # Shift y for loss computation (remove <BOS>)
-                y_target = y[:, 1:]
+                y_target = y[:, 1:min_len+1]  # Match with truncated y_pred
                 y_target_flat = y_target.reshape(-1) # (batch_size*seq_len)
                 
                 loss = self.loss_fn(y_pred_flat, y_target_flat)
