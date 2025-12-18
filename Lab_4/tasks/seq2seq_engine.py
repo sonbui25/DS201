@@ -228,7 +228,6 @@ class Seq2SeqTraining():
         Evaluates the model on a given dataloader (the final test set).
         """
         self.model.eval()
-        test_loss = []  # Initialize as list, not int
         test_rouge_L = []
         y_true_all, y_pred_all = [], []
         predictions_log = []  # Store predictions for logging
@@ -251,9 +250,7 @@ class Seq2SeqTraining():
                 y_target_flat = y_target.reshape(-1) # (batch_size*seq_len)
                 
                 loss = self.loss_fn(y_pred_flat, y_target_flat)
-                    
-                test_loss.append(loss.item()) # Loss for this batch
-                
+                                    
                 y_pred_class = torch.argmax(y_pred, dim=2)
                 
                 # Compute ROUGE-L for each sample in batch
@@ -290,9 +287,7 @@ class Seq2SeqTraining():
                     })
                                   
 
-        test_loss = np.mean(test_loss)  # Calculate mean instead of dividing
         test_metrics = {
-            "loss": test_loss,
             "rouge_L": np.mean(test_rouge_L)
         }
         

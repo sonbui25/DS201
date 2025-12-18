@@ -9,7 +9,7 @@ import re
 from unicodedata import normalize
 def plot_metrics(results, epochs, model_name, dataset_name):
     metrics = [
-        ("train_loss", "val_loss", "Loss"),
+        ("train_loss", None, "Loss"),  # Val loss không có
         ("train_rouge_L", "val_rouge_L", "ROUGE-L"),
     ]
     plt.figure(figsize=(18, 10))
@@ -17,7 +17,8 @@ def plot_metrics(results, epochs, model_name, dataset_name):
     for i, (train_key, val_key, title) in enumerate(metrics, 1):
         plt.subplot(2, 3, i)
         plt.plot(range(epochs), results[train_key], label="Train")
-        plt.plot(range(epochs), results[val_key], label="Validation")
+        if val_key and val_key in results:  # Chỉ plot validation nếu có
+            plt.plot(range(epochs), results[val_key], label="Validation")
         plt.xlabel("Epoch")
         plt.ylabel(title)
         plt.title(title)

@@ -277,7 +277,7 @@ def main():
         logger.info(" Best model loaded successfully.")
         test_metrics = trainer.evaluate(test_dataloader, output_log_path=output_log_path)
         logger.info(" Test evaluation completed successfully.")
-        logger.info(f" Test Set Results: Loss: {test_metrics['loss']:.4f}, ROUGE-L: {test_metrics['rouge_L']:.4f}")
+        logger.info(f" Test Set Results: ROUGE-L: {test_metrics['rouge_L']:.4f}")
     except Exception as e:
         logger.error(f"Error during final test set evaluation: {e}")
 
