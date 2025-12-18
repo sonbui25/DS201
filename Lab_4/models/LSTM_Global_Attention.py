@@ -75,11 +75,14 @@ class LSTM_Global_Attention(nn.Module):
         return context
 
     def forward(self, x, y=None):
+        """
+        x: [batch, src_len]
+        y: [batch, tgt_len] (Optional)
+        Nếu y có thì dùng để Teacher Forcing, không thì dùng để Inference
+        """
         batch_size = x.shape[0]
         src_lens = torch.sum(x != self.vocab.pad_id, dim=1).cpu()
 
-        
-        
         # Đảo ngược chuỗi đầu vào
         x_reversed = x.clone()
         for i, length in enumerate(src_lens):

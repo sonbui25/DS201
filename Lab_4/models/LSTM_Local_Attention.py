@@ -123,6 +123,7 @@ class LSTM_Local_Attention(nn.Module):
         """
         x: [batch, src_len]
         y: [batch, tgt_len] (Optional)
+        Nếu y có thì dùng để Teacher Forcing, không thì dùng để Inference
         """
         batch_size = x.shape[0]
         src_len = x.shape[1]

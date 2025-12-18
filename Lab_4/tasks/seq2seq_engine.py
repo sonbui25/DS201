@@ -243,7 +243,7 @@ class Seq2SeqTraining():
         predictions_log = []  # Store predictions for logging
 
         with torch.inference_mode():
-            for X, y in tqdm(dataloader, desc="Evaluating Test Set"):
+            for batch_idx, (X, y) in enumerate(tqdm(dataloader, desc="Evaluating Test Set")):
                 X, y = X.to(self.device), y.to(self.device)
                 y_pred = self.model(X)  # Inference mode - không truyền y
                 
@@ -279,13 +279,19 @@ class Seq2SeqTraining():
                     
                     # Store prediction log if dataset has source/target text
                     if hasattr(dataloader.dataset, 'data'):
-                        sample_data = dataloader.dataset.data[i] if i < len(dataloader.dataset.data) else {}
+                        batch_size = dataloader.batch_size
+                        global_idx = batch_idx * batch_size + i
+
+                        if global_idx < len(dataloader.dataset.data):
+                            sample_data = dataloader.dataset.data[global_idx]
+                        else:
+                            sample_data = {}
+                            
                         src_text = sample_data.get(self.vocab.src_language, "")
                         tgt_text = sample_data.get(self.vocab.tgt_language, "")
                     else:
                         src_text = ""
                         tgt_text = ""
-                    
                     predictions_log.append({
                         f"{self.vocab.src_language}_source": src_text,
                         f"{self.vocab.tgt_language}_gold_label": references,

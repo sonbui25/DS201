@@ -14,7 +14,7 @@ vocab:
 
 # --- Global Settings ---
 seed: 42
-checkpoint_dir: "./checkpoints/LSTM_Bahdanau_PhoMT/"
+checkpoint_dir: "/kaggle/working/DS201/checkpoints/LSTM_Bahdanau_PhoMT/"
 
 # --- Dataset Definitions ---
 datasets:

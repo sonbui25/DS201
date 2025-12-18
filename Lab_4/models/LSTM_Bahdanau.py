@@ -111,7 +111,8 @@ class LSTM_Bahdanau(nn.Module):
     def forward(self, x, y=None):
         """
         x: [batch, src_len]
-        y: [batch, tgt_len] (Optional). Nếu None -> Chế độ Predict
+        y: [batch, tgt_len] (Optional)
+        Nếu y có thì dùng để Teacher Forcing, không thì dùng để Inference
         """
         batch_size = x.shape[0]
         
