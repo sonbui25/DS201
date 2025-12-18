@@ -251,7 +251,7 @@ def main():
     start_epoch = trainer.load_checkpoint_for_resume(last_check_point_path)
     if start_epoch > 0:
         if hasattr(trainer, "best_epoch") and trainer.best_epoch != -1:
-            logger.info(f"Best validation at epoch {trainer.best_epoch}: Val_Loss={trainer.best_val_loss:.4f}, Val_F1={trainer.best_val_f1:.4f}")
+            logger.info(f"Best validation at epoch {trainer.best_epoch}: Val_ROUGE-L={trainer.best_val_rouge_L:.4f}")
         logger.info(f"Resuming training from epoch {start_epoch}")
         
     early_stop_patience = hp.get('early_stop_patience', 10)

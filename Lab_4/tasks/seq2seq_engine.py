@@ -32,7 +32,6 @@ class Seq2SeqTraining():
         self.device = device
         self.scheduler = scheduler
         self.vocab = vocab
-        self.best_val_loss = float('inf')
         self.best_val_rouge_L = 0.0
         self.best_epoch = -1
         
@@ -90,7 +89,6 @@ class Seq2SeqTraining():
         """Performs a single validation step (one epoch)"""
         self.model.eval()
         y_true_all, y_pred_all = [], []
-        val_loss = []
         val_rouge_L = []
 
         with torch.inference_mode():
@@ -110,9 +108,7 @@ class Seq2SeqTraining():
                 y_target_flat = y_target.reshape(-1) # (batch_size*seq_len)
                 
                 loss = self.loss_fn(y_pred_flat, y_target_flat)
-                    
-                val_loss.append(loss.item()) # Loss for this batch
-                
+                                    
                 y_pred_class = torch.argmax(y_pred, dim=2)
                 
                 # Compute ROUGE-L for each sample in batch
@@ -132,10 +128,8 @@ class Seq2SeqTraining():
                     # print(f"[Target]: {references}")
                     # print(f"[Prediction]: {predictions}\n\n")
                                     
-
-        val_loss = np.mean(val_loss)
         val_rouge_L = np.mean(val_rouge_L)
-        return (val_loss, val_rouge_L)
+        return val_rouge_L
 
     def train(
         self,
@@ -158,11 +152,11 @@ class Seq2SeqTraining():
         
         results = {
             "train_loss": [], "train_rouge_L": [],
-            "val_loss": [], "val_rouge_L": []
+            "val_rouge_L": []
         }
         headers = [
             "Epoch", "Train Loss", "Train ROUGE-L",
-            "Val Loss", "Val ROUGE-L"
+            "Val ROUGE-L"
         ]
         
         epochs_no_improve = 0
@@ -173,19 +167,17 @@ class Seq2SeqTraining():
         for epoch in pbar:
             
             train_loss, train_rouge_L = self.train_step(epoch_pbar=pbar)
-            val_loss, val_rouge_L = self.val_step()
+            val_rouge_L = self.val_step()
 
             row = [
                 epoch, 
                 f"{train_loss:.4f}",
                 f"{train_rouge_L:.4f}",  # Thêm dòng này
-                f"{val_loss:.4f}", 
                 f"{val_rouge_L:.4f}"
             ]
 
             results["train_loss"].append(train_loss)
             results["train_rouge_L"].append(train_rouge_L)
-            results["val_loss"].append(val_loss)
             results["val_rouge_L"].append(val_rouge_L)
 
             if self.scheduler is not None:
@@ -203,7 +195,6 @@ class Seq2SeqTraining():
 
             # Early stopping & checkpoint logic
             if val_rouge_L > self.best_val_rouge_L:
-                self.best_val_loss = val_loss
                 self.best_val_rouge_L = val_rouge_L
                 self.best_epoch = epoch
                 self.save_best_model(best_model_path, epoch)
@@ -222,7 +213,7 @@ class Seq2SeqTraining():
             self.save_last_checkpoint(last_ckpt_path, epoch)
             
         best_msg_1 = "\nBest result based on ROUGE-L on validation set:"
-        best_msg_2 = f"Best epoch: {self.best_epoch}, Best Val_Loss: {self.best_val_loss:.4f}, Val_ROUGE-L: {self.best_val_rouge_L:.4f}"
+        best_msg_2 = f"Best epoch: {self.best_epoch}, Val_ROUGE-L: {self.best_val_rouge_L:.4f}"
         if self.logger:
             self.logger.info(best_msg_1)
             self.logger.info(best_msg_2)
@@ -335,7 +326,6 @@ class Seq2SeqTraining():
             print(save_msg)
         torch.save({
             "model_state": model_state,
-            "best_val_loss": self.best_val_loss,
             "best_val_rouge_L": self.best_val_rouge_L,
             "best_epoch": epoch
         }, path)
@@ -354,7 +344,6 @@ class Seq2SeqTraining():
             "model_state": model_state,
             "optimizer_state": self.optimizer.state_dict() if self.optimizer else None,
             "scheduler_state": self.scheduler.state_dict() if self.scheduler else None,
-            "best_val_loss": self.best_val_loss,
             "best_val_rouge_L": self.best_val_rouge_L,
             "best_epoch": self.best_epoch,
             "epoch": epoch
@@ -376,7 +365,6 @@ class Seq2SeqTraining():
 
         self.model.load_state_dict(state_dict)
         self.best_val_rouge_L = ckpt.get('best_val_rouge_L', self.best_val_rouge_L)
-        self.best_val_loss = ckpt.get('best_val_loss', self.best_val_loss)
         self.best_epoch = ckpt.get('best_epoch', self.best_epoch)
 
         return self.best_epoch
@@ -411,7 +399,6 @@ class Seq2SeqTraining():
                 self.log(f"Warning: couldn't load scheduler state: {e}")
 
         self.best_val_rouge_L = ckpt.get('best_val_rouge_L', self.best_val_rouge_L)
-        self.best_val_loss = ckpt.get('best_val_loss', self.best_val_loss)
         self.best_epoch = ckpt.get('best_epoch', self.best_epoch)
 
         last_epoch = ckpt.get('epoch', None)
