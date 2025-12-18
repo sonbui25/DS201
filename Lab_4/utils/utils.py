@@ -14,8 +14,13 @@ def plot_metrics(results, epochs, model_name, dataset_name):
     ]
     plt.figure(figsize=(18, 10))
     plt.suptitle(f"Metrics over Epochs of {model_name} model", fontsize=16)
+    num_metrics = len(metrics)
+    cols = 2
+    rows = (num_metrics + cols - 1) // cols  # Tính số hàng cần thiết
+    plt.figure(figsize=(12, 5 * rows))
+    plt.suptitle(f"Metrics over Epochs of {model_name} model", fontsize=16)
     for i, (train_key, val_key, title) in enumerate(metrics, 1):
-        plt.subplot(2, 3, i)
+        plt.subplot(rows, cols, i)
         plt.plot(range(epochs), results[train_key], label="Train")
         if val_key and val_key in results:  # Chỉ plot validation nếu có
             plt.plot(range(epochs), results[val_key], label="Validation")
