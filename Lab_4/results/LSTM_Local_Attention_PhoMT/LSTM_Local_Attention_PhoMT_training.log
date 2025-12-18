@@ -1,0 +1,15 @@
+2025-12-18 11:36:41,823 - INFO - ==================================================
+2025-12-18 11:36:41,823 - INFO - STARTING PROCESS FOR EXPERIMENT: LSTM_Local_Attention_PhoMT
+2025-12-18 11:36:41,823 - INFO - Log file location: /kaggle/working/DS201/Lab_4/results/LSTM_Local_Attention_PhoMT/LSTM_Local_Attention_PhoMT_training.log
+2025-12-18 11:36:41,823 - INFO - Loading configuration from: /kaggle/working/DS201/Lab_4/config/LSTM_Local_Attention.yml
+2025-12-18 11:36:41,846 - INFO - Using device: cuda
+2025-12-18 11:36:41,847 - INFO - Random seed set to: 42
+2025-12-18 11:36:41,847 - INFO - 
+Running Experiment: LSTM_Local_Attention_PhoMT
+2025-12-18 11:36:41,847 - INFO - Model: LSTM_Local_Attention, Dataset: pho_mt
+2025-12-18 11:36:41,847 - INFO - Hyperparameters: {'epochs': 35, 'early_stop_patience': 10, 'lr': 0.001, 'weight_decay': 1e-05, 'batch_size': 128, 'optimizer': 'Adam', 'step_size': 30, 'gamma': 0.1, 'optimizer_params': {}, 'embedding_dim': 256, 'hidden_dim': 256, 'encoder_layers': 3, 'decoder_layers': 3, 'dropout': 0.1, 'D': 10, 'max_length': 64}
+2025-12-18 11:36:42,721 - INFO - Loading dataset: pho_mt
+2025-12-18 11:36:42,922 - INFO - Train: 20000, Val: 2000, Test: 2000
+2025-12-18 11:36:43,224 - INFO - Using optimizer: Adam with LR=0.001, WeightDecay=1e-05
+2025-12-18 11:36:44,238 - INFO - START TRAINING LSTM_Local_Attention_PhoMT...
+2025-12-18 11:36:44,238 - INFO - No checkpoint found at /kaggle/working/DS201/checkpoints/LSTM_Local_Attention_PhoMT/LSTM_Local_Attention_PhoMT_last_checkpoint.pth

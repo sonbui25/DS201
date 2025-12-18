@@ -1,0 +1,15 @@
+2025-12-18 11:36:20,890 - INFO - ==================================================
+2025-12-18 11:36:20,890 - INFO - STARTING PROCESS FOR EXPERIMENT: LSTM_Bahdanau_PhoMT
+2025-12-18 11:36:20,891 - INFO - Log file location: /kaggle/working/DS201/Lab_4/results/LSTM_Bahdanau_PhoMT/LSTM_Bahdanau_PhoMT_training.log
+2025-12-18 11:36:20,891 - INFO - Loading configuration from: /kaggle/working/DS201/Lab_4/config/LSTM_Bahdanau.yml
+2025-12-18 11:36:20,912 - INFO - Using device: cuda
+2025-12-18 11:36:20,912 - INFO - Random seed set to: 42
+2025-12-18 11:36:20,913 - INFO - 
+Running Experiment: LSTM_Bahdanau_PhoMT
+2025-12-18 11:36:20,913 - INFO - Model: LSTM_Bahdanau, Dataset: pho_mt
+2025-12-18 11:36:20,913 - INFO - Hyperparameters: {'epochs': 35, 'early_stop_patience': 10, 'lr': 0.001, 'weight_decay': 1e-05, 'batch_size': 128, 'optimizer': 'Adam', 'step_size': 30, 'gamma': 0.1, 'optimizer_params': {}, 'embedding_dim': 256, 'hidden_dim': 256, 'encoder_layers': 3, 'decoder_layers': 3, 'dropout': 0.1, 'max_length': 64}
+2025-12-18 11:36:21,801 - INFO - Loading dataset: pho_mt
+2025-12-18 11:36:21,989 - INFO - Train: 20000, Val: 2000, Test: 2000
+2025-12-18 11:36:22,294 - INFO - Using optimizer: Adam with LR=0.001, WeightDecay=1e-05
+2025-12-18 11:36:23,322 - INFO - START TRAINING LSTM_Bahdanau_PhoMT...
+2025-12-18 11:36:23,322 - INFO - No checkpoint found at /kaggle/working/DS201/checkpoints/LSTM_Bahdanau_PhoMT/LSTM_Bahdanau_PhoMT_last_checkpoint.pth

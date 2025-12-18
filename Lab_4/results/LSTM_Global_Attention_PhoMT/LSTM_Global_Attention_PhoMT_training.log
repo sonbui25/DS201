@@ -1,0 +1,223 @@
+2025-12-18 11:37:36,836 - INFO - ==================================================
+2025-12-18 11:37:36,836 - INFO - STARTING PROCESS FOR EXPERIMENT: LSTM_Global_Attention_PhoMT
+2025-12-18 11:37:36,836 - INFO - Log file location: /kaggle/working/DS201/Lab_4/results/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_training.log
+2025-12-18 11:37:36,836 - INFO - Loading configuration from: /kaggle/working/DS201/Lab_4/config/LSTM_Global_Attention.yml
+2025-12-18 11:37:36,859 - INFO - Using device: cuda
+2025-12-18 11:37:36,860 - INFO - Random seed set to: 42
+2025-12-18 11:37:36,860 - INFO - 
+Running Experiment: LSTM_Global_Attention_PhoMT
+2025-12-18 11:37:36,860 - INFO - Model: LSTM_Global_Attention, Dataset: pho_mt
+2025-12-18 11:37:36,860 - INFO - Hyperparameters: {'epochs': 35, 'early_stop_patience': 10, 'lr': 0.001, 'weight_decay': 1e-05, 'batch_size': 128, 'optimizer': 'Adam', 'step_size': 30, 'gamma': 0.1, 'optimizer_params': {}, 'embedding_dim': 256, 'hidden_dim': 256, 'encoder_layers': 3, 'decoder_layers': 3, 'dropout': 0.1, 'max_length': 64}
+2025-12-18 11:37:37,732 - INFO - Loading dataset: pho_mt
+2025-12-18 11:37:37,933 - INFO - Train: 20000, Val: 2000, Test: 2000
+2025-12-18 11:37:38,245 - INFO - Using optimizer: Adam with LR=0.001, WeightDecay=1e-05
+2025-12-18 11:37:39,299 - INFO - START TRAINING LSTM_Global_Attention_PhoMT...
+2025-12-18 11:37:39,299 - INFO - No checkpoint found at /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_last_checkpoint.pth
+2025-12-18 11:38:57,222 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|       0 |       1.9644 |          0.0749 |        0.1185 |
+2025-12-18 11:38:57,223 - INFO - 
+[INFO]: Saving best model at epoch 0 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 11:40:15,998 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|       1 |       1.5904 |          0.1894 |        0.2688 |
+2025-12-18 11:40:15,999 - INFO - 
+[INFO]: Saving best model at epoch 1 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 11:41:35,875 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|       2 |       1.5299 |          0.2518 |        0.2575 |
+2025-12-18 11:42:57,460 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|       3 |       1.4076 |          0.2928 |        0.2804 |
+2025-12-18 11:42:57,460 - INFO - 
+[INFO]: Saving best model at epoch 3 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 11:44:20,065 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|       4 |       1.3456 |          0.3244 |        0.3225 |
+2025-12-18 11:44:20,065 - INFO - 
+[INFO]: Saving best model at epoch 4 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 11:45:42,723 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|       5 |       1.2881 |          0.3443 |        0.3139 |
+2025-12-18 11:47:06,089 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|       6 |       1.2124 |          0.3624 |        0.3284 |
+2025-12-18 11:47:06,090 - INFO - 
+[INFO]: Saving best model at epoch 6 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 11:48:30,799 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|       7 |       1.1516 |          0.3771 |         0.329 |
+2025-12-18 11:48:30,800 - INFO - 
+[INFO]: Saving best model at epoch 7 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 11:49:55,000 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|       8 |       1.1215 |          0.3894 |        0.3346 |
+2025-12-18 11:49:55,001 - INFO - 
+[INFO]: Saving best model at epoch 8 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 11:51:19,212 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|       9 |       1.0893 |          0.4004 |        0.3403 |
+2025-12-18 11:51:19,213 - INFO - 
+[INFO]: Saving best model at epoch 9 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 11:52:43,818 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      10 |       1.0385 |          0.4111 |        0.3348 |
+2025-12-18 11:54:07,364 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      11 |       1.0283 |          0.4202 |        0.3402 |
+2025-12-18 11:55:30,890 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      12 |       1.0077 |           0.428 |        0.3437 |
+2025-12-18 11:55:30,891 - INFO - 
+[INFO]: Saving best model at epoch 12 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 11:56:55,064 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      13 |       0.9628 |          0.4369 |        0.3475 |
+2025-12-18 11:56:55,064 - INFO - 
+[INFO]: Saving best model at epoch 13 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 11:58:19,210 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      14 |       0.9411 |          0.4448 |        0.3517 |
+2025-12-18 11:58:19,210 - INFO - 
+[INFO]: Saving best model at epoch 14 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 11:59:44,216 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      15 |       1.1252 |            0.42 |        0.3423 |
+2025-12-18 12:01:08,687 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      16 |         0.96 |          0.4343 |        0.3578 |
+2025-12-18 12:01:08,688 - INFO - 
+[INFO]: Saving best model at epoch 16 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 12:02:32,789 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      17 |       0.8964 |          0.4636 |        0.3654 |
+2025-12-18 12:02:32,789 - INFO - 
+[INFO]: Saving best model at epoch 17 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 12:03:57,986 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      18 |       0.8367 |          0.4829 |        0.3799 |
+2025-12-18 12:03:57,987 - INFO - 
+[INFO]: Saving best model at epoch 18 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 12:05:23,524 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      19 |       0.7838 |          0.5015 |        0.3922 |
+2025-12-18 12:05:23,524 - INFO - 
+[INFO]: Saving best model at epoch 19 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 12:06:47,826 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      20 |       0.7646 |          0.5178 |         0.406 |
+2025-12-18 12:06:47,827 - INFO - 
+[INFO]: Saving best model at epoch 20 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 12:08:13,170 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      21 |       0.7202 |          0.5321 |        0.4183 |
+2025-12-18 12:08:13,170 - INFO - 
+[INFO]: Saving best model at epoch 21 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 12:09:38,433 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      22 |       0.6897 |          0.5475 |         0.422 |
+2025-12-18 12:09:38,433 - INFO - 
+[INFO]: Saving best model at epoch 22 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 12:11:03,565 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      23 |       0.6666 |          0.5569 |        0.4285 |
+2025-12-18 12:11:03,566 - INFO - 
+[INFO]: Saving best model at epoch 23 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 12:12:29,877 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      24 |       0.6317 |          0.5676 |        0.4413 |
+2025-12-18 12:12:29,877 - INFO - 
+[INFO]: Saving best model at epoch 24 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 12:13:54,456 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      25 |       0.6179 |          0.5801 |        0.4417 |
+2025-12-18 12:13:54,457 - INFO - 
+[INFO]: Saving best model at epoch 25 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 12:15:19,433 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      26 |       0.5916 |          0.5915 |        0.4463 |
+2025-12-18 12:15:19,433 - INFO - 
+[INFO]: Saving best model at epoch 26 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 12:16:44,037 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      27 |       0.5776 |           0.602 |        0.4494 |
+2025-12-18 12:16:44,038 - INFO - 
+[INFO]: Saving best model at epoch 27 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 12:18:09,379 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      28 |       0.5566 |          0.6089 |        0.4519 |
+2025-12-18 12:18:09,380 - INFO - 
+[INFO]: Saving best model at epoch 28 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 12:19:35,379 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      29 |       0.5305 |          0.6186 |         0.458 |
+2025-12-18 12:19:35,380 - INFO - 
+[INFO]: Saving best model at epoch 29 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 12:21:00,686 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      30 |       0.4653 |          0.6592 |         0.465 |
+2025-12-18 12:21:00,687 - INFO - 
+[INFO]: Saving best model at epoch 30 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 12:22:26,111 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      31 |       0.4403 |          0.6723 |        0.4659 |
+2025-12-18 12:22:26,112 - INFO - 
+[INFO]: Saving best model at epoch 31 to: /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth
+2025-12-18 12:23:51,954 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      32 |        0.429 |          0.6779 |        0.4653 |
+2025-12-18 12:25:16,623 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      33 |       0.4262 |          0.6835 |        0.4643 |
+2025-12-18 12:26:42,217 - INFO - 
+|   Epoch |   Train Loss |   Train ROUGE-L |   Val ROUGE-L |
+|---------|--------------|-----------------|---------------|
+|      34 |       0.4169 |          0.6872 |        0.4652 |
+2025-12-18 12:26:42,727 - INFO - 
+Best result based on ROUGE-L on validation set:
+2025-12-18 12:26:42,727 - INFO - Best epoch: 31, Val_ROUGE-L: 0.4659
+2025-12-18 12:26:42,727 - INFO - DONE TRAINING LSTM_Global_Attention_PhoMT. Ran for 35 epochs.
+2025-12-18 12:26:42,727 - INFO - 
+ Starting final evaluation on the (unseen) test set...
+2025-12-18 12:26:42,727 - INFO - Loading best model from /kaggle/working/DS201/checkpoints/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_best_model.pth for final test evaluation...
+2025-12-18 12:26:42,788 - INFO -  Best model loaded successfully.
+2025-12-18 12:26:45,997 - INFO - Predictions log saved to /kaggle/working/DS201/Lab_4/results/LSTM_Global_Attention_PhoMT/LSTM_Global_Attention_PhoMT_test_predictions.jsonl
+2025-12-18 12:26:45,998 - INFO -  Test evaluation completed successfully.
+2025-12-18 12:26:45,998 - INFO -  Test Set Results: ROUGE-L: 0.4806
+2025-12-18 12:26:45,998 - INFO - Plotting training/validation results for LSTM_Global_Attention_PhoMT.
+2025-12-18 12:26:46,535 - INFO - 
+Experiment LSTM_Global_Attention_PhoMT finished successfully!
