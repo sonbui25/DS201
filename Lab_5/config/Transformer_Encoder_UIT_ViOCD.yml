@@ -1,0 +1,43 @@
+vocab:
+  vocab_prefix: "UIT_ViOCD"
+  unk_piece: "<UNK>"
+  bos_piece: "<BOS>"
+  eos_piece: "<EOS>"
+  pad_piece: "<PAD>"
+  path:
+    train: "E://DS201.Q11//DS201//Lab_5//data//UIT-ViOCD//train.json"
+    val:   "E://DS201.Q11//DS201//Lab_5//data//UIT-ViOCD//dev.json"
+    test:  "E://DS201.Q11//DS201//Lab_5//data//UIT-ViOCD//test.json"
+  text: "review"
+  label: "domain"
+  task_type: "text_classification" # or seq_labeling
+# --- Global Settings ---
+seed: 42
+checkpoint_dir: "checkpoints/TransformerEncoder_UIT_ViOCD/"
+
+# --- Dataset Definitions ---
+datasets:
+  uit_viocd:
+    train_path: "E://DS201.Q11//DS201//Lab_5//data//UIT-ViOCD//train.json"
+    val_path: "E://DS201.Q11//DS201//Lab_5//data//UIT-ViOCD//dev.json"
+    test_path: "E://DS201.Q11//DS201//Lab_5//data//UIT-ViOCD//test.json"
+
+# --- Model Definitions ---
+models:
+  TransformerEncoder: models.TransformerEncoder.TransformerEncoder 
+
+# --- Experiment Definition ---
+experiments:
+  - name: "TransformerEncoder_UIT_ViOCD"
+    model: "TransformerEncoder"
+    dataset: "uit_viocd"
+    hyperparameters:
+      epochs: 50
+      early_stop_patience: 10
+      lr: 0.0002
+      weight_decay: 0.00001
+      batch_size: 32
+      optimizer: "Adam"
+      step_size: 30
+      gamma: 0.1
+      optimizer_params: {}

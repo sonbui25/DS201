@@ -1,0 +1,2 @@
+from .UIT_ViOCD import UIT_ViOCD_Dataset
+from .PhoNER_COVID19 import PhoNER_COVID19Dataset

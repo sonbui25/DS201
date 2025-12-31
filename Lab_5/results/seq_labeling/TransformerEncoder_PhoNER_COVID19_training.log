@@ -1,0 +1,340 @@
+2025-12-31 22:30:27,596 - INFO - ==================================================
+2025-12-31 22:30:27,596 - INFO - STARTING PROCESS FOR EXPERIMENT: TransformerEncoder_PhoNER_COVID19
+2025-12-31 22:30:27,596 - INFO - Log file location: ./results/seq_labeling\TransformerEncoder_PhoNER_COVID19_training.log
+2025-12-31 22:30:27,596 - INFO - Loading configuration from: E:\DS201.Q11\DS201\Lab_5\config\Transformer_Encoder_PhoNER_syllable.yml
+2025-12-31 22:30:27,596 - INFO - 
+Running Experiment: TransformerEncoder_PhoNER_COVID19
+2025-12-31 22:30:27,596 - INFO - Model: TransformerEncoder, Dataset: phoner_syllable
+2025-12-31 22:30:27,596 - INFO - Hyperparameters: {'epochs': 50, 'early_stop_patience': 20, 'lr': 0.001, 'weight_decay': 1e-05, 'batch_size': 32, 'optimizer': 'Adam', 'step_size': 30, 'gamma': 0.1, 'optimizer_params': {}}
+2025-12-31 22:30:27,618 - INFO - Using device: cuda
+2025-12-31 22:30:27,678 - INFO - Loading dataset: phoner_syllable
+2025-12-31 22:30:27,762 - INFO - Train: 5027, Val: 2000, Test: 3000
+2025-12-31 22:30:27,762 - INFO - Sample sentence size: torch.Size([27]), Number of classes: 21
+2025-12-31 22:30:27,862 - INFO - 
+[INFO] Class Distribution (Train Data):
++-----------------------+---------+
+| Label                 |   Count |
++=======================+=========+
+| O                     |  129379 |
++-----------------------+---------+
+| I-LOCATION            |   12309 |
++-----------------------+---------+
+| B-LOCATION            |    5398 |
++-----------------------+---------+
+| I-ORGANIZATION        |    4818 |
++-----------------------+---------+
+| B-PATIENT_ID          |    3240 |
++-----------------------+---------+
+| B-DATE                |    2549 |
++-----------------------+---------+
+| I-DATE                |    2500 |
++-----------------------+---------+
+| I-SYMPTOM_AND_DISEASE |    2270 |
++-----------------------+---------+
+| B-SYMPTOM_AND_DISEASE |    1439 |
++-----------------------+---------+
+| B-ORGANIZATION        |    1137 |
++-----------------------+---------+
+| B-AGE                 |     682 |
++-----------------------+---------+
+| B-GENDER              |     542 |
++-----------------------+---------+
+| B-NAME                |     349 |
++-----------------------+---------+
+| I-JOB                 |     318 |
++-----------------------+---------+
+| B-TRANSPORTATION      |     226 |
++-----------------------+---------+
+| B-JOB                 |     205 |
++-----------------------+---------+
+| I-NAME                |      80 |
++-----------------------+---------+
+| I-TRANSPORTATION      |      69 |
++-----------------------+---------+
+| I-PATIENT_ID          |      15 |
++-----------------------+---------+
+| I-GENDER              |      14 |
++-----------------------+---------+
+| I-AGE                 |       2 |
++-----------------------+---------+
+2025-12-31 22:30:27,862 - INFO - Using optimizer: Adam with LR=0.001, WeightDecay=1e-05
+2025-12-31 22:30:29,061 - INFO - START TRAINING TransformerEncoder_PhoNER_COVID19...
+2025-12-31 22:30:29,061 - INFO - No checkpoint found at checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_last_checkpoint.pth
+2025-12-31 22:30:34,957 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|       0 |       1.0432 |       0.793 |            0.0752 |         0.0568 |     0.0566 |     0.8914 |    0.8149 |          0.2343 |       0.2278 |   0.2144 |
+2025-12-31 22:30:34,957 - INFO - 
+[INFO]: Saving best model at epoch 0 to: checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_best_model.pth
+2025-12-31 22:30:40,540 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|       1 |       0.7842 |      0.8516 |            0.2468 |         0.2205 |     0.2089 |     0.7726 |     0.848 |          0.3926 |        0.342 |   0.3275 |
+2025-12-31 22:30:40,540 - INFO - 
+[INFO]: Saving best model at epoch 1 to: checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_best_model.pth
+2025-12-31 22:30:46,151 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|       2 |       0.6915 |      0.8775 |             0.328 |         0.3292 |     0.3073 |     0.7221 |     0.865 |          0.3742 |       0.4262 |   0.3813 |
+2025-12-31 22:30:46,151 - INFO - 
+[INFO]: Saving best model at epoch 2 to: checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_best_model.pth
+2025-12-31 22:30:51,809 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|       3 |       0.6462 |      0.8903 |            0.3838 |         0.3934 |     0.3648 |     0.6885 |    0.8768 |          0.5051 |       0.4768 |   0.4376 |
+2025-12-31 22:30:51,809 - INFO - 
+[INFO]: Saving best model at epoch 3 to: checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_best_model.pth
+2025-12-31 22:30:57,597 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|       4 |       0.6152 |      0.8999 |            0.4334 |         0.4556 |     0.4209 |     0.6773 |    0.8783 |          0.4545 |       0.5525 |   0.4604 |
+2025-12-31 22:30:57,597 - INFO - 
+[INFO]: Saving best model at epoch 4 to: checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_best_model.pth
+2025-12-31 22:31:03,395 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|       5 |       0.5883 |      0.9086 |            0.4759 |         0.5154 |     0.4726 |     0.6546 |    0.8915 |          0.5149 |       0.5364 |   0.4943 |
+2025-12-31 22:31:03,396 - INFO - 
+[INFO]: Saving best model at epoch 5 to: checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_best_model.pth
+2025-12-31 22:31:09,023 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|       6 |       0.5665 |      0.9152 |            0.5069 |         0.5519 |     0.5076 |     0.6404 |    0.8922 |          0.5713 |       0.5652 |   0.5435 |
+2025-12-31 22:31:09,023 - INFO - 
+[INFO]: Saving best model at epoch 6 to: checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_best_model.pth
+2025-12-31 22:31:14,779 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|       7 |       0.5549 |      0.9192 |            0.5281 |         0.5698 |     0.5255 |     0.6407 |    0.8927 |          0.5367 |       0.6033 |   0.5541 |
+2025-12-31 22:31:14,779 - INFO - 
+[INFO]: Saving best model at epoch 7 to: checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_best_model.pth
+2025-12-31 22:31:21,337 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|       8 |       0.5447 |      0.9231 |            0.5564 |         0.6056 |     0.5596 |     0.6111 |    0.8988 |          0.5517 |       0.6228 |   0.5729 |
+2025-12-31 22:31:21,338 - INFO - 
+[INFO]: Saving best model at epoch 8 to: checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_best_model.pth
+2025-12-31 22:31:28,105 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|       9 |       0.5328 |      0.9267 |            0.5726 |         0.6292 |     0.5798 |     0.6161 |    0.9005 |          0.6038 |       0.5874 |   0.5793 |
+2025-12-31 22:31:28,105 - INFO - 
+[INFO]: Saving best model at epoch 9 to: checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_best_model.pth
+2025-12-31 22:31:34,655 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      10 |       0.5249 |      0.9294 |            0.5827 |         0.6405 |     0.5892 |     0.6205 |    0.8978 |          0.5406 |       0.6622 |   0.5779 |
+2025-12-31 22:31:41,130 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      11 |       0.5164 |      0.9322 |            0.5885 |         0.6483 |     0.5986 |      0.623 |    0.9038 |          0.6346 |       0.6046 |   0.5999 |
+2025-12-31 22:31:41,130 - INFO - 
+[INFO]: Saving best model at epoch 11 to: checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_best_model.pth
+2025-12-31 22:31:47,816 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      12 |       0.5098 |      0.9346 |            0.6099 |         0.6694 |     0.6187 |     0.6026 |    0.9075 |          0.5982 |       0.6237 |   0.5964 |
+2025-12-31 22:31:54,149 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      13 |       0.5072 |      0.9353 |            0.6107 |         0.6724 |      0.621 |     0.5995 |    0.9054 |          0.5702 |        0.668 |   0.5999 |
+2025-12-31 22:32:00,488 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      14 |       0.5015 |      0.9374 |            0.6218 |         0.6897 |     0.6366 |     0.6038 |    0.9049 |          0.5885 |       0.6801 |   0.6137 |
+2025-12-31 22:32:00,489 - INFO - 
+[INFO]: Saving best model at epoch 14 to: checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_best_model.pth
+2025-12-31 22:32:06,947 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      15 |       0.4943 |      0.9394 |            0.6306 |         0.6956 |     0.6433 |     0.5949 |    0.9113 |          0.6264 |       0.6569 |   0.6282 |
+2025-12-31 22:32:06,948 - INFO - 
+[INFO]: Saving best model at epoch 15 to: checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_best_model.pth
+2025-12-31 22:32:13,345 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      16 |       0.4915 |      0.9408 |            0.6402 |         0.7099 |     0.6558 |     0.6043 |    0.9086 |          0.6138 |         0.63 |   0.6071 |
+2025-12-31 22:32:19,701 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      17 |       0.4856 |      0.9429 |            0.6377 |         0.7084 |     0.6541 |     0.5989 |    0.9114 |          0.6161 |       0.6565 |   0.6233 |
+2025-12-31 22:32:26,057 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      18 |       0.4833 |      0.9434 |            0.6487 |         0.7181 |     0.6666 |     0.5839 |    0.9124 |          0.6169 |       0.6771 |   0.6322 |
+2025-12-31 22:32:26,058 - INFO - 
+[INFO]: Saving best model at epoch 18 to: checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_best_model.pth
+2025-12-31 22:32:32,699 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      19 |       0.4806 |      0.9441 |            0.6445 |         0.7128 |     0.6608 |     0.5959 |    0.9111 |          0.6231 |       0.6819 |   0.6342 |
+2025-12-31 22:32:32,699 - INFO - 
+[INFO]: Saving best model at epoch 19 to: checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_best_model.pth
+2025-12-31 22:32:39,258 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      20 |       0.4793 |      0.9448 |            0.6551 |         0.7284 |      0.673 |      0.598 |    0.9083 |          0.6063 |        0.699 |   0.6342 |
+2025-12-31 22:32:45,751 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      21 |       0.4792 |      0.9446 |            0.6602 |         0.7316 |     0.6777 |     0.5881 |    0.9081 |          0.6014 |       0.6937 |   0.6288 |
+2025-12-31 22:32:52,330 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      22 |       0.4731 |      0.9466 |            0.6592 |         0.7325 |      0.679 |     0.5964 |    0.9133 |          0.5702 |       0.7012 |   0.6172 |
+2025-12-31 22:32:58,977 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      23 |       0.4707 |      0.9476 |            0.6682 |         0.7488 |     0.6906 |     0.5961 |    0.9139 |          0.6165 |       0.6697 |   0.6337 |
+2025-12-31 22:33:05,350 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      24 |       0.4653 |      0.9496 |              0.68 |         0.7512 |     0.6987 |     0.5861 |    0.9146 |          0.6181 |       0.6898 |   0.6424 |
+2025-12-31 22:33:05,350 - INFO - 
+[INFO]: Saving best model at epoch 24 to: checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_best_model.pth
+2025-12-31 22:33:11,731 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      25 |       0.4635 |      0.9502 |            0.6851 |         0.7553 |     0.7037 |     0.6029 |    0.9122 |          0.6107 |       0.6987 |   0.6392 |
+2025-12-31 22:33:18,087 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      26 |       0.4625 |      0.9506 |             0.686 |         0.7607 |     0.7065 |     0.5972 |    0.9128 |          0.6231 |       0.6726 |   0.6342 |
+2025-12-31 22:33:24,451 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      27 |       0.4614 |      0.9513 |            0.6885 |         0.7663 |       0.71 |      0.599 |    0.9103 |          0.6153 |       0.6975 |   0.6414 |
+2025-12-31 22:33:30,857 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      28 |       0.4562 |      0.9528 |            0.6883 |         0.7656 |     0.7098 |     0.5907 |    0.9153 |          0.5767 |       0.6842 |   0.6215 |
+2025-12-31 22:33:37,485 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      29 |        0.459 |      0.9518 |            0.6894 |         0.7679 |     0.7116 |     0.5776 |    0.9159 |          0.6218 |       0.6892 |   0.6443 |
+2025-12-31 22:33:37,485 - INFO - 
+[INFO]: Saving best model at epoch 29 to: checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_best_model.pth
+2025-12-31 22:33:44,153 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      30 |        0.438 |      0.9593 |            0.7172 |         0.7973 |      0.743 |     0.5798 |    0.9186 |          0.6206 |        0.707 |   0.6543 |
+2025-12-31 22:33:44,154 - INFO - 
+[INFO]: Saving best model at epoch 30 to: checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_best_model.pth
+2025-12-31 22:33:50,658 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      31 |       0.4297 |      0.9625 |            0.7321 |         0.8079 |     0.7584 |     0.5775 |    0.9194 |          0.6205 |       0.7149 |   0.6571 |
+2025-12-31 22:33:50,659 - INFO - 
+[INFO]: Saving best model at epoch 31 to: checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_best_model.pth
+2025-12-31 22:33:57,059 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      32 |       0.4263 |      0.9635 |            0.7402 |         0.8151 |     0.7651 |     0.5812 |    0.9196 |          0.6204 |       0.7153 |   0.6567 |
+2025-12-31 22:34:03,591 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      33 |       0.4249 |      0.9643 |            0.7555 |         0.8301 |     0.7806 |     0.5805 |    0.9201 |          0.6323 |       0.7144 |   0.6627 |
+2025-12-31 22:34:03,592 - INFO - 
+[INFO]: Saving best model at epoch 33 to: checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_best_model.pth
+2025-12-31 22:34:09,937 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      34 |       0.4219 |      0.9656 |            0.7604 |         0.8358 |     0.7857 |     0.5778 |    0.9201 |           0.629 |       0.7202 |   0.6642 |
+2025-12-31 22:34:09,939 - INFO - 
+[INFO]: Saving best model at epoch 34 to: checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_best_model.pth
+2025-12-31 22:34:16,367 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      35 |       0.4202 |      0.9661 |            0.7569 |         0.8314 |     0.7829 |     0.5807 |    0.9206 |          0.6127 |       0.7276 |   0.6592 |
+2025-12-31 22:34:22,797 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      36 |       0.4198 |      0.9665 |            0.7599 |         0.8317 |     0.7858 |     0.5799 |    0.9207 |           0.624 |       0.7226 |   0.6629 |
+2025-12-31 22:34:29,376 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      37 |       0.4195 |       0.966 |            0.7506 |         0.8243 |     0.7769 |     0.5795 |    0.9216 |          0.6433 |        0.723 |   0.6728 |
+2025-12-31 22:34:29,376 - INFO - 
+[INFO]: Saving best model at epoch 37 to: checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_best_model.pth
+2025-12-31 22:34:35,767 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      38 |       0.4169 |      0.9677 |            0.7685 |         0.8415 |     0.7939 |     0.5842 |    0.9207 |          0.6365 |        0.722 |   0.6683 |
+2025-12-31 22:34:42,061 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      39 |       0.4157 |      0.9674 |            0.7693 |         0.8371 |     0.7917 |     0.5857 |    0.9208 |          0.6235 |       0.7292 |   0.6645 |
+2025-12-31 22:34:48,436 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      40 |       0.4165 |      0.9673 |             0.762 |          0.836 |     0.7882 |     0.5804 |    0.9209 |          0.6337 |       0.7318 |   0.6724 |
+2025-12-31 22:34:54,783 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      41 |       0.4145 |       0.968 |            0.7659 |         0.8393 |     0.7925 |     0.5808 |    0.9206 |          0.6192 |       0.7316 |   0.6642 |
+2025-12-31 22:35:01,163 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      42 |       0.4145 |      0.9679 |            0.7708 |         0.8421 |     0.7957 |     0.5831 |    0.9204 |          0.6153 |       0.7331 |   0.6627 |
+2025-12-31 22:35:07,449 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      43 |       0.4134 |      0.9685 |            0.7746 |         0.8464 |     0.8003 |     0.5825 |    0.9208 |          0.6317 |       0.7299 |   0.6702 |
+2025-12-31 22:35:13,666 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      44 |        0.412 |      0.9689 |            0.7723 |         0.8431 |     0.7973 |      0.584 |    0.9209 |          0.6243 |       0.7352 |   0.6665 |
+2025-12-31 22:35:19,899 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      45 |       0.4123 |       0.969 |            0.7757 |         0.8416 |     0.7989 |     0.5822 |    0.9212 |          0.6291 |       0.7284 |   0.6667 |
+2025-12-31 22:35:26,239 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      46 |       0.4095 |      0.9698 |            0.7717 |         0.8422 |     0.7974 |     0.5828 |    0.9215 |          0.6317 |       0.7335 |   0.6714 |
+2025-12-31 22:35:32,426 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      47 |       0.4109 |      0.9696 |            0.7745 |         0.8485 |     0.8015 |     0.5845 |    0.9206 |          0.6107 |       0.7438 |   0.6602 |
+2025-12-31 22:35:38,862 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      48 |       0.4091 |      0.9701 |            0.7768 |         0.8498 |     0.8026 |     0.5879 |    0.9207 |          0.6249 |         0.74 |   0.6681 |
+2025-12-31 22:35:45,387 - INFO - 
+|   Epoch |   Train Loss |   Train Acc |   Train Precision |   Train Recall |   Train F1 |   Val Loss |   Val Acc |   Val Precision |   Val Recall |   Val F1 |
+|---------|--------------|-------------|-------------------|----------------|------------|------------|-----------|-----------------|--------------|----------|
+|      49 |       0.4094 |      0.9703 |            0.7797 |         0.8549 |     0.8075 |      0.586 |    0.9211 |          0.6282 |       0.7251 |   0.6653 |
+2025-12-31 22:35:45,389 - INFO - 
+Best result based on F1 on validation set:
+2025-12-31 22:35:45,389 - INFO - Best epoch: 37, Best Val_Loss: 0.5795, Val_F1: 0.6728
+2025-12-31 22:35:45,389 - INFO - DONE TRAINING TransformerEncoder_PhoNER_COVID19. Ran for 50 epochs.
+2025-12-31 22:35:45,389 - INFO - 
+[INFO] Starting final evaluation on the (unseen) test set...
+2025-12-31 22:35:45,390 - INFO - Loading best model from checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_best_model.pth for final test evaluation...
+2025-12-31 22:35:45,432 - INFO - [INFO] Loaded best model from checkpoints/TransformerEncoder_PhoNER_COVID19/TransformerEncoder_PhoNER_COVID19_best_model.pth for evaluation.
+2025-12-31 22:35:45,433 - INFO - [INFO] Best model loaded successfully.
+2025-12-31 22:35:47,482 - INFO - [INFO] Test evaluation completed successfully.
+2025-12-31 22:35:47,483 - INFO - [INFO] Test Set Results: Loss: 0.6080, Acc: 0.9151, Precision: 0.6159, Recall: 0.6892, F1: 0.6420
+2025-12-31 22:35:47,483 - INFO - 
+Classification report for final (unseen) test set:
+2025-12-31 22:35:47,483 - INFO - 
+                     precision    recall  f1-score   support
+
+                AGE       0.79      0.87      0.83       582
+               DATE       0.58      0.81      0.68      1654
+             GENDER       0.91      0.92      0.92       462
+                JOB       0.31      0.38      0.34       173
+           LOCATION       0.51      0.71      0.59      4441
+               NAME       0.77      0.53      0.63       318
+       ORGANIZATION       0.25      0.48      0.33       771
+         PATIENT_ID       0.82      0.89      0.85      2005
+SYMPTOM_AND_DISEASE       0.54      0.66      0.59      1136
+     TRANSPORTATION       0.66      0.65      0.65       193
+
+          micro avg       0.57      0.74      0.64     11735
+          macro avg       0.62      0.69      0.64     11735
+       weighted avg       0.60      0.74      0.66     11735
+
+2025-12-31 22:35:47,483 - INFO - Plotting training/validation results for TransformerEncoder_PhoNER_COVID19.
+2025-12-31 22:35:50,843 - INFO - 
+Experiment TransformerEncoder_PhoNER_COVID19 finished successfully!

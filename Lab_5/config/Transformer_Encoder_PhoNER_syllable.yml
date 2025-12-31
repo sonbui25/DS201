@@ -1,0 +1,44 @@
+vocab:
+  vocab_prefix: "PhoNER_COVID19"
+  unk_piece: "<UNK>"
+  bos_piece: "<BOS>"
+  eos_piece: "<EOS>"
+  pad_piece: "<PAD>"
+  path:
+    train: "E://DS201.Q11//DS201//Lab_5//data//PhoNER_COVID19//data//syllable//train_syllable.json"
+    val:   "E://DS201.Q11//DS201//Lab_5//data//PhoNER_COVID19//data//syllable//dev_syllable.json"
+    test:  "E://DS201.Q11//DS201//Lab_5//data//PhoNER_COVID19//data//syllable//test_syllable.json"
+  text: "words"
+  label: "tags"
+  task_type: "seq_labeling" # or classification
+# --- Global Settings ---
+seed: 42
+checkpoint_dir: "checkpoints/TransformerEncoder_PhoNER_COVID19/"
+
+# --- Dataset Definitions ---
+datasets:
+  phoner_syllable:
+    train_path: "E://DS201.Q11//DS201//Lab_5//data//PhoNER_COVID19//data//syllable//train_syllable.json"
+    val_path: "E://DS201.Q11//DS201//Lab_5//data//PhoNER_COVID19//data//syllable//dev_syllable.json"
+    test_path: "E://DS201.Q11//DS201//Lab_5//data//PhoNER_COVID19//data//syllable//test_syllable.json"
+
+# --- Model Definitions ---
+models:
+  TransformerEncoder: models.TransformerEncoder.TransformerEncoder 
+
+# --- Experiment Definition ---
+experiments:
+  - name: "TransformerEncoder_PhoNER_COVID19"
+    model: "TransformerEncoder"
+    dataset: "phoner_syllable"
+    hyperparameters:
+      epochs: 50
+      early_stop_patience: 20
+      lr: 0.001
+      weight_decay: 0.00001
+      batch_size: 32
+      optimizer: "Adam"
+      step_size: 30
+      gamma: 0.1 
+      optimizer_params: {}
+      
